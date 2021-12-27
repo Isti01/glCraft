@@ -5,7 +5,8 @@ set(CMAKE_CXX_STANDARD 23)
 
 file(GLOB_RECURSE main_sources src/*.cpp)
 add_executable(main ${main_sources})
-target_compile_options(main PRIVATE -Wall -pedantic -ansi)
+target_compile_options(main PRIVATE -Wall)
+target_precompile_headers(main PRIVATE src/glCraft.h)
 
 # glfw
 add_subdirectory(third_party/glfw EXCLUDE_FROM_ALL)
