@@ -1,8 +1,13 @@
-#include "Application/Application.h"
 #include <iostream>
+
+#include "Application/Application.h"
 
 int main() {
   std::cout << "Hello World from glCraft!" << std::endl;
 
-  return Application::instance().run();
+  Application &app = Application::instance();
+  Scene scene = Scene();
+  app.setScene(scene);
+
+  return app.run();
 }

@@ -1,71 +1,34 @@
 #include "Application.h"
-#include "../Assets/ShaderProgram.h"
 
+Application::Application() : gui(Gui::instance()) {}
 
 int Application::run() {
+  if (!scene) return -1;
   if (!window.isValid()) return -1;
 
-  uint32_t vao, vbo, ibo;
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-
-  glm::vec3 vertices[] = {{0, 1, 0}, {-1, -1, 0}, {1, -1, 0}};
-
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
-  glEnableVertexAttribArray(0);
-
-  uint32_t indices[] = {0, 1, 2};
-
-  glGenBuffers(1, &ibo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-  ShaderProgram defaultShader = ShaderProgram("default", {{0, "position"}});
-
+  scene->init();
   while (!window.shouldClose()) {
-    glfwPollEvents();
-
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-
-    ImGui::NewFrame();
-    ImGui::ShowDemoWindow();
-    ImGui::Render();
-
     window.update();
+    gui.update();
 
-    glm::vec4 clear_color = {.1, .1, 0.6, 1};
+    scene->update();
+    scene->render();
+    scene->renderGui();
 
-
-    glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w,
-                 clear_color.w);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    defaultShader.bind();
-    glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(indices[0]), GL_UNSIGNED_INT, nullptr);
-
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+    gui.render();
     window.swapBuffers();
   }
-
-  glDeleteVertexArrays(1, &vao);
-  glDeleteBuffers(1, &vbo);
-  glDeleteBuffers(1, &ibo);
-
-  ImGui_ImplOpenGL3_Shutdown();
-  ImGui_ImplGlfw_Shutdown();
-  ImGui::DestroyContext();
-
-  glfwTerminate();
   return 0;
 }
 
-Application::~Application() {}
+void Application::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {
+  std::cout << "onKeyEvent" << std::endl;
+}
 
-Window &Application::getWindow() { return window; }
+void Application::onMouseButtonEvent(int32_t button, int32_t action, int32_t mods) {
+  std::cout << "onMouseButtonEvent" << std::endl;
+}
+
+void Application::onResized(int32_t width, int32_t height) {
+  std::cout << "onResized" << std::endl;
+}

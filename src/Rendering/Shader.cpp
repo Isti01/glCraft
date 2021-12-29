@@ -1,5 +1,6 @@
 #include "Shader.h"
-#include "AssetManager/AssetManager.h"
+
+#include "../AssetManager/AssetManager.h"
 
 Shader::Shader(const std::string &name, uint32_t type) {
   id = glCreateShader(type);
