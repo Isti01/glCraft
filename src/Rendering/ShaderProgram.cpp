@@ -42,5 +42,5 @@ void ShaderProgram::setMat4(const std::string &location, const glm::mat4 &value)
 }
 
 ShaderProgram::~ShaderProgram() {
-  if (isValid()) { glDeleteShader(shaderProgram); }
+  if (isValid()) { glDeleteProgram(shaderProgram); }
 }
