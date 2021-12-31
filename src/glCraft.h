@@ -1,5 +1,5 @@
 #pragma once
-// this is to force the formatter to keep the order
+// this is to force the formatter to keep the order, because glad must be included first
 #if 1
 #include <glad/glad.h>
 #endif

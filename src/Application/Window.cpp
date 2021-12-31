@@ -81,7 +81,7 @@ void Window::update() {
   glClearColor(clearColor.x * clearColor.w, clearColor.y * clearColor.w, clearColor.z * clearColor.w, clearColor.w);
   glClear(GL_COLOR_BUFFER_BIT);
 }
-void Window::swapBuffers() {
+void Window::finalizeFrame() {
   glfwSwapBuffers(window);
 }
 

@@ -14,7 +14,7 @@ public:
     return gui;
   }
   void update();
-  void render();
+  void finalizeFrame();
 
   ~Gui();
 };

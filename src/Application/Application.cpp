@@ -7,6 +7,7 @@ int Application::run() {
   if (!window.isValid()) return -1;
 
   scene->init();
+
   while (!window.shouldClose()) {
     window.update();
     gui.update();
@@ -15,8 +16,8 @@ int Application::run() {
     scene->render();
     scene->renderGui();
 
-    gui.render();
-    window.swapBuffers();
+    gui.finalizeFrame();
+    window.finalizeFrame();
   }
   return 0;
 }

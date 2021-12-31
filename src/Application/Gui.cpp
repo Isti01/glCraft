@@ -19,7 +19,7 @@ void Gui::update() {
   ImGui::NewFrame();
 }
 
-void Gui::render() {
+void Gui::finalizeFrame() {
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
