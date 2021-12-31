@@ -4,6 +4,6 @@
 class Entity {
 public:
   void init();
-  void update();
+  void update(float deltaTime);
   void render();
 };

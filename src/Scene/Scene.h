@@ -1,10 +1,11 @@
 #pragma once
 #include <utility>
 
-#include "../glCraft.h"
-#include "Entity.h"
 #include "../Rendering/ShaderProgram.h"
 #include "../Rendering/VertexArray.h"
+#include "../glCraft.h"
+#include "Camera.h"
+#include "Entity.h"
 
 class Scene {
   std::vector<Entity> entities;
@@ -21,7 +22,7 @@ public:
   void addEntity(const Entity &entity) { entities.emplace_back(entity); };
 
   void init();
-  void update();
+  void update(float deltaTime);
   void render();
   void renderGui();
 };

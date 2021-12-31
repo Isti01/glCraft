@@ -1,5 +1,7 @@
 #pragma once
 
+#include <chrono>
+
 #include "../Scene/Scene.h"
 #include "../glCraft.h"
 #include "Gui.h"

@@ -16,8 +16,8 @@ void Scene::init() {
   defaultShader = AssetManager::instance().loadShaderProgram("default");
 }
 
-void Scene::update() {
-  for (auto &entity: entities) { entity.update(); }
+void Scene::update(float deltaTime) {
+  for (auto &entity: entities) { entity.update(deltaTime); }
 }
 
 void Scene::render() {
