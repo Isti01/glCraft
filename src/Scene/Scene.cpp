@@ -13,7 +13,7 @@ void Scene::init() {
   std::vector<uint32_t> indices = {0, 1, 2};
 
   vao = std::make_shared<VertexArray>(vertices, vertexAttributes, indices);
-  defaultShader = AssetManager::instance().loadShader("default");
+  defaultShader = AssetManager::instance().loadShaderProgram("default");
 }
 
 void Scene::update() {

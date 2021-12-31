@@ -9,7 +9,7 @@ public:
   Shader(Shader &) = delete;
   Shader(Shader &&) = delete;
 
-  Shader(const std::string &name, uint32_t type);
+  Shader(const std::string &name);
   [[nodiscard]] bool isValid() const { return id != 0; };
   [[nodiscard]] uint32_t getId() const { return id; };
   ~Shader();

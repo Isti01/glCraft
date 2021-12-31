@@ -1,22 +1,22 @@
 #include "ShaderProgram.h"
 
+#include "../AssetManager/AssetManager.h"
 #include "Shader.h"
 
 ShaderProgram::ShaderProgram(const std::string &name) {
-  Shader vertexShader(name + ".vert", GL_VERTEX_SHADER);
-  if (!vertexShader.isValid()) return;
+  Ref<const Shader> vertexShader = AssetManager::instance().loadShader(name + ".vert");
+  if (!vertexShader->isValid()) throw std::exception("Invalid Shader");
 
-  Shader fragmentShader(name + ".frag", GL_FRAGMENT_SHADER);
-  if (!fragmentShader.isValid()) return;
+  Ref<const Shader> fragmentShader = AssetManager::instance().loadShader(name + ".frag");
+  if (!fragmentShader->isValid()) throw std::exception("Invalid Shader");
 
   shaderProgram = glCreateProgram();
 
-  glAttachShader(shaderProgram, fragmentShader.getId());
-  glAttachShader(shaderProgram, vertexShader.getId());
+  glAttachShader(shaderProgram, fragmentShader->getId());
+  glAttachShader(shaderProgram, vertexShader->getId());
 
   glLinkProgram(shaderProgram);
 }
-
 int32_t ShaderProgram::getUniformLocation(const std::string &location) const {
   return glGetUniformLocation(shaderProgram, location.c_str());
 }
