@@ -5,7 +5,6 @@
 Gui::Gui() {
   const auto context = Window::instance().getContext();
   if (context == nullptr) return;
-  std::cout << "initialized the gui" << std::endl;
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGui::StyleColorsDark();
@@ -25,7 +24,6 @@ void Gui::finalizeFrame() {
 }
 
 Gui::~Gui() {
-  std::cout << "gui destroyed" << std::endl;
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
