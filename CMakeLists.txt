@@ -38,9 +38,13 @@ add_library(
 )
 include_directories(imgui third_party/imgui third_party/imgui/backends)
 
+# lodepng
+add_library(lodepng EXCLUDE_FROM_ALL third_party/lodepng/lodepng.h third_party/lodepng/lodepng.cpp)
+include_directories(lodepng third_party/lodepng)
+
 # link glfw to imgui and link everything to the main app
 target_link_libraries(imgui PRIVATE glfw)
-target_link_libraries(main PRIVATE glfw glm glad imgui)
+target_link_libraries(main PRIVATE glfw glm glad imgui lodepng)
 
 # set a symlink to the assets dir
 add_custom_command(

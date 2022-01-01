@@ -1,7 +1,5 @@
 #pragma once
 
-#include <chrono>
-
 #include "../Scene/Scene.h"
 #include "../glCraft.h"
 #include "Gui.h"
@@ -11,7 +9,7 @@ class Application {
 private:
   Window &window = Window::instance();
   Gui &gui;
-  Scene *scene = nullptr;
+  Ref<Scene> scene;
   friend Window;
 
   Application();
@@ -30,10 +28,10 @@ public:
     return app;
   };
 
-  void setScene(Scene &newScene) { scene = &newScene; };
+  void setScene(Ref<Scene> &newScene) { scene = newScene; };
 
-  Window &getWindow() { return window; };
-  int run();
   int32_t getWindowWidth();
   int32_t getWindowHeight();
+  Window &getWindow() { return window; };
+  int run();
 };
