@@ -25,7 +25,7 @@ Window::Window() {
   }
 
 
-  setupCallbacks(window);
+  setupCallbacks();
 }
 
 void Window::onWindowError(int errorCode, const char *description) {
@@ -49,7 +49,12 @@ void Window::onMouseButtonEvent(GLFWwindow *window, int32_t button, int32_t acti
   Application::instance().onMouseButtonEvent(button, action, mods);
 }
 
-void Window::setupCallbacks(GLFWwindow *window) {
+void Window::onRefreshWindow(GLFWwindow *window) {
+  std::cout << "on refresh window" << std::endl;
+  Application::instance().onRefreshWindow();
+}
+
+void Window::setupCallbacks() {
   glfwSetKeyCallback(window, onKeyEvent);
   glfwSetMouseButtonCallback(window, onMouseButtonEvent);
   glfwSetFramebufferSizeCallback(window, onResized);
@@ -60,6 +65,7 @@ void Window::setupCallbacks(GLFWwindow *window) {
   glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
   glfwSwapInterval(2);  // note: maybe change this later
 
+  glfwSetWindowRefreshCallback(window, onRefreshWindow);
   glfwSetErrorCallback(Window::onWindowError);
 }
 
@@ -75,18 +81,17 @@ bool Window::setupGlad() {
   return true;
 }
 
-void Window::update() {
+void Window::pollEvents(){
   glfwPollEvents();
+}
+
+void Window::update() {
   glViewport(0, 0, windowWidth, windowHeight);
   glClearColor(clearColor.x * clearColor.w, clearColor.y * clearColor.w, clearColor.z * clearColor.w, clearColor.w);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 void Window::finalizeFrame() {
   glfwSwapBuffers(window);
-}
-
-Window::~Window() {
-  glfwTerminate();
 }
 
 void GLAPIENTRY Window::onOpenGlMessage(GLenum source,
@@ -176,4 +181,8 @@ void GLAPIENTRY Window::onOpenGlMessage(GLenum source,
   }
   std::cerr << std::endl;
   std::cerr << std::endl;
+}
+
+Window::~Window() {
+  glfwTerminate();
 }

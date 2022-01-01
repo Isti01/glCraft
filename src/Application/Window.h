@@ -9,12 +9,15 @@ class Window {
 
   Window();
 
-  static void setupCallbacks(GLFWwindow *window);
+   void setupCallbacks();
   static bool setupGlad();
 
   static void onKeyEvent(GLFWwindow *window, int32_t key, int32_t scancode, int32_t action, int32_t mode);
   static void onResized(GLFWwindow *window, int32_t width, int32_t height);
   static void onMouseButtonEvent(GLFWwindow *window, int32_t button, int32_t action, int32_t mods);
+
+  static void onRefreshWindow(GLFWwindow*window);
+
   static void onWindowError(int errorCode, const char *description);
   static void onOpenGlMessage(GLenum source,
                               GLenum type,
@@ -47,6 +50,5 @@ public:
   void finalizeFrame();
 
   ~Window();
-
-  friend class Application;
+  void pollEvents();
 };
