@@ -34,4 +34,6 @@ public:
 
   Window &getWindow() { return window; };
   int run();
+  int32_t getWindowWidth();
+  int32_t getWindowHeight();
 };

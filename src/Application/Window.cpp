@@ -25,6 +25,7 @@ Window::Window() {
     return;
   }
 
+
   setupCallbacks(window);
 }
 
@@ -73,13 +74,17 @@ bool Window::setupGlad() {
     std::cout << "Failed to initialize OpenGL context" << std::endl;
     return false;
   }
+
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_CULL_FACE);
+
   return true;
 }
 void Window::update() {
   glfwPollEvents();
   glViewport(0, 0, windowWidth, windowHeight);
   glClearColor(clearColor.x * clearColor.w, clearColor.y * clearColor.w, clearColor.z * clearColor.w, clearColor.w);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 void Window::finalizeFrame() {
   glfwSwapBuffers(window);

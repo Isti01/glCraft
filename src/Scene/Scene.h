@@ -14,9 +14,12 @@ class Scene {
   Ref<VertexArray> vao;
   Ref<const ShaderProgram> defaultShader;
 
+  Camera camera;
+  glm::mat4 projectionMatrix;
+
 public:
-  Scene() = default;
-  explicit Scene(std::vector<Entity> entities) : entities(std::move(entities)) {}
+  Scene();
+  explicit Scene(std::vector<Entity> entities) ;
 
   void addEntity(Entity &&entity) { entities.emplace_back(entity); };
   void addEntity(const Entity &entity) { entities.emplace_back(entity); };
@@ -25,4 +28,5 @@ public:
   void update(float deltaTime);
   void render();
   void renderGui();
+  void onResized(int32_t width, int32_t height);
 };
