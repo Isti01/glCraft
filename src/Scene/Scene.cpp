@@ -50,7 +50,7 @@ void Scene::init() {
   };
 
   vao = std::make_shared<VertexArray>(vertices, vertexAttributes, indices);
-  defaultShader = AssetManager::instance().loadShaderProgram("default");
+  defaultShader = AssetManager::instance().loadShaderProgram("assets/default");
 }
 
 void Scene::update(float deltaTime) {

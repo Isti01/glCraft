@@ -7,7 +7,7 @@ class TextRegistry : public AssetRegistry<std::string> {
       std::ifstream file;
 
       file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-      file.open("assets/" + name);
+      file.open(name);
 
       std::stringstream ss;
       ss << file.rdbuf();

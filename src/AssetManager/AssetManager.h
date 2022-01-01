@@ -1,11 +1,11 @@
 #pragma once
+#include "../Rendering/Shader.h"
 #include "../Rendering/ShaderProgram.h"
 #include "../glCraft.h"
 #include "AssetRegistry.h"
 #include "ShaderProgramRegistry.h"
-#include "TextRegistry.h"
-#include "../Rendering/Shader.h"
 #include "ShaderRegistry.h"
+#include "TextRegistry.h"
 
 class AssetManager {
   TextRegistry textRegistry;
