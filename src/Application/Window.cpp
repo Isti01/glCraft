@@ -5,7 +5,7 @@
 Window::Window() {
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
@@ -81,7 +81,7 @@ bool Window::setupGlad() {
   return true;
 }
 
-void Window::pollEvents(){
+void Window::pollEvents() {
   glfwPollEvents();
 }
 
@@ -90,6 +90,7 @@ void Window::update() {
   glClearColor(clearColor.x * clearColor.w, clearColor.y * clearColor.w, clearColor.z * clearColor.w, clearColor.w);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
+
 void Window::finalizeFrame() {
   glfwSwapBuffers(window);
 }

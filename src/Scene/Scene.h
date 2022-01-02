@@ -2,6 +2,7 @@
 #include <utility>
 
 #include "../Rendering/ShaderProgram.h"
+#include "../Rendering/Texture.h"
 #include "../Rendering/VertexArray.h"
 #include "../glCraft.h"
 #include "Camera.h"
@@ -12,6 +13,7 @@ class Scene {
   bool initialized = false;
 
   Ref<VertexArray> vao;
+  Ref<const Texture> textureAtlas;
   Ref<const ShaderProgram> defaultShader;
 
   Camera camera;
@@ -19,7 +21,7 @@ class Scene {
 
 public:
   Scene();
-  explicit Scene(std::vector<Entity> entities) ;
+  explicit Scene(std::vector<Entity> entities);
 
   void addEntity(Entity &&entity) { entities.emplace_back(entity); };
   void addEntity(const Entity &entity) { entities.emplace_back(entity); };

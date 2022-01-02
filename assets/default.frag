@@ -1,8 +1,11 @@
 #version 450 core
 
 in vec3 vert_pos;
+in vec2 vert_uv;
 out vec4 color;
 
+uniform sampler2D atlas;
+
 void main() {
-    color = vec4(vert_pos / 2 + 0.5, 1);
+    color = texture(atlas, vert_uv);
 }

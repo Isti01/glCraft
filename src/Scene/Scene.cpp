@@ -2,6 +2,7 @@
 
 #include "../Application/Application.h"
 #include "../AssetManager/AssetManager.h"
+#include "../Rendering/GlCraftVertex.h"
 
 Scene::Scene() {
   onResized(Application::instance().getWindowWidth(), Application::instance().getWindowHeight());
@@ -17,40 +18,55 @@ void Scene::init() {
 
   for (auto &entity: entities) { entity.init(); }
 
-  std::vector<glm::vec3> vertices = {
-     {1, 1, 1},     //
-     {1, 1, -1},    //
-     {1, -1, 1},    //
-     {1, -1, -1},   //
-     {-1, 1, 1},    //
-     {-1, 1, -1},   //
-     {-1, -1, 1},   //
-     {-1, -1, -1},  // don't format
-  };
-  std::vector<VertexAttribute> vertexAttributes = {VertexAttribute(3, VertexAttribute::Float, 0)};
-  std::vector<uint32_t> indices = {
+  std::vector<GlCraftVertex> vertices = {
      // top
-     0, 1, 5,  //
-     4, 0, 5,  //
+     {{-1, 1, 1}, {1, 0}},
+     {{1, 1, 1}, {1, 1}},
+     {{-1, 1, -1}, {0, 0}},
+     {{1, 1, 1}, {1, 1}},
+     {{1, 1, -1}, {0, 1}},
+     {{-1, 1, -1}, {0, 0}},
      // +x east
-     2, 1, 0,  //
-     1, 2, 3,  //
-     // -x west
-     7, 4, 5,  //
-     4, 7, 6,  //
-     // -z north
-     1, 3, 7,  //
-     1, 7, 5,  //
+     {{1, 1, -1}, {0, 0}},
+     {{1, -1, 1}, {1, 1}},
+     {{1, -1, -1}, {0, 1}},
+     {{1, -1, 1}, {1, 1}},
+     {{1, 1, -1}, {0, 0}},
+     {{1, 1, 1}, {1, 0}},
+     //-x west
+     {{-1, -1, -1}, {1, 1}},
+     {{-1, 1, 1}, {0, 0}},
+     {{-1, 1, -1}, {1, 0}},
+     {{-1, 1, 1}, {0, 0}},
+     {{-1, -1, -1}, {1, 1}},
+     {{-1, -1, 1}, {0, 1}},
+     //-z north
+     {{1, -1, -1}, {1, 1}},
+     {{-1, -1, -1}, {0, 1}},
+     {{1, 1, -1}, {1, 0}},
+     {{-1, -1, -1}, {0, 1}},
+     {{-1, 1, -1}, {0, 0}},
+     {{1, 1, -1}, {1, 0}},
      // +z south
-     4, 6, 0,  //
-     2, 0, 6,  //
+     {{-1, 1, 1}, {1, 0}},
+     {{-1, -1, 1}, {1, 1}},
+     {{1, 1, 1}, {0, 0}},
+     {{1, -1, 1}, {0, 1}},
+     {{1, 1, 1}, {0, 0}},
+     {{-1, -1, 1}, {1, 1}},
      // bottom
-     3, 2, 6,  //
-     7, 3, 6   //
+     {{1, -1, -1}, {0, 0}},
+     {{1, -1, 1}, {1, 0}},
+     {{-1, -1, 1}, {1, 1}},
+     {{-1, -1, -1}, {0, 1}},
+     {{1, -1, -1}, {0, 0}},
+     {{-1, -1, 1}, {1, 1}},
   };
 
-  vao = std::make_shared<VertexArray>(vertices, vertexAttributes, indices);
+  vao = std::make_shared<VertexArray>(vertices, GlCraftVertex::vertexAttributes());
   defaultShader = AssetManager::instance().loadShaderProgram("assets/default");
+  textureAtlas = AssetManager::instance().loadTexture("assets/default_texture.png");
+  defaultShader->setTexture("atlas", textureAtlas, 0);
 }
 
 void Scene::update(float deltaTime) {
@@ -59,7 +75,8 @@ void Scene::update(float deltaTime) {
 
   for (auto &entity: entities) { entity.update(deltaTime); }
 
-  camera.setPosition({sin(animationProgress) * 5, sin(animationProgress / 2) * 3, cos(animationProgress) * 5});
+  camera.setPosition(
+     {glm::sin(animationProgress) * 5, glm::sin(animationProgress / 2) * 2, glm::cos(animationProgress) * 5});
 }
 
 void Scene::render() {
@@ -67,11 +84,13 @@ void Scene::render() {
   defaultShader->bind();
   defaultShader->setMat4("MVP", mvp);
 
-  vao->render();
+  vao->renderVertexStream();
 }
+
 void Scene::renderGui() {
   ImGui::ShowDemoWindow();
 }
+
 void Scene::onResized(int32_t width, int32_t height) {
   float aspectRatio = width == 0 || height == 0 ? 0 : static_cast<float>(width) / static_cast<float>(height);
   projectionMatrix = glm::perspective<float>(glm::half_pi<float>(), aspectRatio, .1f, 100.0f);

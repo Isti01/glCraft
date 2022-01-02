@@ -3,6 +3,7 @@
 
 class Buffer {
 protected:
+  int32_t size;
   uint32_t id = 0;
   Buffer() { glGenBuffers(1, &id); }
 
@@ -11,6 +12,7 @@ public:
   Buffer(Buffer &) = delete;
   Buffer(Buffer &&) = delete;
 
+  [[nodiscard]] int32_t getSize() const { return size; }
   [[nodiscard]] uint32_t getId() const { return id; };
   [[nodiscard]] bool isValid() const { return id != 0; };
 
@@ -30,7 +32,8 @@ public:
     if (!isValid()) throw std::exception("Cannot write data to an invalid buffer");
 
     bind();
-    glBufferData(GL_ARRAY_BUFFER, sizeof(T) * data.size(), &data[0], GL_STATIC_DRAW);
+    size = data.size();
+    glBufferData(GL_ARRAY_BUFFER, sizeof(T) * size, &data[0], GL_STATIC_DRAW);
   }
 };
 
@@ -44,7 +47,6 @@ public:
   void bind() { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id); };
 
   [[nodiscard]] uint32_t getType() const { return type; }
-  [[nodiscard]] int getElementCount() const { return elementCount; };
 
   template<typename T>
   void bufferStaticIndexData(const std::vector<T> &data) {
@@ -54,7 +56,6 @@ public:
 
     if (!isValid()) throw std::exception("Cannot write data to an invalid buffer");
 
-    elementCount = data.size();
 
     switch (sizeof(T)) {
       case 1:
@@ -69,6 +70,7 @@ public:
     }
 
     bind();
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(T) * data.size(), &data[0], GL_STATIC_DRAW);
+    size = data.size();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(T) * size, &data[0], GL_STATIC_DRAW);
   }
 };

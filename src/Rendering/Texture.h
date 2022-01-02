@@ -14,6 +14,7 @@ public:
   [[nodiscard]] bool isValid() const { return id != 0; };
 
   void bind() const;
+  void bindToSlot(uint32_t slot) const;
   void unbind() const;
 
   void bufferRGBAData(uint32_t width, uint32_t height, const std::vector<uint8_t>& data);

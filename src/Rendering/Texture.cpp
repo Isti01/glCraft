@@ -7,7 +7,7 @@ Texture::Texture() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   unbind();
 }
 
@@ -21,6 +21,11 @@ void Texture::bufferRGBAData(uint32_t width, uint32_t height, const std::vector<
 
 void Texture::bind() const {
   glBindTexture(GL_TEXTURE_2D, id);
+}
+
+void Texture::bindToSlot(uint32_t slot) const {
+  glActiveTexture(GL_TEXTURE0 + slot);
+  bind();
 }
 
 void Texture::unbind() const {
