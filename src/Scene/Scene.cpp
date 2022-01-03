@@ -2,7 +2,7 @@
 
 #include "../Application/Application.h"
 #include "../AssetManager/AssetManager.h"
-#include "../Rendering/GlCraftVertex.h"
+#include "../Rendering/BlockVertex.h"
 
 Scene::Scene() {
   onResized(Application::instance().getWindowWidth(), Application::instance().getWindowHeight());
@@ -18,7 +18,7 @@ void Scene::init() {
 
   for (auto &entity: entities) { entity.init(); }
 
-  std::vector<GlCraftVertex> vertices = {
+  std::vector<BlockVertex> vertices = {
      // top
      {{-1, 1, 1}, {1, 0}},
      {{1, 1, 1}, {1, 1}},
@@ -27,45 +27,45 @@ void Scene::init() {
      {{1, 1, -1}, {0, 1}},
      {{-1, 1, -1}, {0, 0}},
      // +x east
+     {{1, 1, 1}, {1, 0}},
+     {{1, -1, 1}, {1, 1}},
      {{1, 1, -1}, {0, 0}},
      {{1, -1, 1}, {1, 1}},
      {{1, -1, -1}, {0, 1}},
-     {{1, -1, 1}, {1, 1}},
      {{1, 1, -1}, {0, 0}},
-     {{1, 1, 1}, {1, 0}},
      //-x west
-     {{-1, -1, -1}, {1, 1}},
-     {{-1, 1, 1}, {0, 0}},
      {{-1, 1, -1}, {1, 0}},
+     {{-1, -1, -1}, {1, 1}},
      {{-1, 1, 1}, {0, 0}},
      {{-1, -1, -1}, {1, 1}},
      {{-1, -1, 1}, {0, 1}},
+     {{-1, 1, 1}, {0, 0}},
      //-z north
+     {{1, 1, -1}, {1, 0}},
+     {{1, -1, -1}, {1, 1}},
+     {{-1, 1, -1}, {0, 0}},
      {{1, -1, -1}, {1, 1}},
      {{-1, -1, -1}, {0, 1}},
-     {{1, 1, -1}, {1, 0}},
-     {{-1, -1, -1}, {0, 1}},
      {{-1, 1, -1}, {0, 0}},
-     {{1, 1, -1}, {1, 0}},
      // +z south
      {{-1, 1, 1}, {1, 0}},
      {{-1, -1, 1}, {1, 1}},
      {{1, 1, 1}, {0, 0}},
+     {{-1, -1, 1}, {1, 1}},
      {{1, -1, 1}, {0, 1}},
      {{1, 1, 1}, {0, 0}},
-     {{-1, -1, 1}, {1, 1}},
      // bottom
-     {{1, -1, -1}, {0, 0}},
      {{1, -1, 1}, {1, 0}},
+     {{-1, -1, 1}, {1, 1}},
+     {{1, -1, -1}, {0, 0}},
      {{-1, -1, 1}, {1, 1}},
      {{-1, -1, -1}, {0, 1}},
      {{1, -1, -1}, {0, 0}},
-     {{-1, -1, 1}, {1, 1}},
   };
 
-  vao = std::make_shared<VertexArray>(vertices, GlCraftVertex::vertexAttributes());
-  defaultShader = AssetManager::instance().loadShaderProgram("assets/default");
-  textureAtlas = AssetManager::instance().loadTexture("assets/default_texture.png");
+  vao = std::make_shared<VertexArray>(vertices, BlockVertex::vertexAttributes());
+  defaultShader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
+  textureAtlas = AssetManager::instance().loadTexture("assets/textures/default_texture.png");
   defaultShader->setTexture("atlas", textureAtlas, 0);
 }
 
