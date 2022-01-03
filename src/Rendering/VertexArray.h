@@ -75,6 +75,7 @@ public:
   void bind();
   void addVertexAttributes(const std::vector<VertexAttribute> &vector, int32_t defaultVertexSize);
   void renderIndexed();
+  void renderVertexSubStream(int32_t size);
   void renderVertexStream();
   void unbind();
 

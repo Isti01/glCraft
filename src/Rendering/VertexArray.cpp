@@ -21,14 +21,20 @@ void VertexArray::renderIndexed() {
 VertexArray::~VertexArray() {
   if (isValid()) { glDeleteVertexArrays(1, &id); }
 }
+
 void VertexArray::renderVertexStream() {
+  renderVertexSubStream(vertexBuffer->getSize());
+}
+
+void VertexArray::renderVertexSubStream(int32_t size = -1) {
   if (!isValid()) return;
   if (indexBuffer != nullptr) throw std::exception("Cannot draw indexed vertex stream");
 
   bind();
-  glDrawArrays(GL_TRIANGLES, 0, vertexBuffer->getSize());
+  glDrawArrays(GL_TRIANGLES, 0, size);
   unbind();
 }
+
 void VertexArray::addVertexAttributes(const std::vector<VertexAttribute> &vector, int32_t defaultVertexSize) {
   bind();
   for (size_t i = 0; i < vector.size(); i++) {

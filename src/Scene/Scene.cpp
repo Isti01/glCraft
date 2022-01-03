@@ -3,6 +3,7 @@
 #include "../Application/Application.h"
 #include "../AssetManager/AssetManager.h"
 #include "../Rendering/BlockVertex.h"
+#include "Chunk.h"
 
 Scene::Scene() {
   onResized(Application::instance().getWindowWidth(), Application::instance().getWindowHeight());
@@ -18,52 +19,12 @@ void Scene::init() {
 
   for (auto &entity: entities) { entity.init(); }
 
-  std::vector<BlockVertex> vertices = {
-     // top
-     {{-1, 1, 1}, {1, 0}},
-     {{1, 1, 1}, {1, 1}},
-     {{-1, 1, -1}, {0, 0}},
-     {{1, 1, 1}, {1, 1}},
-     {{1, 1, -1}, {0, 1}},
-     {{-1, 1, -1}, {0, 0}},
-     // +x east
-     {{1, 1, 1}, {1, 0}},
-     {{1, -1, 1}, {1, 1}},
-     {{1, 1, -1}, {0, 0}},
-     {{1, -1, 1}, {1, 1}},
-     {{1, -1, -1}, {0, 1}},
-     {{1, 1, -1}, {0, 0}},
-     //-x west
-     {{-1, 1, -1}, {1, 0}},
-     {{-1, -1, -1}, {1, 1}},
-     {{-1, 1, 1}, {0, 0}},
-     {{-1, -1, -1}, {1, 1}},
-     {{-1, -1, 1}, {0, 1}},
-     {{-1, 1, 1}, {0, 0}},
-     //-z north
-     {{1, 1, -1}, {1, 0}},
-     {{1, -1, -1}, {1, 1}},
-     {{-1, 1, -1}, {0, 0}},
-     {{1, -1, -1}, {1, 1}},
-     {{-1, -1, -1}, {0, 1}},
-     {{-1, 1, -1}, {0, 0}},
-     // +z south
-     {{-1, 1, 1}, {1, 0}},
-     {{-1, -1, 1}, {1, 1}},
-     {{1, 1, 1}, {0, 0}},
-     {{-1, -1, 1}, {1, 1}},
-     {{1, -1, 1}, {0, 1}},
-     {{1, 1, 1}, {0, 0}},
-     // bottom
-     {{1, -1, 1}, {1, 0}},
-     {{-1, -1, 1}, {1, 1}},
-     {{1, -1, -1}, {0, 0}},
-     {{-1, -1, 1}, {1, 1}},
-     {{-1, -1, -1}, {0, 1}},
-     {{1, -1, -1}, {0, 0}},
-  };
+  chunk = std::make_shared<Chunk>(glm::ivec2(0, 0));
 
-  vao = std::make_shared<VertexArray>(vertices, BlockVertex::vertexAttributes());
+  chunk->placeBlock(BlockData::BlockType::grass, {0, 2, 0});
+  chunk->placeBlock(BlockData::BlockType::dirt, {0, 1, 0});
+  chunk->placeBlock(BlockData::BlockType::stone, {0, 0, 0});
+
   defaultShader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
   textureAtlas = AssetManager::instance().loadTexture("assets/textures/default_texture.png");
   defaultShader->setTexture("atlas", textureAtlas, 0);
@@ -75,16 +36,18 @@ void Scene::update(float deltaTime) {
 
   for (auto &entity: entities) { entity.update(deltaTime); }
 
-  camera.setPosition(
-     {glm::sin(animationProgress) * 5, glm::sin(animationProgress / 2) * 2, glm::cos(animationProgress) * 5});
+  camera.setPosition({
+     glm::sin(animationProgress) * 5,
+     glm::sin(animationProgress / 2) * 2,
+     glm::cos(animationProgress) * 5,
+  });
 }
 
 void Scene::render() {
   glm::mat4 mvp = projectionMatrix * camera.getViewMatrix();
-  defaultShader->bind();
-  defaultShader->setMat4("MVP", mvp);
 
-  vao->renderVertexStream();
+
+  chunk->render(mvp);
 }
 
 void Scene::renderGui() {

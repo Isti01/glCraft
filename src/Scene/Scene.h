@@ -6,13 +6,14 @@
 #include "../Rendering/VertexArray.h"
 #include "../glCraft.h"
 #include "Camera.h"
+#include "Chunk.h"
 #include "Entity.h"
 
 class Scene {
   std::vector<Entity> entities;
   bool initialized = false;
 
-  Ref<VertexArray> vao;
+  Ref<Chunk> chunk;
   Ref<const Texture> textureAtlas;
   Ref<const ShaderProgram> defaultShader;
 
