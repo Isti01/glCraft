@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../glCraft.h"
 
 class Gui {

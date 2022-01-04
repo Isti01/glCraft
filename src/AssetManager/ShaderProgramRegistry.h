@@ -1,4 +1,5 @@
 #pragma once
+
 #include "AssetRegistry.h"
 
 class ShaderProgramRegistry : public AssetRegistry<ShaderProgram> {

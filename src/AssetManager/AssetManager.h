@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../Rendering/Shader.h"
 #include "../Rendering/ShaderProgram.h"
 #include "../glCraft.h"

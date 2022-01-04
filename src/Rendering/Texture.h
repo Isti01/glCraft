@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../glCraft.h"
+
 class Texture {
   uint32_t id = 0;
 

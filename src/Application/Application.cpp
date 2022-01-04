@@ -40,18 +40,21 @@ int32_t Application::getWindowHeight() {
 }
 
 void Application::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {
-  std::cout << "onKeyEvent" << std::endl;
+  scene->onKeyEvent(key, scancode, action, mode);
 }
 
 void Application::onMouseButtonEvent(int32_t button, int32_t action, int32_t mods) {
-  std::cout << "onMouseButtonEvent" << std::endl;
+  scene->onMouseButtonEvent(button, action, mods);
 }
 
 void Application::onResized(int32_t width, int32_t height) {
   scene->onResized(width, height);
-  std::cout << "onResized" << std::endl;
 }
 
 void Application::onRefreshWindow() {
   updateAndRender();
+}
+
+void Application::onCursorPositionEvent(double x, double y) {
+  scene->onCursorPositionEvent(x, y);
 }

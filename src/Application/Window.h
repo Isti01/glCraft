@@ -9,14 +9,14 @@ class Window {
 
   Window();
 
-   void setupCallbacks();
+  void setupCallbacks();
   static bool setupGlad();
 
   static void onKeyEvent(GLFWwindow *window, int32_t key, int32_t scancode, int32_t action, int32_t mode);
   static void onResized(GLFWwindow *window, int32_t width, int32_t height);
   static void onMouseButtonEvent(GLFWwindow *window, int32_t button, int32_t action, int32_t mods);
-
-  static void onRefreshWindow(GLFWwindow*window);
+  static void onCursorPosition(GLFWwindow* window, double x, double y);
+  static void onRefreshWindow(GLFWwindow *window);
 
   static void onWindowError(int errorCode, const char *description);
   static void onOpenGlMessage(GLenum source,
@@ -33,10 +33,10 @@ public:
   Window(Window &&) = delete;
 
   [[nodiscard]] int getWindowWidth() const { return windowWidth; }
-  void setWindowWidth(int windowWidth) { Window::windowWidth = windowWidth; }
+  void setWindowWidth(int width) { windowWidth = width; }
 
   [[nodiscard]] int getWindowHeight() const { return windowHeight; }
-  void setWindowHeight(int windowHeight) { Window::windowHeight = windowHeight; }
+  void setWindowHeight(int height) { windowHeight = height; }
 
   [[nodiscard]] GLFWwindow *getContext() { return window; };
 
@@ -51,4 +51,6 @@ public:
 
   ~Window();
   void pollEvents();
+  void unlockMouse();
+  void lockMouse();
 };

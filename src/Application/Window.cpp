@@ -49,14 +49,18 @@ void Window::onMouseButtonEvent(GLFWwindow *window, int32_t button, int32_t acti
   Application::instance().onMouseButtonEvent(button, action, mods);
 }
 
+void Window::onCursorPosition(GLFWwindow *window, double x, double y) {
+  Application::instance().onCursorPositionEvent(x, y);
+}
+
 void Window::onRefreshWindow(GLFWwindow *window) {
-  std::cout << "on refresh window" << std::endl;
   Application::instance().onRefreshWindow();
 }
 
 void Window::setupCallbacks() {
   glfwSetKeyCallback(window, onKeyEvent);
   glfwSetMouseButtonCallback(window, onMouseButtonEvent);
+  glfwSetCursorPosCallback(window, onCursorPosition);
   glfwSetFramebufferSizeCallback(window, onResized);
 
   glEnable(GL_DEBUG_OUTPUT);
@@ -79,6 +83,14 @@ bool Window::setupGlad() {
   glEnable(GL_CULL_FACE);
 
   return true;
+}
+
+void Window::lockMouse() {
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Window::unlockMouse() {
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void Window::pollEvents() {
