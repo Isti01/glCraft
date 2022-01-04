@@ -24,6 +24,32 @@ void Scene::init() {
   chunk->placeBlock(BlockData::BlockType::grass, {0, 2, 0});
   chunk->placeBlock(BlockData::BlockType::dirt, {0, 1, 0});
   chunk->placeBlock(BlockData::BlockType::stone, {0, 0, 0});
+  chunk->placeBlock(BlockData::BlockType::grass, {1, 2, 0});
+  chunk->placeBlock(BlockData::BlockType::dirt, {1, 1, 0});
+  chunk->placeBlock(BlockData::BlockType::stone, {1, 0, 0});
+  chunk->placeBlock(BlockData::BlockType::grass, {2, 2, 0});
+  chunk->placeBlock(BlockData::BlockType::dirt, {2, 1, 0});
+  chunk->placeBlock(BlockData::BlockType::stone, {2, 0, 0});
+
+  chunk->placeBlock(BlockData::BlockType::grass, {0, 2, 1});
+  chunk->placeBlock(BlockData::BlockType::dirt, {0, 1, 1});
+  chunk->placeBlock(BlockData::BlockType::stone, {0, 0, 1});
+  chunk->placeBlock(BlockData::BlockType::grass, {1, 2, 1});
+  chunk->placeBlock(BlockData::BlockType::dirt, {1, 1, 1});
+  chunk->placeBlock(BlockData::BlockType::stone, {1, 0, 1});
+  chunk->placeBlock(BlockData::BlockType::grass, {2, 2, 1});
+  chunk->placeBlock(BlockData::BlockType::dirt, {2, 1, 1});
+  chunk->placeBlock(BlockData::BlockType::stone, {2, 0, 1});
+
+  chunk->placeBlock(BlockData::BlockType::grass, {0, 2, 2});
+  chunk->placeBlock(BlockData::BlockType::dirt, {0, 1, 2});
+  chunk->placeBlock(BlockData::BlockType::stone, {0, 0, 2});
+  chunk->placeBlock(BlockData::BlockType::grass, {1, 2, 2});
+  chunk->placeBlock(BlockData::BlockType::dirt, {1, 1, 2});
+  chunk->placeBlock(BlockData::BlockType::stone, {1, 0, 2});
+  chunk->placeBlock(BlockData::BlockType::grass, {2, 2, 2});
+  chunk->placeBlock(BlockData::BlockType::dirt, {2, 1, 2});
+  chunk->placeBlock(BlockData::BlockType::stone, {2, 0, 2});
 
   defaultShader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
   textureAtlas = AssetManager::instance().loadTexture("assets/textures/default_texture.png");
@@ -38,7 +64,7 @@ void Scene::update(float deltaTime) {
 
   camera.setPosition({
      glm::sin(animationProgress) * 5,
-     glm::sin(animationProgress / 2) * 2,
+     3,
      glm::cos(animationProgress) * 5,
   });
 }
