@@ -33,38 +33,51 @@ class VertexArray {
 
 public:
   template<typename VertexT>
-  explicit VertexArray(const std::vector<VertexT> &vertices) {
+  explicit VertexArray(const std::vector<VertexT> &vertices, bool dynamic = false) {
     glGenVertexArrays(1, &id);
     bind();
 
     vertexBuffer = VertexBuffer::createRef();
-    vertexBuffer->bufferStaticVertexData<VertexT>(vertices);
+    if (dynamic) {
+      vertexBuffer->bufferDynamicVertexData<VertexT>(vertices);
+    } else {
+      vertexBuffer->bufferStaticVertexData<VertexT>(vertices);
+    }
 
     unbind();
   };
 
 
   template<typename VertexT, typename IndexT>
-  VertexArray(const std::vector<VertexT> &vertices, const std::vector<IndexT> &indices) : VertexArray(vertices) {
+  VertexArray(const std::vector<VertexT> &vertices, const std::vector<IndexT> &indices, bool dynamic = false)
+      : VertexArray(vertices, dynamic) {
     bind();
 
-    indexBuffer = IndexBuffer::createRef();
-    indexBuffer->bufferStaticIndexData<IndexT>(indices);
 
+    indexBuffer = IndexBuffer::createRef();
+
+    if (dynamic) {
+      indexBuffer->bufferDynamicIndexData<IndexT>(indices);
+    } else {
+      indexBuffer->bufferStaticIndexData<IndexT>(indices);
+    }
     unbind();
   };
 
   template<typename VertexT>
-  explicit VertexArray(const std::vector<VertexT> &vertices, const std::vector<VertexAttribute> &vertexAttributes)
-      : VertexArray(vertices) {
+  explicit VertexArray(const std::vector<VertexT> &vertices,
+                       const std::vector<VertexAttribute> &vertexAttributes,
+                       bool dynamic = false)
+      : VertexArray(vertices, dynamic) {
     addVertexAttributes(vertexAttributes, sizeof(VertexT));
   };
 
   template<typename VertexT, typename IndexT>
   VertexArray(const std::vector<VertexT> &vertices,
               const std::vector<VertexAttribute> &vertexAttributes,
-              const std::vector<IndexT> &indices)
-      : VertexArray(vertices, indices) {
+              const std::vector<IndexT> &indices,
+              bool dynamic = false)
+      : VertexArray(vertices, indices, dynamic) {
     addVertexAttributes(vertexAttributes, sizeof(VertexT));
   };
 
@@ -78,6 +91,8 @@ public:
   void renderVertexSubStream(int32_t size);
   void renderVertexStream();
   void unbind();
+
+  Ref<VertexBuffer> getVertexBuffer() { return vertexBuffer; };
 
   [[nodiscard]] bool isValid() const { return id != 0; };
 

@@ -74,7 +74,16 @@ void Scene::render() {
 }
 
 void Scene::renderGui() {
-  if (isMenuOpen) { ImGui::ShowDemoWindow(); }
+  if (!isMenuOpen) return;
+
+  ImGui::Begin("Place Block");
+  static float coords[] = {0, 0, 0};
+
+  if (ImGui::SliderFloat3("Block Coordinate: ", &coords[0], 0, 15)) {
+    chunk->placeBlock(BlockData::BlockType::cobble_stone, {coords[0], coords[1], coords[2]});
+  }
+
+  ImGui::End();
 }
 
 void Scene::onResized(int32_t width, int32_t height) {

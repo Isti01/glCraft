@@ -52,8 +52,12 @@ Ref<VertexArray> Chunk::createMesh() {
     }
   }
 
-  // todo reuse the old buffers
-  return std::make_shared<VertexArray>(*vertices, BlockVertex::vertexAttributes());
+  if (mesh) {
+    mesh->getVertexBuffer()->bufferDynamicVertexSubData(*vertices);
+    return mesh;
+  } else {
+    return std::make_shared<VertexArray>(*vertices, BlockVertex::vertexAttributes());
+  }
 }
 
 bool Chunk::isInBounds(int32_t x, int32_t y, int32_t z) {
