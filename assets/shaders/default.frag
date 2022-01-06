@@ -8,4 +8,5 @@ uniform sampler2D atlas;
 
 void main() {
     color = texture(atlas, vert_uv / 16);
+    if (color.a < .01) discard;
 }

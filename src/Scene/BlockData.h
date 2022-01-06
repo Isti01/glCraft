@@ -12,7 +12,8 @@ struct BlockData {
     oak_leaves,
     air
   };
-  BlockType type;
+  BlockType type = BlockType::air;
 
+  static bool isTransparent(BlockType type) { return type == BlockType::glass; }
   BlockData(BlockData::BlockType type = BlockType::air) : type(type){};
 };

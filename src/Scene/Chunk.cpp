@@ -35,8 +35,11 @@ Ref<VertexArray> Chunk::createMesh() {
         if (type == BlockData::BlockType::air) continue;
 
         for (const auto& [ox, oy, oz]: offsetsToCheck) {
-          if (isInBounds(x + ox, y + oy, z + oz) && data[x + ox][y + oy][z + oz].type != BlockData::BlockType::air)
+          const auto neighborType = data[x + ox][y + oy][z + oz].type;
+          if (isInBounds(x + ox, y + oy, z + oz) && neighborType != BlockData::BlockType::air &&
+              !BlockData::isTransparent(neighborType)) {
             continue;
+          }
 
           for (const auto& vertex: BlockMesh::getVerticesFromDirection(ox, oy, oz)) {
             vertices->at(vertexCount) = vertex;
