@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Scene/BlockData.h"
+#include "../World/BlockData.h"
 #include "../glCraft.h"
 #include "VertexArray.h"
 

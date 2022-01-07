@@ -49,4 +49,6 @@ public:
   void onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode);
   void onMouseButtonEvent(int32_t button, int32_t action, int32_t mods);
   void onCursorPositionEvent(double d, double d1);
+  glm::vec3 getPosition();
+  glm::vec3 getLookDirection();
 };

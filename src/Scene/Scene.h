@@ -5,17 +5,18 @@
 #include "../Rendering/ShaderProgram.h"
 #include "../Rendering/Texture.h"
 #include "../Rendering/VertexArray.h"
+#include "../World/World.h"
 #include "../glCraft.h"
-#include "Chunk.h"
 #include "Player.h"
 
 class Scene {
   bool initialized = false;
   bool isMenuOpen = false;
 
-  Ref<Chunk> chunk;
-  Ref<const Texture> textureAtlas;
-  Ref<const ShaderProgram> defaultShader;
+  Ref<World> world;
+
+  Ref<const ShaderProgram> outlinedBlockShader;
+  Ref<VertexArray> outlinedBlockVertexArray;
 
   Player player;
   glm::mat4 projectionMatrix;

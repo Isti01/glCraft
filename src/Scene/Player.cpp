@@ -87,3 +87,9 @@ void Player::updatePlayerOrientation() {
 glm::mat4 Player::calcView() {
   return glm::lookAt(position, position + lookDirection, up);
 }
+glm::vec3 Player::getPosition() {
+  return position;
+}
+glm::vec3 Player::getLookDirection() {
+  return lookDirection;
+}

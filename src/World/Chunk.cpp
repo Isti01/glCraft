@@ -2,15 +2,20 @@
 
 #include "../AssetManager/AssetManager.h"
 
-void Chunk::placeBlock(BlockData block, const glm::ivec3& position) {
-  if (!isInBounds(position.x, position.y, position.z)) {
-    std::stringstream ss("Chunk out of bounds, cannot place block at: ");
-    ss << position.x << " " << position.y << " " << position.z;
-    throw std::exception(ss.str().c_str());
+Chunk::Chunk(const glm::ivec2& worldPosition) : worldPosition(worldPosition) {}
+
+void Chunk::render(const glm::mat4& transform) {
+  if (!mesh || renderState != RenderState::ready) {
+    mesh = createMesh();
+    renderState = RenderState::ready;
   }
 
-  renderState = RenderState::dirty;
-  data[position.x][position.y][position.z] = block;
+  const auto& shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
+
+  shader->bind();
+  shader->setMat4("MVP", transform * glm::translate(glm::vec3(worldPosition.x, 0, worldPosition.y)));
+
+  mesh->renderVertexSubStream(vertexCount);
 }
 
 Ref<VertexArray> Chunk::createMesh() {
@@ -32,12 +37,13 @@ Ref<VertexArray> Chunk::createMesh() {
     for (int y = 0; y < VerticalSize; y++) {
       for (int z = 0; z < HorizontalSize; z++) {
         const BlockData::BlockType type = data[x][y][z].type;
+        const bool transparent = BlockData::isTransparent(type);
         if (type == BlockData::BlockType::air) continue;
 
         for (const auto& [ox, oy, oz]: offsetsToCheck) {
           const auto neighborType = data[x + ox][y + oy][z + oz].type;
           if (isInBounds(x + ox, y + oy, z + oz) && neighborType != BlockData::BlockType::air &&
-              !BlockData::isTransparent(neighborType)) {
+              transparent == BlockData::isTransparent(neighborType)) {
             continue;
           }
 
@@ -64,16 +70,25 @@ bool Chunk::isInBounds(int32_t x, int32_t y, int32_t z) {
   return x >= 0 && x < HorizontalSize && y >= 0 && y < VerticalSize && z >= 0 && z < HorizontalSize;
 }
 
-void Chunk::render(const glm::mat4& transform) {
-  if (!mesh || renderState != RenderState::ready) {
-    mesh = createMesh();
-    renderState = RenderState::ready;
+void Chunk::placeBlock(BlockData block, const glm::ivec3& position) {
+  if (!isInBounds(position.x, position.y, position.z)) {
+    std::stringstream ss("Chunk out of bounds, cannot place block at: ");
+    ss << position.x << " " << position.y << " " << position.z;
+    throw std::exception(ss.str().c_str());
   }
 
-  const auto& shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
+  renderState = RenderState::dirty;
+  data[position.x][position.y][position.z] = block;
+}
 
-  shader->bind();
-  shader->setMat4("MVP", transform * glm::translate(glm::vec3(worldPosition.x, 0, worldPosition.y)));
+BlockData Chunk::getBlockAt(const glm::ivec3& position) const {
+  return data[position.x][position.y][position.z];
+}
 
-  mesh->renderVertexSubStream(vertexCount);
+bool Chunk::isValidPosition(glm::ivec3 position) {
+  return position.y >= 0 && position.y < VerticalSize;
+}
+
+glm::ivec3 Chunk::toChunkCoordinates(const glm::ivec3& globalPosition) {
+  return {glm::abs(globalPosition.x % HorizontalSize), globalPosition.y, glm::abs(globalPosition.z % HorizontalSize)};
 }

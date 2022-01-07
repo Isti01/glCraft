@@ -13,7 +13,6 @@ public:
 
   static const int32_t BlockCount = HorizontalSize * HorizontalSize * VerticalSize;
   static const int32_t VertexCount = BlockCount * 8;
-  static const int32_t IndexCount = BlockCount * 6 * 6;
 
 private:
   enum class RenderState {
@@ -35,7 +34,12 @@ private:
 
 
 public:
-  explicit Chunk(const glm::ivec2& worldPosition) : worldPosition(worldPosition){};
+  explicit Chunk(const glm::ivec2& worldPosition);
   void render(const glm::mat4& transform);
+
   void placeBlock(BlockData block, const glm::ivec3& position);
+  [[nodiscard]] BlockData getBlockAt(const glm::ivec3& position) const;
+
+  static bool isValidPosition(glm::ivec3 position);
+  static glm::ivec3 toChunkCoordinates(const glm::ivec3& globalPosition);
 };
