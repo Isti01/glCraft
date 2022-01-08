@@ -91,5 +91,6 @@ bool Chunk::isValidPosition(glm::ivec3 position) {
 }
 
 glm::ivec3 Chunk::toChunkCoordinates(const glm::ivec3& globalPosition) {
-  return {glm::abs(globalPosition.x % HorizontalSize), globalPosition.y, glm::abs(globalPosition.z % HorizontalSize)};
+  return {Math::positiveMod(globalPosition.x, HorizontalSize), globalPosition.y,
+          Math::positiveMod(globalPosition.z, HorizontalSize)};
 }
