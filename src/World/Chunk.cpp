@@ -1,6 +1,7 @@
 #include "Chunk.h"
 
 #include "../AssetManager/AssetManager.h"
+#include "../Util/Math.h"
 
 Chunk::Chunk(const glm::ivec2& worldPosition) : worldPosition(worldPosition) {}
 
@@ -41,9 +42,9 @@ Ref<VertexArray> Chunk::createMesh() {
         if (type == BlockData::BlockType::air) continue;
 
         for (const auto& [ox, oy, oz]: offsetsToCheck) {
-          const auto neighborType = data[x + ox][y + oy][z + oz].type;
-          if (isInBounds(x + ox, y + oy, z + oz) && neighborType != BlockData::BlockType::air &&
-              transparent == BlockData::isTransparent(neighborType)) {
+          // todo fix this
+          if (isInBounds(x + ox, y + oy, z + oz) && data[x + ox][y + oy][z + oz].type != BlockData::BlockType::air &&
+              transparent == BlockData::isTransparent(data[x + ox][y + oy][z + oz].type)) {
             continue;
           }
 

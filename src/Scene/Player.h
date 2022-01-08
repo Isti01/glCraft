@@ -8,7 +8,7 @@ struct MovementDirection {
 };
 
 class Player {
-  glm::vec3 position = {5, 1, 5};
+  glm::vec3 position = {5, 5, 5};
   glm::vec3 up = {0, 1, 0};
 
   float yaw = 0;

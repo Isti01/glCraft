@@ -11,9 +11,7 @@ World::World() {
 void World::render(glm::vec3 playerPos, glm::mat4 transform) {
   // todo sort the chunks before rendering
 
-  for (auto& [position, chunk]: chunks) {
-    chunk->render(transform * glm::translate(glm::vec3(position.x, 0, position.y)));
-  }
+  for (auto& [position, chunk]: chunks) { chunk->render(transform); }
 }
 
 BlockData World::getBlockAt(glm::ivec3 position) {
@@ -27,10 +25,7 @@ bool World::isValidBlockPosition(glm::ivec3 position) {
 bool World::placeBlock(BlockData block, glm::ivec3 position) {
   if (!Chunk::isValidPosition(position)) return false;
 
-  Ref<Chunk> chunk = getChunk(getChunkIndex(position));
-  chunk->placeBlock(block, Chunk::toChunkCoordinates(position));
-  glm::ivec2 localPosition = position % Chunk::HorizontalSize;
-
+  getChunk(getChunkIndex(position))->placeBlock(block, Chunk::toChunkCoordinates(position));
   return true;
 }
 

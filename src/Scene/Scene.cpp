@@ -36,45 +36,14 @@ void Scene::init() {
 
   world = std::make_shared<World>();
 
-  world->placeBlock(BlockData::BlockType::grass, {0, 2, -1});
-  world->placeBlock(BlockData::BlockType::dirt, {0, 1, -1});
-  world->placeBlock(BlockData::BlockType::stone, {0, 0, -1});
-  world->placeBlock(BlockData::BlockType::grass, {1, 2, -1});
-  world->placeBlock(BlockData::BlockType::dirt, {1, 1, -1});
-  world->placeBlock(BlockData::BlockType::stone, {1, 0, -1});
-  world->placeBlock(BlockData::BlockType::glass, {2, 2, -1});
-  world->placeBlock(BlockData::BlockType::dirt, {2, 1, -1});
-  world->placeBlock(BlockData::BlockType::stone, {2, 0, -1});
-
-  world->placeBlock(BlockData::BlockType::grass, {0, 2, 0});
-  world->placeBlock(BlockData::BlockType::dirt, {0, 1, 0});
-  world->placeBlock(BlockData::BlockType::stone, {0, 0, 0});
-  world->placeBlock(BlockData::BlockType::grass, {1, 2, 0});
-  world->placeBlock(BlockData::BlockType::dirt, {1, 1, 0});
-  world->placeBlock(BlockData::BlockType::stone, {1, 0, 0});
-  world->placeBlock(BlockData::BlockType::glass, {2, 2, 0});
-  world->placeBlock(BlockData::BlockType::dirt, {2, 1, 0});
-  world->placeBlock(BlockData::BlockType::stone, {2, 0, 0});
-
-  world->placeBlock(BlockData::BlockType::grass, {0, 2, 1});
-  world->placeBlock(BlockData::BlockType::dirt, {0, 1, 1});
-  world->placeBlock(BlockData::BlockType::stone, {0, 0, 1});
-  world->placeBlock(BlockData::BlockType::grass, {1, 2, 1});
-  world->placeBlock(BlockData::BlockType::dirt, {1, 1, 1});
-  world->placeBlock(BlockData::BlockType::stone, {1, 0, 1});
-  world->placeBlock(BlockData::BlockType::glass, {2, 2, 1});
-  world->placeBlock(BlockData::BlockType::dirt, {2, 1, 1});
-  world->placeBlock(BlockData::BlockType::stone, {2, 0, 1});
-
-  world->placeBlock(BlockData::BlockType::grass, {0, 2, 2});
-  world->placeBlock(BlockData::BlockType::dirt, {0, 1, 2});
-  world->placeBlock(BlockData::BlockType::stone, {0, 0, 2});
-  world->placeBlock(BlockData::BlockType::grass, {1, 2, 2});
-  world->placeBlock(BlockData::BlockType::dirt, {1, 1, 2});
-  world->placeBlock(BlockData::BlockType::stone, {1, 0, 2});
-  world->placeBlock(BlockData::BlockType::grass, {2, 2, 2});
-  world->placeBlock(BlockData::BlockType::glass, {2, 1, 2});
-  world->placeBlock(BlockData::BlockType::stone, {2, 0, 2});
+  for (int x = -25; x < 25; ++x) {
+    for (int z = -25; z < 25; ++z) {
+      world->placeBlock(BlockData::BlockType::grass, {x, 3, z});
+      world->placeBlock(BlockData::BlockType::dirt, {x, 2, z});
+      world->placeBlock(BlockData::BlockType::dirt, {x, 1, z});
+      world->placeBlock(BlockData::BlockType::stone, {x, 0, z});
+    }
+  }
 }
 
 void Scene::update(float deltaTime) {
@@ -136,7 +105,7 @@ void Scene::renderGui() {
 
 void Scene::onResized(int32_t width, int32_t height) {
   float aspectRatio = width == 0 || height == 0 ? 0 : static_cast<float>(width) / static_cast<float>(height);
-  projectionMatrix = glm::perspective<float>(glm::half_pi<float>(), aspectRatio, .1f, 100.0f);
+  projectionMatrix = glm::perspective<float>(glm::half_pi<float>(), aspectRatio, .1f, 250.0f);
 }
 
 void Scene::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {
