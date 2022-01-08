@@ -10,11 +10,11 @@ void VertexArray::unbind() {
   glBindVertexArray(0);
 }
 
-void VertexArray::renderIndexed() {
+void VertexArray::renderIndexed(int32_t type) {
   if (indexBuffer == nullptr) throw std::exception("Cannot draw un-indexed vertex stream");
 
   bind();
-  glDrawElements(GL_TRIANGLES, indexBuffer->getSize(), indexBuffer->getType(), nullptr);
+  glDrawElements(type, indexBuffer->getSize(), indexBuffer->getType(), nullptr);
   unbind();
 }
 
@@ -22,16 +22,16 @@ VertexArray::~VertexArray() {
   if (isValid()) { glDeleteVertexArrays(1, &id); }
 }
 
-void VertexArray::renderVertexStream() {
-  renderVertexSubStream(vertexBuffer->getSize());
+void VertexArray::renderVertexStream(int32_t type) {
+  renderVertexSubStream(vertexBuffer->getSize(), type);
 }
 
-void VertexArray::renderVertexSubStream(int32_t size = -1) {
+void VertexArray::renderVertexSubStream(int32_t size = -1, int32_t type) {
   if (!isValid()) return;
   if (indexBuffer != nullptr) throw std::exception("Cannot draw indexed vertex stream");
 
   bind();
-  glDrawArrays(GL_TRIANGLES, 0, size);
+  glDrawArrays(type, 0, size);
   unbind();
 }
 
