@@ -23,7 +23,7 @@ class AxisPlane {
   [[nodiscard]] glm::vec3 calculateHitPosition() const;
 
 public:
-  static glm::ivec3 rayHitsToBlockPosition(const glm::vec3& hit1, const glm::vec3& hit2);
+  static std::optional<glm::ivec3> rayHitsToBlockPosition(const glm::vec3& hit1, const glm::vec3& hit2);
   AxisPlane(glm::vec3 planeNormal, glm::vec3 rayPosition, glm::vec3 rayDirection);
 
   [[nodiscard]] glm::vec3 getHitPosition() const { return hitPosition; };

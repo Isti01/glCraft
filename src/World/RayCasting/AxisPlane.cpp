@@ -42,6 +42,9 @@ void AxisPlane::advanceOffset() {
   hitDistance = calculateHitDistanceToPosition();
 }
 
-glm::ivec3 AxisPlane::rayHitsToBlockPosition(const glm::vec3& hit1, const glm::vec3& hit2) {
-  return (hit1 + hit2) / 2.0f;
+std::optional<glm::ivec3> AxisPlane::rayHitsToBlockPosition(const glm::vec3& hit1, const glm::vec3& hit2) {
+  glm::vec3 diff = glm::abs(hit1 - hit2);
+
+  if (diff.x > 1.001f || diff.y > 1.001f || diff.z > 1.001f) return {};
+  return glm::floor((hit1 + hit2) / 2.0f);
 }

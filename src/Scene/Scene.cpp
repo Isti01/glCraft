@@ -36,6 +36,16 @@ void Scene::init() {
 
   world = std::make_shared<World>();
 
+  world->placeBlock(BlockData::BlockType::grass, {0, 2, -1});
+  world->placeBlock(BlockData::BlockType::dirt, {0, 1, -1});
+  world->placeBlock(BlockData::BlockType::stone, {0, 0, -1});
+  world->placeBlock(BlockData::BlockType::grass, {1, 2, -1});
+  world->placeBlock(BlockData::BlockType::dirt, {1, 1, -1});
+  world->placeBlock(BlockData::BlockType::stone, {1, 0, -1});
+  world->placeBlock(BlockData::BlockType::glass, {2, 2, -1});
+  world->placeBlock(BlockData::BlockType::dirt, {2, 1, -1});
+  world->placeBlock(BlockData::BlockType::stone, {2, 0, -1});
+
   world->placeBlock(BlockData::BlockType::grass, {0, 2, 0});
   world->placeBlock(BlockData::BlockType::dirt, {0, 1, 0});
   world->placeBlock(BlockData::BlockType::stone, {0, 0, 0});
@@ -105,12 +115,12 @@ void Scene::render() {
 }
 
 void Scene::renderGui() {
-  //  if (!isMenuOpen) return;
+  if (!isMenuOpen) return;
 
   ImGui::Begin("Place Block");
   static float coords[] = {0, 0, 0};
 
-  if (ImGui::SliderFloat3("Block Coordinate: ", &coords[0], 0, 100)) {
+  if (ImGui::SliderFloat3("Block Coordinate: ", &coords[0], -20, 20)) {
     world->placeBlock(BlockData::BlockType::cobble_stone, {coords[0], coords[1], coords[2]});
   }
 
