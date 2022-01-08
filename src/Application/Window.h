@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/fwd.hpp>
 class Window {
   const char *name = "glCraft";
   int windowWidth = 800;
@@ -15,7 +16,7 @@ class Window {
   static void onKeyEvent(GLFWwindow *window, int32_t key, int32_t scancode, int32_t action, int32_t mode);
   static void onResized(GLFWwindow *window, int32_t width, int32_t height);
   static void onMouseButtonEvent(GLFWwindow *window, int32_t button, int32_t action, int32_t mods);
-  static void onCursorPosition(GLFWwindow* window, double x, double y);
+  static void onCursorPosition(GLFWwindow *window, double x, double y);
   static void onRefreshWindow(GLFWwindow *window);
 
   static void onWindowError(int errorCode, const char *description);
@@ -53,4 +54,5 @@ public:
   void pollEvents();
   void unlockMouse();
   void lockMouse();
+  glm::dvec2 getCursorPosition();
 };

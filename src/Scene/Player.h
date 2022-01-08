@@ -17,6 +17,7 @@ class Player {
   float movementSpeed = 3.5;
   float mouseSensitivity = .5;
 
+  bool resetMouse = true;
 
   MovementDirection directions[6] = {
      {false, {1, 0, 0}},  {false, {-1, 0, 0}}, {false, {0, 0, 1}},
@@ -51,4 +52,5 @@ public:
   void onCursorPositionEvent(double d, double d1);
   glm::vec3 getPosition();
   glm::vec3 getLookDirection();
+  void resetMousePosition();
 };

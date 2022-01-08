@@ -88,6 +88,7 @@ void Scene::toggleMenu() {
 
 void Scene::updateMouse() {
   if (isMenuOpen) {
+    player.resetMousePosition();
     Window::instance().unlockMouse();
   } else {
     Window::instance().lockMouse();

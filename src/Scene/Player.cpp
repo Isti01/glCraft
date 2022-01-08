@@ -56,6 +56,12 @@ void Player::onCursorPositionEvent(double x, double y) {
   static double lastX = x;
   static double lastY = y;
 
+  if (resetMouse) {
+    resetMouse = false;
+    lastX = x;
+    lastY = y;
+  }
+
   yaw += static_cast<float>(-lastX + x) * mouseSensitivity;
   pitch = glm::clamp(pitch + static_cast<float>(lastY - y) * mouseSensitivity, -89.0f, 89.0f);
 
@@ -92,4 +98,7 @@ glm::vec3 Player::getPosition() {
 }
 glm::vec3 Player::getLookDirection() {
   return lookDirection;
+}
+void Player::resetMousePosition() {
+  resetMouse = true;
 }
