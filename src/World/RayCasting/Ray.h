@@ -9,10 +9,6 @@ struct HitTarget {
 };
 
 class Ray {
-  glm::vec3 position;
-  glm::vec3 direction;
-  const World& world;
-
   bool successful;
   HitTarget hitTarget;
 

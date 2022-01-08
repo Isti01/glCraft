@@ -86,7 +86,6 @@ void Scene::render() {
 
   if (ray.hasHit()) {
     auto blockHit = ray.getHitTarget().position;
-    std::cout << "hit pos: " << blockHit.x << " " << blockHit.y << " " << blockHit.z << std::endl;
 
     outlinedBlockShader->setMat4("MVP", mvp * glm::translate(blockHit));
     outlinedBlockShader->bind();
@@ -95,7 +94,7 @@ void Scene::render() {
 }
 
 void Scene::renderGui() {
-  if (!isMenuOpen) return;
+  //  if (!isMenuOpen) return;
 
   ImGui::Begin("Place Block");
   static float coords[] = {0, 0, 0};
@@ -103,6 +102,12 @@ void Scene::renderGui() {
   if (ImGui::SliderFloat3("Block Coordinate: ", &coords[0], 0, 100)) {
     world->placeBlock(BlockData::BlockType::cobble_stone, {coords[0], coords[1], coords[2]});
   }
+
+  ImGui::Text("Player position: x:%f, y:%f, z:%f", player.getPosition().x, player.getPosition().y,
+              player.getPosition().z);
+
+  ImGui::Text("Player direction: x:%f, y:%f, z:%f", player.getLookDirection().x, player.getLookDirection().y,
+              player.getLookDirection().z);
 
   ImGui::End();
 }

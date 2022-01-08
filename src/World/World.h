@@ -24,35 +24,16 @@ class World {
   }
 
 public:
-  World() {
-    defaultShader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
-    textureAtlas = AssetManager::instance().loadTexture("assets/textures/default_texture.png");
-    defaultShader->setTexture("atlas", textureAtlas, 0);
-  }
+  World();
+
+  Ref<Chunk> getChunk(glm::ivec2 position);
   void addChunk(glm::ivec2 position, const Ref<Chunk>& chunk) { chunks[position] = chunk; };
+  [[nodiscard]] static glm::ivec2 getChunkIndex(glm::ivec3 position);
 
-  Ref<Chunk> getChunk(glm::ivec2 position) {
-    if (!chunks.contains(position)) { addChunk(position, generateOrLoadChunk(position)); }
-
-    return chunks.at(position);
-  }
-
+  [[nodiscard]] BlockData getBlockAt(glm::ivec3 position);
+  bool placeBlock(BlockData block, glm::ivec3 position);
 
   void render(glm::vec3 playerPos, glm::mat4 transform);
 
-  [[nodiscard]] BlockData getBlockAt(glm::ivec3 position);
-
-  [[nodiscard]] static glm::ivec2 getChunkIndex(glm::ivec3 position) {
-    return {position.x - (position.x % Chunk::HorizontalSize), position.z - (position.z % Chunk::HorizontalSize)};
-  }
-
-  bool placeBlock(BlockData block, glm::ivec3 position) {
-    if (!Chunk::isValidPosition(position)) return false;
-
-    Ref<Chunk> chunk = getChunk(getChunkIndex(position));
-    chunk->placeBlock(block, Chunk::toChunkCoordinates(position));
-    glm::ivec2 localPosition = position % Chunk::HorizontalSize;
-
-    return true;
-  }
+  static bool isValidBlockPosition(glm::ivec3 position);
 };

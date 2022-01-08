@@ -1,14 +1,14 @@
 #include "AxisPlane.h"
 
-AxisPlane::AxisPlane(glm::vec3 plane, glm::vec3 rayPosition, glm::vec3 rayDirection)
-    : plane(plane),
-      offsetDirection(calculateOffsetDirection(rayDirection)),
-      offset(calculateStartOffset(rayPosition, rayDirection)),
+AxisPlane::AxisPlane(glm::vec3 planeNormal, glm::vec3 rayPosition, glm::vec3 rayDirection)
+    : planeNormal(planeNormal),
       rayPosition(rayPosition),
-      rayDirection(rayDirection),
-      hitPosition(calculateHitPosition()),
-      hitDistance(calculateHitDistanceToPosition()),
-      hitBlockPosition(calculateBlockPosition()) {}
+      rayDirection(rayDirection) {
+  offsetDirection = calculateOffsetDirection(rayDirection);
+  planeOffset = calculateStartOffset(rayPosition, rayDirection);
+  hitPosition = calculateHitPosition();
+  hitDistance = calculateHitDistanceToPosition();
+}
 
 glm::vec3 AxisPlane::calculateHitPosition() const {
   float t = intersect();
@@ -20,27 +20,28 @@ glm::vec3 AxisPlane::calculateHitPosition() const {
 }
 
 float AxisPlane::intersect() const {
-  float d = plane.x * rayDirection.x + plane.y * rayDirection.y + plane.z * rayDirection.z;
+  float d = glm::dot(planeNormal, rayDirection);
   if (d == 0) return -std::numeric_limits<float>::infinity();  // the plane and the ray are parallel
 
-  return -((rayPosition.x + rayPosition.y + rayPosition.z + offset) / d);
+  float t = glm::dot(planeNormal, planeNormal * planeOffset - rayPosition);
+  float td = t / d;
+  return td;
 }
 
 float AxisPlane::calculateOffsetDirection(const glm::vec3& direction) const {
-  return glm::dot(plane, direction) < 0 ? -1.0f : 1.0f;
+  return glm::dot(planeNormal, direction) < 0 ? -1.0f : 1.0f;
 }
 
 float AxisPlane::calculateStartOffset(const glm::vec3& position, const glm::vec3& direction) const {
-  return std::floor(glm::dot(plane, position)) + (glm::dot(plane, direction) > 0 ? 1.0f : 0.0f);
+  return std::floor(glm::dot(planeNormal, position)) + (glm::dot(planeNormal, direction) > 0 ? 1.0f : 0.0f);
 }
 
 void AxisPlane::advanceOffset() {
-  offset += offsetDirection;
+  planeOffset += offsetDirection;
   hitPosition = calculateHitPosition();
   hitDistance = calculateHitDistanceToPosition();
-  hitBlockPosition = calculateBlockPosition();
 }
 
-glm::ivec3 AxisPlane::calculateBlockPosition() {
-  return hitPosition + glm::sign(rayDirection);
+glm::ivec3 AxisPlane::rayHitsToBlockPosition(const glm::vec3& hit1, const glm::vec3& hit2) {
+  return (hit1 + hit2) / 2.0f;
 }
