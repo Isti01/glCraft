@@ -10,11 +10,14 @@
 #include <imgui_impl_opengl3.h>
 #include <lodepng.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/integer.hpp>
+#include <glm/gtx/transform.hpp>
+
+// std libraries
 #include <algorithm>
 #include <chrono>
 #include <fstream>
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
 #include <iostream>
 #include <iterator>
 #include <map>
