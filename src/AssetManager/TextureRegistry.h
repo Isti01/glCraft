@@ -11,7 +11,7 @@ class TextureRegistry : public AssetRegistry<Texture> {
     uint32_t error = lodepng::decode(image, width, height, name, LCT_RGBA);
 
     if (error != 0) {
-      std::cerr << "Failed to lead the imagefile: " << name << ", message: " << lodepng_error_text(error) << std::endl;
+      std::cerr << "Failed to read the image file: " << name << ", message: " << lodepng_error_text(error) << std::endl;
       return nullptr;
     }
 
