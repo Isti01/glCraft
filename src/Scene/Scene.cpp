@@ -16,11 +16,6 @@ void Scene::init() {
   updateMouse();
 
   outlinedBlockShader = AssetManager::instance().loadShaderProgram("assets/shaders/outline");
-  crosshairShader = AssetManager::instance().loadShaderProgram("assets/shaders/crosshair");
-
-  crosshairVertexArray =
-     std::make_shared<VertexArray>(std::vector<glm::vec3>{{0, .01, 0}, {0, -.01, 0}, {.01, 0, 0}, {-.01, 0, 0}},
-                                   std::vector<VertexAttribute>{{3, VertexAttribute::Float, 0}});
 
   std::vector<BlockVertex> vertices;
 
@@ -79,9 +74,7 @@ void Scene::render() {
     outlinedBlockVertexArray->renderVertexStream();
   }
 
-  // render the crosshair
-  crosshairShader->bind();
-  crosshairVertexArray->renderVertexStream(GL_LINES);
+  crosshair.render();
 }
 
 void Scene::renderGui() {
@@ -106,6 +99,7 @@ void Scene::renderGui() {
 void Scene::onResized(int32_t width, int32_t height) {
   float aspectRatio = width == 0 || height == 0 ? 0 : static_cast<float>(width) / static_cast<float>(height);
   projectionMatrix = glm::perspective<float>(glm::half_pi<float>(), aspectRatio, .1f, 250.0f);
+  crosshair.update(aspectRatio);
 }
 
 void Scene::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {

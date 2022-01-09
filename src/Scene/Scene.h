@@ -7,6 +7,7 @@
 #include "../Rendering/VertexArray.h"
 #include "../World/World.h"
 #include "../glCraft.h"
+#include "Crosshair.h"
 #include "Player.h"
 
 class Scene {
@@ -18,11 +19,10 @@ class Scene {
   Ref<const ShaderProgram> outlinedBlockShader;
   Ref<VertexArray> outlinedBlockVertexArray;
 
-  Ref<const ShaderProgram> crosshairShader;
-  Ref<VertexArray> crosshairVertexArray;
-
   Player player;
   glm::mat4 projectionMatrix;
+
+  Crosshair crosshair;
 
   void toggleMenu();
   void updateMouse();
