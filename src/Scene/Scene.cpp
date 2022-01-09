@@ -30,10 +30,10 @@ void Scene::init() {
 
   for (int x = -25; x < 25; ++x) {
     for (int z = -25; z < 25; ++z) {
-      world.placeBlock(BlockData::BlockType::grass, {x, 3, z});
-      world.placeBlock(BlockData::BlockType::dirt, {x, 2, z});
-      world.placeBlock(BlockData::BlockType::dirt, {x, 1, z});
-      world.placeBlock(BlockData::BlockType::stone, {x, 0, z});
+      world->placeBlock(BlockData::BlockType::grass, {x, 3, z});
+      world->placeBlock(BlockData::BlockType::dirt, {x, 2, z});
+      world->placeBlock(BlockData::BlockType::dirt, {x, 1, z});
+      world->placeBlock(BlockData::BlockType::stone, {x, 0, z});
     }
   }
 }
@@ -61,12 +61,11 @@ void Scene::render() {
   skybox.render();
 
   glm::mat4 mvp = projectionMatrix * player.getViewMatrix();
-  world.render(player.getPosition(), mvp);
+  world->render(player.getPosition(), mvp);
 
 
   // render the block outline
-  Ray ray(player.getPosition(), player.getLookDirection(), world, 10.0f);
-  if (ray.hasHit()) {
+  if (Ray ray{player.getPosition(), player.getLookDirection(), *world, Player::reach}) {
     auto blockHit = ray.getHitTarget().position;
 
     outlinedBlockShader->setMat4("MVP", mvp * glm::translate(blockHit));
@@ -84,7 +83,7 @@ void Scene::renderGui() {
   static float coords[] = {0, 0, 0};
 
   if (ImGui::SliderFloat3("Block Coordinate: ", &coords[0], -20, 20)) {
-    world.placeBlock(BlockData::BlockType::cobble_stone, {coords[0], coords[1], coords[2]});
+    world->placeBlock(BlockData::BlockType::cobble_stone, {coords[0], coords[1], coords[2]});
   }
 
   ImGui::Text("Player position: x:%f, y:%f, z:%f", player.getPosition().x, player.getPosition().y,

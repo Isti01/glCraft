@@ -12,30 +12,30 @@ Ray::Ray(glm::vec3 position, glm::vec3 direction, World& world, float reach = 10
   }};
 
   std::sort(planes.begin(), planes.end());
-  glm::vec3 prevClosestHit = position;  // the player might be inside a block
+  glm::vec3 prevClosestHits[2] = {position, position};  // the player might be inside a block
+  bool hasNeighbor = false;
 
   while (!successful && planes[0].getHitDistance() <= reach) {
-    // todo check the distance between the two hit positions
     std::optional<glm::ivec3> maybeBlockPosition =
-       AxisPlane::rayHitsToBlockPosition(planes[0].getHitPosition(), prevClosestHit);
-    prevClosestHit = planes[0].getHitPosition();
+       AxisPlane::rayHitsToBlockPosition(planes[0].getHitPosition(), prevClosestHits[1]);
 
+    if (maybeBlockPosition.has_value() && World::isValidBlockPosition(maybeBlockPosition.value())) {
+      glm::vec3 blockPosition = maybeBlockPosition.value();
+      BlockData block = world.getBlockAt(blockPosition);
 
-    if (!maybeBlockPosition.has_value() || !World::isValidBlockPosition(maybeBlockPosition.value())) {
-      planes[0].advanceOffset();
-      std::sort(planes.begin(), planes.end());
-      continue;
+      if (block.type != BlockData::BlockType::air) {
+        successful = true;
+        std::optional<glm::ivec3> maybeNeighbor =
+           AxisPlane::rayHitsToBlockPosition(prevClosestHits[0], prevClosestHits[1]);
+
+        hitTarget = {blockPosition, block, maybeNeighbor.value(), hasNeighbor && maybeNeighbor.has_value()};
+      }
     }
 
-    glm::vec3 blockPosition = maybeBlockPosition.value();
-
-    BlockData block = world.getBlockAt(blockPosition);
-    if (block.type == BlockData::BlockType::air) {
-      planes[0].advanceOffset();
-      std::sort(planes.begin(), planes.end());
-    } else {
-      successful = true;
-      hitTarget = {blockPosition, block};
-    }
+    hasNeighbor = true;
+    prevClosestHits[0] = prevClosestHits[1];
+    prevClosestHits[1] = planes[0].getHitPosition();
+    planes[0].advanceOffset();
+    std::sort(planes.begin(), planes.end());
   }
 }

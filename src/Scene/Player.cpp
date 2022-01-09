@@ -1,5 +1,7 @@
 #include "Player.h"
 
+#include "../World/RayCasting/Ray.h"
+
 const glm::mat4& Player::updateView() {
   return view = calcView();
 }
@@ -49,7 +51,18 @@ void Player::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t m
 }
 
 void Player::onMouseButtonEvent(int32_t button, int32_t action, int32_t mods) {
-  // todo implement block placing
+  if (action != 1) return;  // ignore the input on mouse button release
+
+  if (button == 0) {  // left click
+    if (Ray ray{position, lookDirection, *world, reach}) {
+      world->placeBlock(BlockData::BlockType::air, ray.getHitTarget().position);
+    }
+  } else if (button == 1) {  // right click
+    Ray ray{position, lookDirection, *world, reach};
+    if (ray && ray.getHitTarget().hasNeighbor) { world->placeBlock(blockToPlace, ray.getHitTarget().neighbor); }
+  } else if (button == 2) {  // middle click
+    if (Ray ray{position, lookDirection, *world, reach}) { blockToPlace = ray.getHitTarget().block.type; }
+  }
 }
 
 void Player::onCursorPositionEvent(double x, double y) {

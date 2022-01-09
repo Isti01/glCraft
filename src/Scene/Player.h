@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../World/World.h"
 #include "../glCraft.h"
 
 struct MovementDirection {
@@ -8,6 +9,9 @@ struct MovementDirection {
 };
 
 class Player {
+  Ref<World> world;
+  BlockData::BlockType blockToPlace = BlockData::BlockType::grass;
+
   glm::vec3 position = {5, 5, 5};
   glm::vec3 up = {0, 1, 0};
 
@@ -40,6 +44,9 @@ class Player {
   void updatePlayerOrientation();
 
 public:
+  constexpr static float reach = 4.5f;
+
+  Player(const Ref<World>& world) : world(world) {}
   const glm::mat4& setPosition(glm::vec3 eye);
   const glm::mat4& lookAt(glm::vec3 eye, glm::vec3 center);
 

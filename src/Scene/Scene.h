@@ -15,14 +15,14 @@ class Scene {
   bool initialized = false;
   bool isMenuOpen = false;
 
-  World world;
+  Ref<World> world = std::make_shared<World>();
 
   Ref<const ShaderProgram> outlinedBlockShader;
   Ref<VertexArray> outlinedBlockVertexArray;
 
   Skybox skybox;
 
-  Player player;
+  Player player{world};
   glm::mat4 projectionMatrix;
 
   Crosshair crosshair;
