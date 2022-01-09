@@ -18,7 +18,9 @@ class Player {
   float yaw = 0;
   float pitch = 0;
 
-  float movementSpeed = 3.5;
+  float walkingSpeed = 4.317;
+  float runningSpeed = 5.612;
+  bool isRunning = false;
   float mouseSensitivity = .5;
 
   bool resetMouse = true;
