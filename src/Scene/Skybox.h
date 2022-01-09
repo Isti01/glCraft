@@ -25,6 +25,6 @@ class Skybox {
 
 public:
   Skybox();
-  void update(const glm::mat4& cameraView);
+  void update(const glm::mat4& projection, const glm::mat4& cameraView);
   void render();
 };

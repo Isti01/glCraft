@@ -40,7 +40,7 @@ void Scene::init() {
 
 void Scene::update(float deltaTime) {
   player.update(deltaTime);
-  skybox.update(player.getViewMatrix());
+  skybox.update(projectionMatrix, player.getViewMatrix());
 }
 
 void Scene::toggleMenu() {

@@ -7,8 +7,8 @@ Skybox::Skybox() {
   shader = AssetManager::instance().loadShaderProgram("assets/shaders/skybox");
 }
 
-void Skybox::update(const glm::mat4& cameraView) {
-  transform = glm::mat4(glm::mat3(cameraView));
+void Skybox::update(const glm::mat4& projection, const glm::mat4& cameraView) {
+  transform = projection * glm::mat4(glm::mat3(cameraView));
 }
 
 void Skybox::render() {
