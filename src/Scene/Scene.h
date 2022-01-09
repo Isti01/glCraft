@@ -23,7 +23,7 @@ class Scene {
   Skybox skybox;
 
   Player player{world};
-  glm::mat4 projectionMatrix;
+  glm::mat4 projectionMatrix = glm::mat4(1);
 
   Crosshair crosshair;
 

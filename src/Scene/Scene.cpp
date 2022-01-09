@@ -8,7 +8,7 @@ Scene::Scene() {
 }
 
 void Scene::init() {
-  if (initialized) throw std::exception("The scene has been already initialized");
+  assert(!initialized && "The scene has been already initialized");
   initialized = true;
 
   updateMouse();

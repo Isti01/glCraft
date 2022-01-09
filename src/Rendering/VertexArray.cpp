@@ -11,7 +11,7 @@ void VertexArray::unbind() {
 }
 
 void VertexArray::renderIndexed(int32_t type) {
-  if (indexBuffer == nullptr) throw std::exception("Cannot draw un-indexed vertex stream");
+  assert(indexBuffer != nullptr);
 
   bind();
   glDrawElements(type, indexBuffer->getSize(), indexBuffer->getType(), nullptr);
@@ -28,7 +28,7 @@ void VertexArray::renderVertexStream(int32_t type) {
 
 void VertexArray::renderVertexSubStream(int32_t size = -1, int32_t type) {
   if (!isValid()) return;
-  if (indexBuffer != nullptr) throw std::exception("Cannot draw indexed vertex stream");
+  assert(indexBuffer == nullptr);
 
   bind();
   glDrawArrays(type, 0, size);

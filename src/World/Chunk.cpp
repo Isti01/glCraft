@@ -72,11 +72,7 @@ bool Chunk::isInBounds(int32_t x, int32_t y, int32_t z) {
 }
 
 void Chunk::placeBlock(BlockData block, const glm::ivec3& position) {
-  if (!isInBounds(position.x, position.y, position.z)) {
-    std::stringstream ss("Chunk out of bounds, cannot place block at: ");
-    ss << position.x << " " << position.y << " " << position.z;
-    throw std::exception(ss.str().c_str());
-  }
+  assert(isInBounds(position.x, position.y, position.z));
 
   renderState = RenderState::dirty;
   data[position.x][position.y][position.z] = block;

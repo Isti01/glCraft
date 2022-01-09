@@ -5,10 +5,10 @@
 
 ShaderProgram::ShaderProgram(const std::string &name) {
   Ref<const Shader> vertexShader = AssetManager::instance().loadShader(name + ".vert");
-  if (!vertexShader->isValid()) throw std::exception("Invalid Shader");
+  assert(vertexShader->isValid());
 
   Ref<const Shader> fragmentShader = AssetManager::instance().loadShader(name + ".frag");
-  if (!fragmentShader->isValid()) throw std::exception("Invalid Shader");
+  assert(fragmentShader->isValid());
 
   shaderProgram = glCreateProgram();
 

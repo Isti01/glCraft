@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 23)
 
 file(GLOB_RECURSE main_sources src/*.cpp)
 add_executable(main ${main_sources})
-target_compile_options(main PRIVATE /EHs)
 target_precompile_headers(main PRIVATE src/glCraft.h)
 
 # glfw

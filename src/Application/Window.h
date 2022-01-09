@@ -54,5 +54,5 @@ public:
   void pollEvents();
   void unlockMouse();
   void lockMouse();
-  glm::dvec2 getCursorPosition();
+  [[maybe_unused]] glm::dvec2 getCursorPosition();
 };
