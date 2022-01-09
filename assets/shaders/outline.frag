@@ -5,8 +5,8 @@ in vec2 vert_uv;
 out vec4 color;
 
 void main() {
-    if (vert_uv.x > .01 && vert_uv.y > .01 && vert_uv.x < .99 && vert_uv.y < .99) discard;
+    if (vert_uv.x > 0.01f && vert_uv.y > 0.01f && vert_uv.x < 0.99f && vert_uv.y < 0.99f) discard;
 
-    gl_FragDepth = gl_FragCoord.z - .0001;
+    gl_FragDepth = gl_FragCoord.z - 0.000001f;
     color = vec4(1, 1, 1, 1);
 }
