@@ -9,15 +9,18 @@
 #include "../glCraft.h"
 #include "Crosshair.h"
 #include "Player.h"
+#include "Skybox.h"
 
 class Scene {
   bool initialized = false;
   bool isMenuOpen = false;
 
-  Ref<World> world;
+  World world;
 
   Ref<const ShaderProgram> outlinedBlockShader;
   Ref<VertexArray> outlinedBlockVertexArray;
+
+  Skybox skybox;
 
   Player player;
   glm::mat4 projectionMatrix;
