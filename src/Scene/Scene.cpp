@@ -28,13 +28,9 @@ void Scene::init() {
   outlinedBlockVertexArray = std::make_shared<VertexArray>(vertices, BlockVertex::vertexAttributes());
 
 
-  for (int x = -25; x < 25; ++x) {
-    for (int z = -25; z < 25; ++z) {
-      world->placeBlock(BlockData::BlockType::grass, {x, 3, z});
-      world->placeBlock(BlockData::BlockType::dirt, {x, 2, z});
-      world->placeBlock(BlockData::BlockType::dirt, {x, 1, z});
-      world->placeBlock(BlockData::BlockType::stone, {x, 0, z});
-    }
+  // to trigger the chunk generation
+  for (int x = -10; x < 10; ++x) {
+    for (int z = -10; z < 10; ++z) { world->placeBlock(BlockData::BlockType::air, {x * 16, 255, z * 16}); }
   }
 }
 
