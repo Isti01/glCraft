@@ -5,6 +5,7 @@
 #include "../Rendering/Texture.h"
 #include "../glCraft.h"
 #include "Chunk.h"
+#include "WorldGenerator.h"
 
 class HashVec2 {
 public:
@@ -17,14 +18,17 @@ class World {
   std::unordered_map<glm::ivec2, Ref<Chunk>, HashVec2> chunks;
   Ref<const Texture> textureAtlas;
   Ref<const ShaderProgram> defaultShader;
+  WorldGenerator generator;
 
   Ref<Chunk> generateOrLoadChunk(glm::ivec2 position) {
-    // todo implement chunk generation
-    return std::make_shared<Chunk>(position);
+    Ref<Chunk> chunk = std::make_shared<Chunk>(position);
+    generator.populateChunk(chunk);
+
+    return chunk;  // todo make the chunks persistent
   }
 
 public:
-  World();
+  World(int seed = 1337);
 
   Ref<Chunk> getChunk(glm::ivec2 position);
   void addChunk(glm::ivec2 position, const Ref<Chunk>& chunk) { chunks[position] = chunk; };

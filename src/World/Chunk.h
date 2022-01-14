@@ -42,4 +42,5 @@ public:
 
   static bool isValidPosition(glm::ivec3 position);
   static glm::ivec3 toChunkCoordinates(const glm::ivec3& globalPosition);
+  glm::ivec2 getPosition();
 };

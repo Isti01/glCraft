@@ -42,7 +42,9 @@ Ref<VertexArray> Chunk::createMesh() {
         if (type == BlockData::BlockType::air) continue;
 
         for (const auto& [ox, oy, oz]: offsetsToCheck) {
-          // todo fix this
+          // todo fix the mesh generation between two loaded chunks
+          // todo fix the mesh generation issue between different transparency types
+
           if (isInBounds(x + ox, y + oy, z + oz) && data[x + ox][y + oy][z + oz].type != BlockData::BlockType::air &&
               transparent == BlockData::isTransparent(data[x + ox][y + oy][z + oz].type)) {
             continue;
@@ -89,4 +91,8 @@ bool Chunk::isValidPosition(glm::ivec3 position) {
 glm::ivec3 Chunk::toChunkCoordinates(const glm::ivec3& globalPosition) {
   return {Math::positiveMod(globalPosition.x, HorizontalSize), globalPosition.y,
           Math::positiveMod(globalPosition.z, HorizontalSize)};
+}
+
+glm::ivec2 Chunk::getPosition() {
+  return worldPosition;
 }
