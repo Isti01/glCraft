@@ -1,6 +1,7 @@
 #pragma once
 
-#include <glm/fwd.hpp>
+#include "../glCraft.h"
+
 class Window {
   const char *name = "glCraft";
   int windowWidth = 800;

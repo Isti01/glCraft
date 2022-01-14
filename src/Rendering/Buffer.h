@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../glCraft.h"
+
 #include "type_traits"
 
 class Buffer {
