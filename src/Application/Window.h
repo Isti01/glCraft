@@ -33,20 +33,20 @@ public:
   Window(Window &) = delete;
   Window(Window &&) = delete;
 
-  [[nodiscard]] int getWindowWidth() const { return windowWidth; }
+  [[nodiscard]] inline int getWindowWidth() const { return windowWidth; }
   void setWindowWidth(int width) { windowWidth = width; }
 
-  [[nodiscard]] int getWindowHeight() const { return windowHeight; }
+  [[nodiscard]] inline int getWindowHeight() const { return windowHeight; }
   void setWindowHeight(int height) { windowHeight = height; }
 
-  [[nodiscard]] GLFWwindow *getContext() { return window; };
+  [[nodiscard]] inline GLFWwindow *getContext() { return window; };
 
   static Window &instance() {
     static Window window;
     return window;
   }
   bool isValid() { return window != nullptr; };
-  [[nodiscard]] bool shouldClose() const { return glfwWindowShouldClose(window); };
+  [[nodiscard]] inline bool shouldClose() const { return glfwWindowShouldClose(window); };
   void update();
   void finalizeFrame();
 
@@ -54,5 +54,5 @@ public:
   void pollEvents();
   void unlockMouse();
   void lockMouse();
-  [[maybe_unused]] glm::dvec2 getCursorPosition();
+  glm::dvec2 getCursorPosition();
 };

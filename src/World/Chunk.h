@@ -8,11 +8,11 @@
 
 class Chunk {
 public:
-  static constexpr int32_t HorizontalSize = 16;
-  static constexpr int32_t VerticalSize = 256;
+  static const int32_t HorizontalSize = 16;
+  static const int32_t VerticalSize = 256;
 
-  static constexpr int32_t BlockCount = HorizontalSize * HorizontalSize * VerticalSize;
-  static constexpr int32_t VertexCount = BlockCount * 8;
+  static const int32_t BlockCount = HorizontalSize * HorizontalSize * VerticalSize;
+  static const int32_t VertexCount = BlockCount * 8;
 
 private:
   enum class RenderState {

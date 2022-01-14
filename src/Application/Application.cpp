@@ -31,14 +31,6 @@ void Application::updateAndRender() {
   window.finalizeFrame();
 }
 
-int32_t Application::getWindowWidth() {
-  return window.getWindowWidth();
-}
-
-int32_t Application::getWindowHeight() {
-  return window.getWindowHeight();
-}
-
 void Application::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {
   scene->onKeyEvent(key, scancode, action, mode);
 }
