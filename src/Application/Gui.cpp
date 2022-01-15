@@ -4,7 +4,10 @@
 
 Gui::Gui() {
   const auto context = Window::instance().getContext();
-  if (context == nullptr) return;
+  if (context == nullptr) {
+    return;
+  }
+
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGui::StyleColorsDark();

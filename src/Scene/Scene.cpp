@@ -26,16 +26,11 @@ void Scene::init() {
     }
   }
   outlinedBlockVertexArray = std::make_shared<VertexArray>(vertices, BlockVertex::vertexAttributes());
-
-
-  // to trigger the chunk generation
-  for (int x = -10; x < 10; ++x) {
-    for (int z = -10; z < 10; ++z) { world->placeBlock(BlockData::BlockType::air, {x * 16, 255, z * 16}); }
-  }
 }
 
 void Scene::update(float deltaTime) {
   player.update(deltaTime);
+  world->update(player.getPosition());
   skybox.update(projectionMatrix, player.getViewMatrix());
 }
 
@@ -73,20 +68,17 @@ void Scene::render() {
 }
 
 void Scene::renderGui() {
-  if (!isMenuOpen) return;
-
-  ImGui::Begin("Place Block");
-  static float coords[] = {0, 0, 0};
-
-  if (ImGui::SliderFloat3("Block Coordinate: ", &coords[0], -20, 20)) {
-    world->placeBlock(BlockData::BlockType::cobble_stone, {coords[0], coords[1], coords[2]});
+  if (!isMenuOpen) {
+    return;
   }
 
-  ImGui::Text("Player position: x:%f, y:%f, z:%f", player.getPosition().x, player.getPosition().y,
-              player.getPosition().z);
+  ImGui::Begin("Player Stats");
 
-  ImGui::Text("Player direction: x:%f, y:%f, z:%f", player.getLookDirection().x, player.getLookDirection().y,
-              player.getLookDirection().z);
+  glm::vec3 position = player.getPosition();
+  ImGui::Text("Player position: x:%f, y:%f, z:%f", position.x, position.y, position.z);
+
+  glm::vec3 direction = player.getLookDirection();
+  ImGui::Text("Player direction: x:%f, y:%f, z:%f", direction.x, direction.y, direction.z);
 
   ImGui::End();
 }
@@ -99,15 +91,22 @@ void Scene::onResized(int32_t width, int32_t height) {
 
 void Scene::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {
   if (key == 256) {
-    if (action == 1) { toggleMenu(); }
+    if (action == 1) {
+      toggleMenu();
+    }
     return;
   }
   player.onKeyEvent(key, scancode, action, mode);
 }
 
 void Scene::onMouseButtonEvent(int32_t button, int32_t action, int32_t mods) {
-  if (!isMenuOpen) { player.onMouseButtonEvent(button, action, mods); }
+  if (!isMenuOpen) {
+    player.onMouseButtonEvent(button, action, mods);
+  }
 }
+
 void Scene::onCursorPositionEvent(double x, double y) {
-  if (!isMenuOpen) { player.onCursorPositionEvent(x, y); }
+  if (!isMenuOpen) {
+    player.onCursorPositionEvent(x, y);
+  }
 }

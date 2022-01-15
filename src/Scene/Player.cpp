@@ -22,7 +22,10 @@ void Player::update(float deltaTime) {
   auto moveDirection = glm::vec3(0);
 
   for (const auto& [isMoving, direction]: directions) {
-    if (!isMoving) continue;
+    if (!isMoving) {
+      continue;
+    }
+
     moveDirection += direction;
   }
 
@@ -34,7 +37,8 @@ void Player::update(float deltaTime) {
 }
 
 void Player::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {
-  if (action == 2) return;  // don't respond to repeatedly pressed buttons
+  if (action == 2)
+    return;  // don't respond to repeatedly pressed buttons
 
   if (key == 87 || key == 265) {  // forward
     directions[0].isMoving = action == 1;
@@ -54,7 +58,8 @@ void Player::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t m
 }
 
 void Player::onMouseButtonEvent(int32_t button, int32_t action, int32_t mods) {
-  if (action != 1) return;  // ignore the input on mouse button release
+  if (action != 1)
+    return;  // ignore the input on mouse button release
 
   if (button == 0) {  // left click
     if (Ray ray{position, lookDirection, *world, reach}) {
@@ -62,9 +67,13 @@ void Player::onMouseButtonEvent(int32_t button, int32_t action, int32_t mods) {
     }
   } else if (button == 1) {  // right click
     Ray ray{position, lookDirection, *world, reach};
-    if (ray && ray.getHitTarget().hasNeighbor) { world->placeBlock(blockToPlace, ray.getHitTarget().neighbor); }
+    if (ray && ray.getHitTarget().hasNeighbor) {
+      world->placeBlock(blockToPlace, ray.getHitTarget().neighbor);
+    }
   } else if (button == 2) {  // middle click
-    if (Ray ray{position, lookDirection, *world, reach}) { blockToPlace = ray.getHitTarget().block.type; }
+    if (Ray ray{position, lookDirection, *world, reach}) {
+      blockToPlace = ray.getHitTarget().block.type;
+    }
   }
 }
 

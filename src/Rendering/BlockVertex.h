@@ -13,7 +13,7 @@ struct BlockVertex {
 
   void offset(int32_t x, int32_t y, int32_t z) { position += glm::vec3(x, y, z); }
 
-  void setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, BlockData::BlockType type) ;
+  void setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, BlockData::BlockType type);
 
   static std::vector<VertexAttribute> vertexAttributes() {
     return {VertexAttribute(3, VertexAttribute::Float, 0),

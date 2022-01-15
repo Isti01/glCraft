@@ -2,8 +2,10 @@
 
 void VertexArray::bind() {
   glBindVertexArray(id);
-  if (vertexBuffer) vertexBuffer->bind();
-  if (indexBuffer) indexBuffer->bind();
+  if (vertexBuffer)
+    vertexBuffer->bind();
+  if (indexBuffer)
+    indexBuffer->bind();
 }
 
 void VertexArray::unbind() {
@@ -19,7 +21,9 @@ void VertexArray::renderIndexed(int32_t type) {
 }
 
 VertexArray::~VertexArray() {
-  if (isValid()) { glDeleteVertexArrays(1, &id); }
+  if (isValid()) {
+    glDeleteVertexArrays(1, &id);
+  }
 }
 
 void VertexArray::renderVertexStream(int32_t type) {
@@ -27,7 +31,8 @@ void VertexArray::renderVertexStream(int32_t type) {
 }
 
 void VertexArray::renderVertexSubStream(int32_t size = -1, int32_t type) {
-  if (!isValid()) return;
+  if (!isValid())
+    return;
   assert(indexBuffer == nullptr);
 
   bind();

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../glCraft.h"
-
 #include "type_traits"
 
 class Buffer {
@@ -20,7 +19,8 @@ public:
   [[nodiscard]] bool isValid() const { return id != 0; };
 
   ~Buffer() {
-    if (isValid()) glDeleteBuffers(1, &id);
+    if (isValid())
+      glDeleteBuffers(1, &id);
   };
 };
 

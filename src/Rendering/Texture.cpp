@@ -33,7 +33,9 @@ void Texture::unbind() const {
 }
 
 Texture::~Texture() {
-  if (isValid()) { glDeleteTextures(1, &id); }
+  if (isValid()) {
+    glDeleteTextures(1, &id);
+  }
 }
 Ref<Texture> Texture::createRef() {
   return std::make_shared<Texture>();

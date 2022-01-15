@@ -114,7 +114,9 @@ void GLAPIENTRY Window::onOpenGlMessage(GLenum source,
                                         GLsizei,
                                         const GLchar *message,
                                         const void *) {
-  if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+  if (id == 131169 || id == 131185 || id == 131218 || id == 131204) {
+    return;
+  }
 
   std::cerr << "---------------" << std::endl;
   std::cerr << "Debug message (" << id << "): " << message << std::endl;

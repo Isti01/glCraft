@@ -42,7 +42,9 @@ void ShaderProgram::setMat4(const std::string &location, const glm::mat4 &value)
 }
 
 ShaderProgram::~ShaderProgram() {
-  if (isValid()) { glDeleteProgram(shaderProgram); }
+  if (isValid()) {
+    glDeleteProgram(shaderProgram);
+  }
 }
 void ShaderProgram::setTexture(const std::string &location, const Ref<const Texture> &texture, int32_t slot) const {
   texture->bindToSlot(slot);

@@ -39,7 +39,9 @@ Ref<VertexArray> Chunk::createMesh() {
       for (int z = 0; z < HorizontalSize; z++) {
         const BlockData::BlockType type = data[x][y][z].type;
         const bool transparent = BlockData::isTransparent(type);
-        if (type == BlockData::BlockType::air) continue;
+        if (type == BlockData::BlockType::air) {
+          continue;
+        }
 
         for (const auto& [ox, oy, oz]: offsetsToCheck) {
           // todo fix the mesh generation between two loaded chunks

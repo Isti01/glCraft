@@ -20,12 +20,9 @@ class World {
   Ref<const ShaderProgram> defaultShader;
   WorldGenerator generator;
 
-  Ref<Chunk> generateOrLoadChunk(glm::ivec2 position) {
-    Ref<Chunk> chunk = std::make_shared<Chunk>(position);
-    generator.populateChunk(chunk);
+  int viewDistance = 5;
 
-    return chunk;  // todo make the chunks persistent
-  }
+  Ref<Chunk> generateOrLoadChunk(glm::ivec2 position);
 
 public:
   World(int seed = 1337);
@@ -37,6 +34,7 @@ public:
   [[nodiscard]] BlockData getBlockAt(glm::ivec3 position);
   bool placeBlock(BlockData block, glm::ivec3 position);
 
+  void update(const glm::vec3& playerPosition);
   void render(glm::vec3 playerPos, glm::mat4 transform);
 
   static bool isValidBlockPosition(glm::ivec3 position);

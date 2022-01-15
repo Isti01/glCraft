@@ -10,12 +10,15 @@ class AssetRegistry {
 
 public:
   [[nodiscard]] bool hasAsset(const std::string &name) const {
-    if (!registry.contains(name)) return false;
+    if (!registry.contains(name))
+      return false;
     return !registry.at(name).expired();
   };
 
   void remove(const std::string &name) {
-    if (hasAsset(name)) { registry[name] = std::shared_ptr<T>(); }
+    if (hasAsset(name)) {
+      registry[name] = std::shared_ptr<T>();
+    }
   }
 
   Ref<const T> get(const std::string &name) {
@@ -25,7 +28,9 @@ public:
     }
 
     Ref<const T> asset = loadAsset(name);
-    if (asset != nullptr) { registry[name] = asset; }
+    if (asset != nullptr) {
+      registry[name] = asset;
+    }
 
     return asset;
   };

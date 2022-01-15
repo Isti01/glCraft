@@ -4,8 +4,10 @@
 
 Shader::Shader(const std::string &name) {
   uint32_t type = 0;
-  if (name.ends_with(".vert")) type = GL_VERTEX_SHADER;
-  if (name.ends_with(".frag")) type = GL_FRAGMENT_SHADER;
+  if (name.ends_with(".vert"))
+    type = GL_VERTEX_SHADER;
+  if (name.ends_with(".frag"))
+    type = GL_FRAGMENT_SHADER;
 
   assert(type != 0 && "Couldn't identify the shader type");
 
@@ -27,5 +29,7 @@ Shader::Shader(const std::string &name) {
 }
 
 Shader::~Shader() {
-  if (isValid()) { glDeleteShader(id); }
+  if (isValid()) {
+    glDeleteShader(id);
+  }
 }
