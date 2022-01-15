@@ -4,6 +4,13 @@
 
 
 Skybox::Skybox() {
+  cubeMap = AssetManager::instance().loadCubeMap(
+     "assets/textures/skybox/empty.png;"
+     "assets/textures/skybox/empty.png;"
+     "assets/textures/skybox/sun.png;"
+     "assets/textures/skybox/moon.png;"
+     "assets/textures/skybox/empty.png;"
+     "assets/textures/skybox/empty.png");
   shader = AssetManager::instance().loadShaderProgram("assets/shaders/skybox");
 }
 
@@ -17,6 +24,7 @@ void Skybox::render() {
   glDepthFunc(GL_LEQUAL);
 
   shader->bind();
+  shader->setTexture("cubeMap", cubeMap, 1);
   shader->setMat4("transform", transform * glm::rotate(rotation, glm::vec3(1, 0, 0)));
   vertexArray.renderIndexed();
 

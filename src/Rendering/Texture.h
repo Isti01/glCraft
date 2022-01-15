@@ -1,16 +1,18 @@
 #pragma once
 
 #include "../glCraft.h"
+#include "Image.h"
 
 class Texture {
   uint32_t id = 0;
+  uint32_t type;
 
 public:
   Texture(const Texture&) = delete;
   Texture(Texture&) = delete;
   Texture(Texture&&) = delete;
 
-  Texture();
+  Texture(uint32_t type);
 
   [[nodiscard]] bool isValid() const { return id != 0; };
 
@@ -18,9 +20,11 @@ public:
   void bindToSlot(uint32_t slot) const;
   void unbind() const;
 
-  void bufferRGBAData(uint32_t width, uint32_t height, const std::vector<uint8_t>& data);
+  void buffer2DRGBAData(const Image& image);
+  void bufferCubeMapRGBAData(const std::array<Ref<const Image>, 6>& images);
 
   ~Texture();
 
-  static Ref<Texture> createRef();
+  static Ref<const Texture> loadTexture2D(const std::string& name);
+  static Ref<const Texture> loadCubeMapTexture(const std::string& name);
 };
