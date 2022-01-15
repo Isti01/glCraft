@@ -29,6 +29,10 @@ class Skybox {
 
 public:
   Skybox();
+
+  [[nodiscard]] float getRotationSpeed() const { return rotationSpeed; };
+  void setRotationSpeed(float speed) { rotationSpeed = speed; };
+
   void update(const glm::mat4& projection, const glm::mat4& cameraView, float deltaTime);
   void render();
 };

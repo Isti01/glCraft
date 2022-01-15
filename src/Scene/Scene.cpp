@@ -1,6 +1,7 @@
 #include "Scene.h"
 
 #include "../Application/Application.h"
+#include "../World/BlockName.h"
 #include "../World/RayCasting/Ray.h"
 
 Scene::Scene() {
@@ -72,7 +73,33 @@ void Scene::renderGui() {
     return;
   }
 
-  player.renderGui();
+  if (ImGui::Begin("Menu")) {
+    glm::vec3 position = player.getPosition();
+    ImGui::Text("Player position: x:%f, y:%f, z:%f", position.x, position.y, position.z);
+    glm::vec3 lookDirection = player.getLookDirection();
+    ImGui::Text("Player direction: x:%f, y:%f, z:%f", lookDirection.x, lookDirection.y, lookDirection.z);
+
+    ImGui::Spacing();
+
+    BlockData::BlockType blockToPlace = player.getBlockToPlace();
+    ImGui::Text("Selected Block: %s", BlockName::blockTypeToName(blockToPlace));
+
+    ImGui::Spacing();
+
+    BlockName::NameArray names = BlockName::getBlockNames();
+    int32_t selected = BlockName::blockTypeToIndex(blockToPlace);
+    if (ImGui::ListBox("Select a block to place: ", &selected, &names[0], names.size())) {
+      player.setBlockToPlace(BlockName::BlockNames[selected].first);
+    }
+
+    ImGui::Spacing();
+
+    float speed = skybox.getRotationSpeed();
+    if (ImGui::SliderFloat("Night/Day cycle speed", &speed, 0.1, 10)) {
+      skybox.setRotationSpeed(speed);
+    }
+  }
+  ImGui::End();
 }
 
 void Scene::onResized(int32_t width, int32_t height) {
