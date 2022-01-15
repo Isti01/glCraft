@@ -6,7 +6,7 @@ struct BlockData {
     dirt,
     sand,
     stone,
-    cobble_stone,
+    cobblestone,
     glass,
     oak_wood,
     oak_leaves,

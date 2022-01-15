@@ -34,9 +34,9 @@ Ref<VertexArray> Chunk::createMesh() {
      {0, 0, -1},
   }};
 
-  for (int x = 0; x < HorizontalSize; x++) {
-    for (int y = 0; y < VerticalSize; y++) {
-      for (int z = 0; z < HorizontalSize; z++) {
+  for (int32_t x = 0; x < HorizontalSize; x++) {
+    for (int32_t y = 0; y < VerticalSize; y++) {
+      for (int32_t z = 0; z < HorizontalSize; z++) {
         const BlockData::BlockType type = data[x][y][z].type;
         const bool transparent = BlockData::isTransparent(type);
         if (type == BlockData::BlockType::air) {

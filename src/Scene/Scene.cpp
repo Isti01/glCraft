@@ -72,15 +72,7 @@ void Scene::renderGui() {
     return;
   }
 
-  ImGui::Begin("Player Stats");
-
-  glm::vec3 position = player.getPosition();
-  ImGui::Text("Player position: x:%f, y:%f, z:%f", position.x, position.y, position.z);
-
-  glm::vec3 direction = player.getLookDirection();
-  ImGui::Text("Player direction: x:%f, y:%f, z:%f", direction.x, direction.y, direction.z);
-
-  ImGui::End();
+  player.renderGui();
 }
 
 void Scene::onResized(int32_t width, int32_t height) {

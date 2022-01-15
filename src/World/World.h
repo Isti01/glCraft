@@ -10,7 +10,7 @@
 class HashVec2 {
 public:
   size_t operator()(const glm::ivec2& coord) const noexcept {
-    return std::hash<int>{}(coord.x) | (std::hash<int>{}(coord.y) << sizeof(int) * 8);
+    return std::hash<int32_t>{}(coord.x) | (std::hash<int32_t>{}(coord.y) << sizeof(int32_t) * 8);
   };
 };
 
@@ -20,12 +20,12 @@ class World {
   Ref<const ShaderProgram> defaultShader;
   WorldGenerator generator;
 
-  int viewDistance = 5;
+  int32_t viewDistance = 5;
 
   Ref<Chunk> generateOrLoadChunk(glm::ivec2 position);
 
 public:
-  World(int seed = 1337);
+  World(int32_t seed = 1337);
 
   Ref<Chunk> getChunk(glm::ivec2 position);
   void addChunk(glm::ivec2 position, const Ref<Chunk>& chunk) { chunks[position] = chunk; };

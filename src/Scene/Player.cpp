@@ -1,5 +1,6 @@
 #include "Player.h"
 
+#include "../World/BlockName.h"
 #include "../World/RayCasting/Ray.h"
 
 const glm::mat4& Player::updateView() {
@@ -36,9 +37,30 @@ void Player::update(float deltaTime) {
   }
 }
 
+void Player::renderGui() {
+  if (ImGui::Begin("Menu")) {
+    ImGui::Text("Player position: x:%f, y:%f, z:%f", position.x, position.y, position.z);
+    ImGui::Text("Player direction: x:%f, y:%f, z:%f", lookDirection.x, lookDirection.y, lookDirection.z);
+
+    ImGui::Spacing();
+
+    ImGui::Text("Selected Block: %s", BlockName::blockTypeToName(blockToPlace));
+
+    ImGui::Spacing();
+
+    BlockName::NameArray names = BlockName::getBlockNames();
+    int32_t selected = BlockName::blockTypeToIndex(blockToPlace);
+    if (ImGui::ListBox("Select a block to place: ", &selected, &names[0], names.size())) {
+      blockToPlace = BlockName::BlockNames[selected].first;
+    }
+  }
+  ImGui::End();
+}
+
 void Player::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {
-  if (action == 2)
+  if (action == 2) {
     return;  // don't respond to repeatedly pressed buttons
+  }
 
   if (key == 87 || key == 265) {  // forward
     directions[0].isMoving = action == 1;
@@ -126,7 +148,6 @@ glm::vec3 Player::getPosition() {
 glm::vec3 Player::getLookDirection() {
   return lookDirection;
 }
-
 void Player::resetMousePosition() {
   resetMouse = true;
 }

@@ -20,7 +20,7 @@ void BlockVertex::setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, Blo
     case BlockData::BlockType::stone:
       uvCoords += glm::vec2(1, 0);
       break;
-    case BlockData::BlockType::cobble_stone:
+    case BlockData::BlockType::cobblestone:
       uvCoords += glm::vec2(0, 1);
       break;
     case BlockData::BlockType::glass:

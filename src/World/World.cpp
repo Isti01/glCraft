@@ -2,7 +2,7 @@
 
 #include "../Util/Math.h"
 
-World::World(int seed) : generator(seed) {
+World::World(int32_t seed) : generator(seed) {
   defaultShader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
   textureAtlas = AssetManager::instance().loadTexture("assets/textures/default_texture.png");
   defaultShader->setTexture("atlas", textureAtlas, 0);
