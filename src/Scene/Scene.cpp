@@ -80,23 +80,38 @@ void Scene::renderGui() {
     ImGui::Text("Player direction: x:%f, y:%f, z:%f", lookDirection.x, lookDirection.y, lookDirection.z);
 
     ImGui::Spacing();
+    ImGui::Spacing();
 
     BlockData::BlockType blockToPlace = player.getBlockToPlace();
     ImGui::Text("Selected Block: %s", BlockName::blockTypeToName(blockToPlace));
 
     ImGui::Spacing();
+    ImGui::Spacing();
 
     BlockName::NameArray names = BlockName::getBlockNames();
     int32_t selected = BlockName::blockTypeToIndex(blockToPlace);
-    if (ImGui::ListBox("Select a block to place: ", &selected, &names[0], names.size())) {
+    if (ImGui::ListBox("Select a block to place", &selected, &names[0], names.size())) {
       player.setBlockToPlace(BlockName::BlockNames[selected].first);
     }
 
+    ImGui::Spacing();
     ImGui::Spacing();
 
     float speed = skybox.getRotationSpeed();
     if (ImGui::SliderFloat("Night/Day cycle speed", &speed, 0.1, 10)) {
       skybox.setRotationSpeed(speed);
+    }
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    static char textureAtlasPath[256] = "";
+    ImGui::InputText("Custom texture atlas path", textureAtlasPath, 256);
+    if (ImGui::Button("Load texture atlas")) {
+      Ref<const Texture> atlas = AssetManager::instance().loadTexture(textureAtlasPath);
+      if (atlas != nullptr) {
+        world->setTextureAtlas(atlas);
+      }
     }
   }
   ImGui::End();

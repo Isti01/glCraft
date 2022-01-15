@@ -38,4 +38,5 @@ public:
   void render(glm::vec3 playerPos, glm::mat4 transform);
 
   static bool isValidBlockPosition(glm::ivec3 position);
+  void setTextureAtlas(const Ref<const Texture>& texture);
 };
