@@ -23,8 +23,11 @@ class Skybox {
   };
   Ref<const ShaderProgram> shader;
 
+  float rotation = 0;
+  float rotationSpeed = 1;
+
 public:
   Skybox();
-  void update(const glm::mat4& projection, const glm::mat4& cameraView);
+  void update(const glm::mat4& projection, const glm::mat4& cameraView, float deltaTime);
   void render();
 };

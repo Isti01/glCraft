@@ -31,7 +31,7 @@ void Scene::init() {
 void Scene::update(float deltaTime) {
   player.update(deltaTime);
   world->update(player.getPosition());
-  skybox.update(projectionMatrix, player.getViewMatrix());
+  skybox.update(projectionMatrix, player.getViewMatrix(), deltaTime);
 }
 
 void Scene::toggleMenu() {
