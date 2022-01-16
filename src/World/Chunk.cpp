@@ -3,15 +3,15 @@
 #include "../AssetManager/AssetManager.h"
 #include "../Util/Math.h"
 
-Chunk::Chunk(const glm::ivec2& worldPosition) : worldPosition(worldPosition) {}
+Chunk::Chunk(const glm::ivec2& worldPosition) : worldPosition(worldPosition) {
+  shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
+}
 
 void Chunk::render(const glm::mat4& transform) {
   if (!mesh || renderState != RenderState::ready) {
     mesh = createMesh();
     renderState = RenderState::ready;
   }
-
-  const auto& shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
 
   shader->bind();
   shader->setMat4("MVP", transform * glm::translate(glm::vec3(worldPosition.x, 0, worldPosition.y)));

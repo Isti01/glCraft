@@ -2,6 +2,7 @@
 
 #include "../Rendering/BlockMesh.h"
 #include "../Rendering/BlockVertex.h"
+#include "../Rendering/ShaderProgram.h"
 #include "../Rendering/VertexArray.h"
 #include "../glCraft.h"
 #include "BlockData.h"
@@ -22,6 +23,7 @@ private:
   };
   int32_t vertexCount = 0;
   Ref<VertexArray> mesh = nullptr;
+  Ref<const ShaderProgram> shader;
 
   RenderState renderState = RenderState::initial;
   glm::ivec2 worldPosition;
