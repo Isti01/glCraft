@@ -10,6 +10,7 @@
 #include "Crosshair.h"
 #include "Player.h"
 #include "Skybox.h"
+#include "BlockOutline.h"
 
 class Scene {
   bool initialized = false;
@@ -17,15 +18,13 @@ class Scene {
 
   Ref<World> world = std::make_shared<World>();
 
-  Ref<const ShaderProgram> outlinedBlockShader;
-  Ref<VertexArray> outlinedBlockVertexArray;
-
   Skybox skybox;
 
   Player player{world};
   glm::mat4 projectionMatrix = glm::mat4(1);
 
   Crosshair crosshair;
+  BlockOutline outline;
 
   void toggleMenu();
   void updateMouse();

@@ -13,20 +13,6 @@ void Scene::init() {
   initialized = true;
 
   updateMouse();
-
-  outlinedBlockShader = AssetManager::instance().loadShaderProgram("assets/shaders/outline");
-
-  std::vector<BlockVertex> vertices;
-
-  vertices.resize(6 * 6);
-  int vertexCount = 0;
-  for (const auto& face: BlockMesh::vertices) {
-    for (const auto& vertex: face) {
-      vertices.at(vertexCount) = vertex;
-      vertexCount++;
-    }
-  }
-  outlinedBlockVertexArray = std::make_shared<VertexArray>(vertices, BlockVertex::vertexAttributes());
 }
 
 void Scene::update(float deltaTime) {
@@ -55,14 +41,8 @@ void Scene::render() {
   glm::mat4 mvp = projectionMatrix * player.getViewMatrix();
   world->render(player.getPosition(), mvp);
 
-
-  // render the block outline
   if (Ray ray{player.getPosition(), player.getLookDirection(), *world, Player::reach}) {
-    auto blockHit = ray.getHitTarget().position;
-
-    outlinedBlockShader->setMat4("MVP", mvp * glm::translate(blockHit));
-    outlinedBlockShader->bind();
-    outlinedBlockVertexArray->renderVertexStream();
+    outline.render(mvp * glm::translate(ray.getHitTarget().position));
   }
 
   crosshair.render();
