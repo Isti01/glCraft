@@ -1,6 +1,7 @@
 #include "BlockVertex.h"
 
-BlockVertex::BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, bool animated) : flags(animated ? 1 : 0) {
+BlockVertex::BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, bool animated)
+    : flags(animated ? 0b1u : 0b0u) {
   offset(position.x, position.y, position.z);
   offsetUv(uv.x, uv.y);
 }

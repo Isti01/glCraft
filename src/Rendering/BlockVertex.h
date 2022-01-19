@@ -4,10 +4,6 @@
 #include "../glCraft.h"
 #include "VertexArray.h"
 
-/**
- * This is how this struct works:
- * One vertex takes up 32 bits of space,
- */
 class BlockVertex {
   uint8_t yPosition = 0;
   uint8_t xzPosition = 0;
@@ -20,6 +16,11 @@ public:
   BlockVertex() = default;
   BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, bool animated = false);
 
+  /**
+   * This is maybe one of the worst hacks in my life ever, but this is how the offset method works:
+   * All the vertex coordinates are between 0 and 256, the problem is that the number 256 does not fit
+   * into a 8 bit integer. The easiest solution was to set flags when an overflow happens
+   */
   void offset(uint32_t x, uint32_t y, uint32_t z) {
     if (yPosition + y > 0xffu) {
       setFlag(0b0010u);
