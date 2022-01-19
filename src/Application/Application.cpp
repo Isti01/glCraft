@@ -2,7 +2,7 @@
 
 Application::Application() : gui(Gui::instance()) {}
 
-int Application::run() {
+int32_t Application::run() {
   if (!scene || !window.isValid()) {
     return -1;
   }

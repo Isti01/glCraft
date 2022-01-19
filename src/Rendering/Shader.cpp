@@ -22,7 +22,7 @@ Shader::Shader(const std::string &name) {
   if (!success) {
     char infoLog[2048];
     glGetShaderInfoLog(id, sizeof(infoLog) / sizeof(infoLog[0]), nullptr, infoLog);
-    std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    std::cerr << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
 
     id = 0;
   }

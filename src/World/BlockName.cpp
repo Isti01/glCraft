@@ -9,7 +9,7 @@ const char* BlockName::blockTypeToName(BlockData::BlockType type) {
   return "unknown";
 }
 int32_t BlockName::blockTypeToIndex(BlockData::BlockType type) {
-  for (int i = 0; i < BlockNames.size(); ++i) {
+  for (int32_t i = 0; i < BlockNames.size(); ++i) {
     if (type == BlockNames[i].first) {
       return i;
     }

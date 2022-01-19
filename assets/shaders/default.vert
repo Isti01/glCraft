@@ -4,7 +4,7 @@ layout(location = 0) in uint vertexData;
 
 uniform mat4 MVP = mat4(1);
 
-out uint animated;
+flat out uint animated;
 out vec3 vert_pos;
 out vec2 vert_uv;
 
@@ -13,7 +13,7 @@ uint extractByte(uint data, uint offset){
 }
 
 uint useValueIfFlag(uint originalValue, uint flagValue, uint flags, uint offset){
-    uint flag = (flags >> offset) & 1u;
+    uint flag = (flags >> offset) & 0x1u;
     return originalValue * (1 - flag) + flagValue * flag;
 }
 
@@ -22,7 +22,7 @@ void main() {
     uint uvCoords = extractByte(vertexData, 16);
     uint flags = extractByte(vertexData, 24);
 
-    animated = useValueIfFlag(0, 1, flags, 0);
+    animated = flags & 1u;
 
     uint yPos = useValueIfFlag(extractByte(vertexData, 0), 256, flags, 1);
     uint xPos = useValueIfFlag(xzPos & 0x0fu, 16, flags, 2);

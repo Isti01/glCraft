@@ -3,7 +3,7 @@
 #include "../Util/Math.h"
 
 World::World(int32_t seed) : generator(seed) {
-  defaultShader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
+  shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
   setTextureAtlas(AssetManager::instance().loadTexture("assets/textures/default_texture.png"));
 }
 
@@ -24,7 +24,9 @@ Ref<Chunk> World::generateOrLoadChunk(glm::ivec2 position) {
   return chunk;
 }
 
-void World::update(const glm::vec3& playerPosition) {
+void World::update(const glm::vec3& playerPosition, float deltaTime) {
+  textureAnimation += deltaTime * TextureAnimationSpeed;
+
   glm::vec2 playerChunkPosition = getChunkIndex(playerPosition);
 
   auto chunksCopy = chunks;
@@ -54,7 +56,30 @@ void World::update(const glm::vec3& playerPosition) {
 void World::render(glm::vec3 playerPos, glm::mat4 transform) {
   // todo sort the chunks before rendering
 
+  glm::vec2 animation{0};
+  int32_t animationProgress = static_cast<int32_t>(textureAnimation) % 5;
+
+  switch (animationProgress) {
+    case 1:
+      animation = glm::vec2(1, 0);
+      break;
+    case 2:
+      animation = glm::vec2(2, 0);
+      break;
+    case 3:
+      animation = glm::vec2(1, 1);
+      break;
+    case 4:
+      animation = glm::vec2(2, 1);
+      break;
+  }
+
+  shader->setVec2("textureAnimation", animation);
+  glEnable(GL_BLEND);
+
   for (auto& [position, chunk]: chunks) { chunk->render(transform, *this); }
+
+  glDisable(GL_BLEND);
 }
 
 BlockData World::getBlockAt(glm::ivec3 position) {
@@ -99,7 +124,7 @@ Ref<Chunk> World::getChunk(glm::ivec2 position) {
 
 void World::setTextureAtlas(const Ref<const Texture>& texture) {
   textureAtlas = texture;
-  defaultShader->setTexture("atlas", textureAtlas, 0);
+  shader->setTexture("atlas", textureAtlas, 0);
 }
 
 std::optional<BlockData> World::getBlockAtIfLoaded(glm::ivec3 position) const {

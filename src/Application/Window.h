@@ -4,8 +4,8 @@
 
 class Window {
   const char *name = "glCraft";
-  int windowWidth = 800;
-  int windowHeight = 600;
+  int32_t windowWidth = 800;
+  int32_t windowHeight = 600;
   GLFWwindow *window = nullptr;
   glm::vec4 clearColor = {0, 0, 0, 1};
 
@@ -20,7 +20,7 @@ class Window {
   static void onCursorPosition(GLFWwindow *window, double x, double y);
   static void onRefreshWindow(GLFWwindow *window);
 
-  static void onWindowError(int errorCode, const char *description);
+  static void onWindowError(int32_t errorCode, const char *description);
   static void onOpenGlMessage(GLenum source,
                               GLenum type,
                               GLuint id,
@@ -34,11 +34,11 @@ public:
   Window(Window &) = delete;
   Window(Window &&) = delete;
 
-  [[nodiscard]] inline int getWindowWidth() const { return windowWidth; }
-  void setWindowWidth(int width) { windowWidth = width; }
+  [[nodiscard]] inline int32_t getWindowWidth() const { return windowWidth; }
+  void setWindowWidth(int32_t width) { windowWidth = width; }
 
-  [[nodiscard]] inline int getWindowHeight() const { return windowHeight; }
-  void setWindowHeight(int height) { windowHeight = height; }
+  [[nodiscard]] inline int32_t getWindowHeight() const { return windowHeight; }
+  void setWindowHeight(int32_t height) { windowHeight = height; }
 
   [[nodiscard]] inline GLFWwindow *getContext() { return window; };
 

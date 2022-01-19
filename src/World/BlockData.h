@@ -9,6 +9,8 @@ struct BlockData {
   };
 
   enum class BlockType {
+    bedrock,
+    planks,
     grass,
     dirt,
     sand,
@@ -17,6 +19,13 @@ struct BlockData {
     glass,
     oak_wood,
     oak_leaves,
+    water,
+    lava,
+    iron,
+    diamond,
+    gold,
+    obsidian,
+    sponge,
     air
   };
 
@@ -26,6 +35,8 @@ struct BlockData {
   static BlockClass typeToClass(BlockType type) {
     if (type == BlockType::air) {
       return BlockClass::air;
+    } else if (type == BlockType::water) {
+      return BlockClass::semiTransparent;
     } else if (type == BlockType::oak_leaves || type == BlockType::glass) {
       return BlockClass::transparent;
     }

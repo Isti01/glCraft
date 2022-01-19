@@ -98,9 +98,9 @@ class IndexBuffer : public Buffer {
 public:
   template<typename T>
   explicit IndexBuffer(T _) : Buffer(GL_ELEMENT_ARRAY_BUFFER) {
-    static_assert(std::is_same<T, unsigned char>::value || std::is_same<T, unsigned short>::value ||
-                     std::is_same<T, unsigned int>::value,
-                  "The given type must be either unsigned char, unsigned short or unsigned int");
+    static_assert(
+       std::is_same<T, uint8_t>::value || std::is_same<T, uint16_t>::value || std::is_same<T, uint32_t>::value,
+       "The given type must be either unsigned char, unsigned short or unsigned int");
     type = getSizeType<T>();
   }
 

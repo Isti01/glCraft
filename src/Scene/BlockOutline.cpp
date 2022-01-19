@@ -10,7 +10,7 @@ BlockOutline::BlockOutline() {
   std::vector<BlockVertex> vertices;
 
   vertices.resize(6 * 6);
-  int vertexCount = 0;
+  int32_t vertexCount = 0;
   for (const auto& face: BlockMesh::vertices) {
     for (const auto& vertex: face) {
       vertices.at(vertexCount) = vertex;

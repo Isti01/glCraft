@@ -40,5 +40,5 @@ public:
   int32_t getWindowWidth() { return window.getWindowWidth(); }
   int32_t getWindowHeight() { return window.getWindowHeight(); }
   Window &getWindow() { return window; };
-  int run();
+  int32_t run();
 };

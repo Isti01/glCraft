@@ -17,10 +17,12 @@ public:
 class World {
   std::unordered_map<glm::ivec2, Ref<Chunk>, HashVec2> chunks;
   Ref<const Texture> textureAtlas;
-  Ref<const ShaderProgram> defaultShader;
+  Ref<const ShaderProgram> shader;
   WorldGenerator generator;
 
   int32_t viewDistance = 10;
+  float textureAnimation = 0;
+  static constexpr float TextureAnimationSpeed = 2;
 
   Ref<Chunk> generateOrLoadChunk(glm::ivec2 position);
 
@@ -36,7 +38,7 @@ public:
   [[nodiscard]] bool isChunkLoaded(glm::ivec2 position) const;
   bool placeBlock(BlockData block, glm::ivec3 position);
 
-  void update(const glm::vec3& playerPosition);
+  void update(const glm::vec3& playerPosition, float deltaTime);
   void render(glm::vec3 playerPos, glm::mat4 transform);
 
   static bool isValidBlockPosition(glm::ivec3 position);

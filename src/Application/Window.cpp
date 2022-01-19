@@ -28,7 +28,7 @@ Window::Window() {
   setupCallbacks();
 }
 
-void Window::onWindowError(int errorCode, const char *description) {
+void Window::onWindowError(int32_t errorCode, const char *description) {
   std::cerr << "GLFW: **ERROR** error=" << errorCode << " description=" << description << std::endl;
 }
 

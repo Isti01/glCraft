@@ -1,7 +1,6 @@
 #include "BlockVertex.h"
 
-BlockVertex::BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, bool animated)
-    : flags(animated ? 0b1u : 0b0u) {
+BlockVertex::BlockVertex(const glm::ivec3& position, const glm::ivec2& uv) {
   offset(position.x, position.y, position.z);
   offsetUv(uv.x, uv.y);
 }
@@ -9,6 +8,35 @@ BlockVertex::BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, bool 
 
 void BlockVertex::setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, BlockData::BlockType type) {
   switch (type) {
+    case BlockData::BlockType::bedrock:
+      offsetUv(1, 1);
+      break;
+    case BlockData::BlockType::planks:
+      offsetUv(4, 0);
+      break;
+    case BlockData::BlockType::water:
+      setAnimated();
+      offsetUv(13, 12);
+      break;
+    case BlockData::BlockType::lava:
+      setAnimated();
+      offsetUv(13, 14);
+      break;
+    case BlockData::BlockType::iron:
+      offsetUv(6, 1);
+      break;
+    case BlockData::BlockType::diamond:
+      offsetUv(8, 1);
+      break;
+    case BlockData::BlockType::gold:
+      offsetUv(7, 1);
+      break;
+    case BlockData::BlockType::obsidian:
+      offsetUv(5, 2);
+      break;
+    case BlockData::BlockType::sponge:
+      offsetUv(0, 3);
+      break;
     case BlockData::BlockType::grass:
       if (offsetY == 1) {
         offsetUv(0, 0);

@@ -14,7 +14,7 @@ class BlockVertex {
 
 public:
   BlockVertex() = default;
-  BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, bool animated = false);
+  BlockVertex(const glm::ivec3& position, const glm::ivec2& uv);
 
   /**
    * This is maybe one of the worst hacks in my life ever, but this is how the offset method works:
@@ -39,7 +39,7 @@ public:
   }
 
   void setFlag(uint8_t flag) { flags |= flag; }
-
+  void setAnimated() { setFlag(1); }
   void setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, BlockData::BlockType type);
 
   static std::vector<VertexAttribute> vertexAttributes() { return {VertexAttribute(1, VertexAttribute::UInt, 0)}; }
