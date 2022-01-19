@@ -76,7 +76,7 @@ void World::render(glm::vec3 playerPos, glm::mat4 transform) {
 
   shader->setVec2("textureAnimation", animation);
   glEnable(GL_BLEND);
-
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   for (auto& [position, chunk]: chunks) { chunk->render(transform, *this); }
 
   glDisable(GL_BLEND);

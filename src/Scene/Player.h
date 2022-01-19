@@ -12,7 +12,7 @@ class Player {
   Ref<World> world;
   BlockData::BlockType blockToPlace = BlockData::BlockType::grass;
 
-  glm::vec3 position = {0, 128, 0};
+  glm::vec3 position = {14, 100, 17};
   glm::vec3 up = {0, 1, 0};
 
   float yaw = 0;

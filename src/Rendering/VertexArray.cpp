@@ -27,16 +27,16 @@ VertexArray::~VertexArray() {
 }
 
 void VertexArray::renderVertexStream(int32_t type) {
-  renderVertexSubStream(vertexBuffer->getSize(), type);
+  renderVertexSubStream(vertexBuffer->getSize(), 0, type);
 }
 
-void VertexArray::renderVertexSubStream(int32_t size = -1, int32_t type) {
+void VertexArray::renderVertexSubStream(int32_t size, int32_t startOffset, int32_t type) {
   if (!isValid())
     return;
   assert(indexBuffer == nullptr);
 
   bind();
-  glDrawArrays(type, 0, size);
+  glDrawArrays(type, startOffset, size);
   unbind();
 }
 

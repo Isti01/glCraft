@@ -23,7 +23,8 @@ private:
     ready,
     dirty
   };
-  int32_t vertexCount = 0;
+  int32_t solidVertexCount = 0;
+  int32_t semiTransparentVertexCount = 0;
   Ref<VertexArray> mesh = nullptr;
   Ref<const ShaderProgram> shader;
 
