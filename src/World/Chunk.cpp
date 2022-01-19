@@ -48,14 +48,16 @@ void Chunk::createMesh(const World& world) {
           int32_t ny = y + oy;
           int32_t nz = z + oz;
 
-          if (isInBounds(nx, ny, nz)) {
-            if (blockClass == data[nx][ny][nz].blockClass) {
-              continue;
-            }
-          } else if (std::optional<BlockData> block =
-                        world.getBlockAtIfLoaded(glm::ivec3(nx + worldPosition.x, ny, nz + worldPosition.y))) {
-            if (blockClass == block->blockClass) {
-              continue;
+          if (ny >= 0 && ny < VerticalSize) {
+            if (nx >= 0 && nx < HorizontalSize && nz >= 0 && nz < HorizontalSize) {
+              if (blockClass == data[nx][ny][nz].blockClass) {
+                continue;
+              }
+            } else if (std::optional<BlockData> block =
+                          world.getBlockAtIfLoaded(glm::ivec3(nx + worldPosition.x, ny, nz + worldPosition.y))) {
+              if (blockClass == block->blockClass) {
+                continue;
+              }
             }
           }
 

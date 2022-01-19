@@ -99,7 +99,7 @@ void Scene::renderGui() {
 
 void Scene::onResized(int32_t width, int32_t height) {
   float aspectRatio = width == 0 || height == 0 ? 0 : static_cast<float>(width) / static_cast<float>(height);
-  projectionMatrix = glm::perspective<float>(glm::half_pi<float>(), aspectRatio, .1f, 250.0f);
+  projectionMatrix = glm::perspective<float>(glm::half_pi<float>(), aspectRatio, .1f, 350.0f);
   crosshair.update(aspectRatio);
 }
 

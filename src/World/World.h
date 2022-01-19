@@ -20,7 +20,7 @@ class World {
   Ref<const ShaderProgram> defaultShader;
   WorldGenerator generator;
 
-  int32_t viewDistance = 3;
+  int32_t viewDistance = 10;
 
   Ref<Chunk> generateOrLoadChunk(glm::ivec2 position);
 

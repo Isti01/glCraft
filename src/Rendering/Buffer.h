@@ -56,7 +56,7 @@ public:
                             int32_t bufferOffset = 0) {
     assert(isValid() && "Cannot write data to an invalid buffer");
     assert(dataOffset + dataSize <= data.size() && "Data is out of bounds");
-    assert(dataSize < size && "Buffer is out of bounds");
+    assert(dataSize <= size && "Buffer is out of bounds");
 
     bind();
     size = dataSize;
