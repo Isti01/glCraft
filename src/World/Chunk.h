@@ -43,6 +43,7 @@ public:
 
   void setDirty() { renderState = RenderState::dirty; };
   void placeBlock(BlockData block, const glm::ivec3& position);
+  void placeBlock(BlockData block, int32_t x, int32_t y, int32_t z);
   [[nodiscard]] BlockData getBlockAt(const glm::ivec3& position) const;
 
   static bool isValidPosition(glm::ivec3 position);
