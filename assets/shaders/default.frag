@@ -1,5 +1,6 @@
 #version 450 core
 
+in uint animated;
 in vec3 vert_pos;
 in vec2 vert_uv;
 out vec4 color;

@@ -1,40 +1,46 @@
 #include "BlockVertex.h"
 
+BlockVertex::BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, bool animated) : flags(animated ? 1 : 0) {
+  offset(position.x, position.y, position.z);
+  offsetUv(uv.x, uv.y);
+}
+
+
 void BlockVertex::setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, BlockData::BlockType type) {
   switch (type) {
     case BlockData::BlockType::grass:
       if (offsetY == 1) {
-        uvCoords += glm::vec2(0, 0);
+        offsetUv(0, 0);
       } else if (offsetY == -1) {
-        uvCoords += glm::vec2(2, 0);
+        offsetUv(2, 0);
       } else {
-        uvCoords += glm::vec2(3, 0);
+        offsetUv(3, 0);
       }
       break;
     case BlockData::BlockType::dirt:
-      uvCoords += glm::vec2(2, 0);
+      offsetUv(2, 0);
       break;
     case BlockData::BlockType::sand:
-      uvCoords += glm::vec2(2, 1);
+      offsetUv(2, 1);
       break;
     case BlockData::BlockType::stone:
-      uvCoords += glm::vec2(1, 0);
+      offsetUv(1, 0);
       break;
     case BlockData::BlockType::cobblestone:
-      uvCoords += glm::vec2(0, 1);
+      offsetUv(0, 1);
       break;
     case BlockData::BlockType::glass:
-      uvCoords += glm::vec2(1, 3);
+      offsetUv(1, 3);
       break;
     case BlockData::BlockType::oak_wood:
       if (offsetY == 1 || offsetY == -1) {
-        uvCoords += glm::vec2(5, 1);
+        offsetUv(5, 1);
       } else {
-        uvCoords += glm::vec2(4, 1);
+        offsetUv(4, 1);
       }
       break;
     case BlockData::BlockType::oak_leaves:
-      uvCoords += glm::vec2(4, 3);
+      offsetUv(4, 3);
       break;
     case BlockData::BlockType::air:
       assert(false);

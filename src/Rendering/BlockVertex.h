@@ -4,21 +4,44 @@
 #include "../glCraft.h"
 #include "VertexArray.h"
 
-struct BlockVertex {
-  glm::vec3 position;
-  glm::vec2 uvCoords;
-  //  uint8_t yPosition;
-  //  uint8_t xzPosition;
-  //  uint8_t uvCoordsAndTexture; // todo one vertex should take up less than 32 bits of space
+/**
+ * This is how this struct works:
+ * One vertex takes up 32 bits of space,
+ */
+class BlockVertex {
+  uint8_t yPosition = 0;
+  uint8_t xzPosition = 0;
+  uint8_t uvCoords = 0;
+  uint8_t flags = 0;
 
-  void offset(int32_t x, int32_t y, int32_t z) { position += glm::vec3(x, y, z); }
+  void offsetUv(uint8_t x, uint8_t y) { uvCoords += x | (y << 4); };
+
+public:
+  BlockVertex() = default;
+  BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, bool animated = false);
+
+  void offset(uint32_t x, uint32_t y, uint32_t z) {
+    if (yPosition + y > 0xffu) {
+      setFlag(0b0010u);
+      y = 0;
+    }
+    if ((xzPosition & 0x0fu) + x > 0xfu) {
+      setFlag(0b0100u);
+      x = 0;
+    }
+    if (((xzPosition & 0xf0u) >> 4) + z > 0xfu) {
+      setFlag(0b1000u);
+      z = 0;
+    }
+    yPosition += y;
+    xzPosition += x | (z << 4);
+  }
+
+  void setFlag(uint8_t flag) { flags |= flag; }
 
   void setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, BlockData::BlockType type);
 
-  static std::vector<VertexAttribute> vertexAttributes() {
-    return {VertexAttribute(3, VertexAttribute::Float, 0),
-            VertexAttribute(2, VertexAttribute::Float, sizeof(glm::vec3))};
-  }
+  static std::vector<VertexAttribute> vertexAttributes() { return {VertexAttribute(1, VertexAttribute::UInt, 0)}; }
 };
 
-//static_assert(sizeof(CubeVertex) == sizeof(uint8_t) * 3, "The CubeVertex struct must not have padding");
+static_assert(sizeof(BlockVertex) == sizeof(uint32_t), "The BlockVertex struct must not have padding");
