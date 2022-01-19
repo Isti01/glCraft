@@ -70,7 +70,17 @@ bool World::placeBlock(BlockData block, glm::ivec3 position) {
     return false;
   }
 
-  getChunk(getChunkIndex(position))->placeBlock(block, Chunk::toChunkCoordinates(position));
+  glm::ivec3 positionInChunk = Chunk::toChunkCoordinates(position);
+  getChunk(getChunkIndex(position))->placeBlock(block, positionInChunk);
+
+  const std::array<glm::ivec3, 4> blocksAround = {{{0, 0, 1}, {1, 0, 0}, {0, 0, -1}, {-1, 0, 0}}};
+  for (const glm::ivec3& offset: blocksAround) {
+    glm::ivec3 neighbor = offset + positionInChunk;
+    if (!Chunk::isInBounds(neighbor.x, neighbor.y, neighbor.z)) {
+      getChunk(getChunkIndex(position + offset))->setDirty();
+    }
+  }
+
   return true;
 }
 glm::ivec2 World::getChunkIndex(glm::ivec3 position) {

@@ -83,37 +83,7 @@ void Chunk::createMesh(const World& world) {
   }
 }
 
-bool Chunk::isInBounds(int32_t x, int32_t y, int32_t z) {
-  return x >= 0 && x < HorizontalSize && y >= 0 && y < VerticalSize && z >= 0 && z < HorizontalSize;
-}
-
-void Chunk::placeBlock(BlockData block, const glm::ivec3& position) {
-  assert(isInBounds(position.x, position.y, position.z));
-
-  renderState = RenderState::dirty;
-  data[position.x][position.y][position.z] = block;
-}
-
-void Chunk::placeBlock(BlockData block, int32_t x, int32_t y, int32_t z) {
-  assert(isInBounds(x, y, z));
-
-  renderState = RenderState::dirty;
-  data[x][y][z] = block;
-}
-
-BlockData Chunk::getBlockAt(const glm::ivec3& position) const {
-  return data[position.x][position.y][position.z];
-}
-
-bool Chunk::isValidPosition(glm::ivec3 position) {
-  return position.y >= 0 && position.y < VerticalSize;
-}
-
 glm::ivec3 Chunk::toChunkCoordinates(const glm::ivec3& globalPosition) {
   return {Math::positiveMod(globalPosition.x, HorizontalSize), globalPosition.y,
           Math::positiveMod(globalPosition.z, HorizontalSize)};
-}
-
-glm::ivec2 Chunk::getPosition() {
-  return worldPosition;
 }
