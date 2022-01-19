@@ -1,6 +1,13 @@
 #pragma once
 
 struct BlockData {
+  enum class BlockClass {
+    air,
+    solid,
+    semiTransparent,
+    transparent
+  };
+
   enum class BlockType {
     grass,
     dirt,
@@ -12,8 +19,18 @@ struct BlockData {
     oak_leaves,
     air
   };
-  BlockType type = BlockType::air;
 
-  static bool isTransparent(BlockType type) { return type == BlockType::glass; }
-  BlockData(BlockData::BlockType type = BlockType::air) : type(type){};
+  BlockType type;
+  BlockClass blockClass;
+
+  static BlockClass typeToClass(BlockType type) {
+    if (type == BlockType::air) {
+      return BlockClass::air;
+    } else if (type == BlockType::oak_leaves || type == BlockType::glass) {
+      return BlockClass::transparent;
+    }
+
+    return BlockClass::solid;
+  }
+  BlockData(BlockData::BlockType type = BlockType::air) : type(type), blockClass(typeToClass(type)){};
 };

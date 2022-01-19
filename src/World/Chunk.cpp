@@ -2,14 +2,15 @@
 
 #include "../AssetManager/AssetManager.h"
 #include "../Util/Math.h"
+#include "World.h"
 
 Chunk::Chunk(const glm::ivec2& worldPosition) : worldPosition(worldPosition) {
   shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
 }
 
-void Chunk::render(const glm::mat4& transform) {
+void Chunk::render(const glm::mat4& transform, const World& world) {
   if (!mesh || renderState != RenderState::ready) {
-    mesh = createMesh();
+    createMesh(world);
     renderState = RenderState::ready;
   }
 
@@ -19,8 +20,8 @@ void Chunk::render(const glm::mat4& transform) {
   mesh->renderVertexSubStream(vertexCount);
 }
 
-Ref<VertexArray> Chunk::createMesh() {
-  static Ref<std::vector<BlockVertex>> vertices = std::make_shared<std::vector<BlockVertex>>(VertexCount);
+void Chunk::createMesh(const World& world) {
+  static Ref<std::vector<BlockVertex>> vertices = std::make_shared<std::vector<BlockVertex>>(MaxVertexCount);
 
   vertexCount = 0;
 
@@ -37,19 +38,25 @@ Ref<VertexArray> Chunk::createMesh() {
   for (int32_t x = 0; x < HorizontalSize; x++) {
     for (int32_t y = 0; y < VerticalSize; y++) {
       for (int32_t z = 0; z < HorizontalSize; z++) {
-        const BlockData::BlockType type = data[x][y][z].type;
-        const bool transparent = BlockData::isTransparent(type);
-        if (type == BlockData::BlockType::air) {
+        const auto& [type, blockClass] = data[x][y][z];
+        if (blockClass == BlockData::BlockClass::air) {
           continue;
         }
 
         for (const auto& [ox, oy, oz]: offsetsToCheck) {
-          // todo fix the mesh generation between two loaded chunks
-          // todo fix the mesh generation issue between different transparency types
+          int32_t nx = x + ox;
+          int32_t ny = y + oy;
+          int32_t nz = z + oz;
 
-          if (isInBounds(x + ox, y + oy, z + oz) && data[x + ox][y + oy][z + oz].type != BlockData::BlockType::air &&
-              transparent == BlockData::isTransparent(data[x + ox][y + oy][z + oz].type)) {
-            continue;
+          if (isInBounds(nx, ny, nz)) {
+            if (blockClass == data[nx][ny][nz].blockClass) {
+              continue;
+            }
+          } else if (std::optional<BlockData> block =
+                        world.getBlockAtIfLoaded(glm::ivec3(nx + worldPosition.x, ny, nz + worldPosition.y))) {
+            if (blockClass == block->blockClass) {
+              continue;
+            }
           }
 
           for (const auto& vertex: BlockMesh::getVerticesFromDirection(ox, oy, oz)) {
@@ -63,11 +70,14 @@ Ref<VertexArray> Chunk::createMesh() {
     }
   }
 
-  if (mesh) {
-    mesh->getVertexBuffer()->bufferDynamicVertexSubData(*vertices);
-    return mesh;
+  if (mesh && mesh->getVertexBuffer()->getSize() >= vertexCount) {
+    mesh->getVertexBuffer()->bufferDynamicSubData(*vertices, vertexCount);
   } else {
-    return std::make_shared<VertexArray>(*vertices, BlockVertex::vertexAttributes());
+    mesh = std::make_shared<VertexArray>();
+    mesh->addVertexAttributes(BlockVertex::vertexAttributes(), sizeof(BlockVertex));
+    int32_t dataSize = glm::min(vertexCount + 1000, MaxVertexCount);
+
+    mesh->getVertexBuffer()->bufferDynamicData(*vertices, dataSize);
   }
 }
 

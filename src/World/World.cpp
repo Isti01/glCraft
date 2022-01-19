@@ -11,7 +11,17 @@ Ref<Chunk> World::generateOrLoadChunk(glm::ivec2 position) {
   Ref<Chunk> chunk = std::make_shared<Chunk>(position);
   generator.populateChunk(chunk);
 
-  return chunk;  // todo make the chunks persistent
+  std::array<glm::ivec2, 4> chunksAround = {{{0, 16}, {16, 0}, {0, -16}, {-16, 0}}};
+  for (const glm::ivec2& offset: chunksAround) {
+    glm::ivec2 neighborPosition = position + offset;
+
+    if (!isChunkLoaded(neighborPosition))
+      continue;
+
+    chunks[neighborPosition]->setDirty();
+  }
+
+  return chunk;
 }
 
 void World::update(const glm::vec3& playerPosition) {
@@ -29,7 +39,7 @@ void World::update(const glm::vec3& playerPosition) {
   for (int32_t i = -viewDistance; i < viewDistance; i++) {
     for (int32_t j = -viewDistance; j < viewDistance; j++) {
       glm::ivec2 position = glm::ivec2(i * 16, j * 16) + glm::ivec2(playerChunkPosition);
-      if (chunks.contains(position)) {
+      if (isChunkLoaded(position)) {
         continue;
       }
 
@@ -44,7 +54,7 @@ void World::update(const glm::vec3& playerPosition) {
 void World::render(glm::vec3 playerPos, glm::mat4 transform) {
   // todo sort the chunks before rendering
 
-  for (auto& [position, chunk]: chunks) { chunk->render(transform); }
+  for (auto& [position, chunk]: chunks) { chunk->render(transform, *this); }
 }
 
 BlockData World::getBlockAt(glm::ivec3 position) {
@@ -70,7 +80,7 @@ glm::ivec2 World::getChunkIndex(glm::ivec3 position) {
 
 
 Ref<Chunk> World::getChunk(glm::ivec2 position) {
-  if (!chunks.contains(position)) {
+  if (!isChunkLoaded(position)) {
     addChunk(position, generateOrLoadChunk(position));
   }
 
@@ -80,4 +90,17 @@ Ref<Chunk> World::getChunk(glm::ivec2 position) {
 void World::setTextureAtlas(const Ref<const Texture>& texture) {
   textureAtlas = texture;
   defaultShader->setTexture("atlas", textureAtlas, 0);
+}
+
+std::optional<BlockData> World::getBlockAtIfLoaded(glm::ivec3 position) const {
+  glm::ivec2 index = getChunkIndex(position);
+  if (!isChunkLoaded(index)) {
+    return {};
+  }
+
+  return chunks.at(index)->getBlockAt(Chunk::toChunkCoordinates(position));
+}
+
+bool World::isChunkLoaded(glm::ivec2 position) const {
+  return chunks.contains(position);
 }

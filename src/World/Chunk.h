@@ -7,13 +7,15 @@
 #include "../glCraft.h"
 #include "BlockData.h"
 
+class World;
+
 class Chunk {
 public:
-  static const int32_t HorizontalSize = 16;
-  static const int32_t VerticalSize = 256;
+  constexpr static int32_t HorizontalSize = 16;
+  constexpr static int32_t VerticalSize = 256;
 
-  static const int32_t BlockCount = HorizontalSize * HorizontalSize * VerticalSize;
-  static const int32_t VertexCount = BlockCount * 8;
+  constexpr static int32_t BlockCount = HorizontalSize * HorizontalSize * VerticalSize;
+  constexpr static int32_t MaxVertexCount = BlockCount * 8;
 
 private:
   enum class RenderState {
@@ -32,13 +34,14 @@ private:
 
   [[nodiscard]] static bool isInBounds(int32_t x, int32_t y, int32_t z);
 
-  [[nodiscard]] Ref<VertexArray> createMesh();
+  void createMesh(const World& world);
 
 
 public:
   explicit Chunk(const glm::ivec2& worldPosition);
-  void render(const glm::mat4& transform);
+  void render(const glm::mat4& transform, const World& world);
 
+  void setDirty() { renderState = RenderState::dirty; };
   void placeBlock(BlockData block, const glm::ivec3& position);
   [[nodiscard]] BlockData getBlockAt(const glm::ivec3& position) const;
 

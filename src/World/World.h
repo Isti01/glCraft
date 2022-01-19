@@ -20,7 +20,7 @@ class World {
   Ref<const ShaderProgram> defaultShader;
   WorldGenerator generator;
 
-  int32_t viewDistance = 5;
+  int32_t viewDistance = 3;
 
   Ref<Chunk> generateOrLoadChunk(glm::ivec2 position);
 
@@ -32,6 +32,8 @@ public:
   [[nodiscard]] static glm::ivec2 getChunkIndex(glm::ivec3 position);
 
   [[nodiscard]] BlockData getBlockAt(glm::ivec3 position);
+  [[nodiscard]] std::optional<BlockData> getBlockAtIfLoaded(glm::ivec3 position) const;
+  [[nodiscard]] bool isChunkLoaded(glm::ivec2 position) const;
   bool placeBlock(BlockData block, glm::ivec3 position);
 
   void update(const glm::vec3& playerPosition);

@@ -33,6 +33,16 @@ class VertexArray {
   Ref<IndexBuffer> indexBuffer;
 
 public:
+  explicit VertexArray() {
+    glGenVertexArrays(1, &id);
+    bind();
+
+    vertexBuffer = VertexBuffer::createRef();
+    vertexBuffer->bind();
+
+    unbind();
+  }
+
   template<typename VertexT>
   explicit VertexArray(const std::vector<VertexT> &vertices, bool dynamic = false) {
     glGenVertexArrays(1, &id);
@@ -40,9 +50,9 @@ public:
 
     vertexBuffer = VertexBuffer::createRef();
     if (dynamic) {
-      vertexBuffer->bufferDynamicVertexData<VertexT>(vertices);
+      vertexBuffer->bufferDynamicData<VertexT>(vertices);
     } else {
-      vertexBuffer->bufferStaticVertexData<VertexT>(vertices);
+      vertexBuffer->bufferStaticData<VertexT>(vertices);
     }
 
     unbind();
@@ -53,14 +63,12 @@ public:
   VertexArray(const std::vector<VertexT> &vertices, const std::vector<IndexT> &indices, bool dynamic = false)
       : VertexArray(vertices, dynamic) {
     bind();
-
-
-    indexBuffer = IndexBuffer::createRef();
+    indexBuffer = IndexBuffer::createRef<IndexT>();
 
     if (dynamic) {
-      indexBuffer->bufferDynamicIndexData<IndexT>(indices);
+      indexBuffer->bufferDynamicData<IndexT>(indices);
     } else {
-      indexBuffer->bufferStaticIndexData<IndexT>(indices);
+      indexBuffer->bufferStaticData<IndexT>(indices);
     }
     unbind();
   };
