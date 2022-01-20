@@ -30,7 +30,9 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <tuple>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 template<typename T>
