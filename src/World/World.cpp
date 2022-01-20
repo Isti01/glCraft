@@ -54,7 +54,18 @@ void World::update(const glm::vec3& playerPosition, float deltaTime) {
 }
 
 void World::render(glm::vec3 playerPos, glm::mat4 transform) {
-  // todo sort the chunks before rendering
+  static Ref<std::vector<glm::vec2>> sortedChunkIndices = std::make_shared<std::vector<glm::vec2>>();
+  sortedChunkIndices->clear();
+  if (sortedChunkIndices->capacity() < chunks.size()) {
+    sortedChunkIndices->reserve(chunks.size());
+  }
+
+  for (const auto& [key, value]: chunks) { sortedChunkIndices->push_back(key); }
+
+  glm::vec2 playerChunk = getChunkIndex(playerPos);
+  std::sort(sortedChunkIndices->begin(), sortedChunkIndices->end(), [&playerChunk](glm::vec2 a, glm::vec2 b) {
+    return glm::distance(playerChunk, a) > glm::distance(playerChunk, b);
+  });
 
   glm::vec2 animation{0};
   int32_t animationProgress = static_cast<int32_t>(textureAnimation) % 5;
@@ -77,7 +88,8 @@ void World::render(glm::vec3 playerPos, glm::mat4 transform) {
   shader->setVec2("textureAnimation", animation);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  for (auto& [position, chunk]: chunks) { chunk->render(transform, *this); }
+
+  for (const auto& index: *sortedChunkIndices) { chunks[index]->render(transform, *this); }
 
   glDisable(GL_BLEND);
 }
