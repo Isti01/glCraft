@@ -38,14 +38,18 @@ void Player::update(float deltaTime) {
   }
 
   if (isSurvivalMovement) {
-    glm::vec3 nextPosition = position + movement;
-    if (MovementSimulation::canMove(position, nextPosition, *world)) {
-      position = nextPosition;
+    std::array<glm::vec3, 3> axes = {{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}};
+
+    for (const auto& axis: axes) {
+      glm::vec3 movementInAxis = movement * axis;
+      if (MovementSimulation::canMove(position, position + movementInAxis, *world)) {
+        position += movementInAxis;
+      }
     }
 
-    nextPosition = position + gravity * deltaTime;
-    if (MovementSimulation::canMove(position, nextPosition, *world)) {
-      position = nextPosition;
+    glm::vec3 positionWithGravity = position + gravity * deltaTime;
+    if (MovementSimulation::canMove(position, positionWithGravity, *world)) {
+      position = positionWithGravity;
     } else {
       canJump = true;
       gravity = glm::vec3(0);
@@ -75,7 +79,7 @@ void Player::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t m
   } else if (key == 32) {  // space
     if (isSurvivalMovement) {
       if (canJump && action == 1) {
-        gravity = glm::vec3(0, GravityConstant / 4, 0);
+        gravity = glm::vec3(0, GravityConstant / 4.5, 0);
       }
     } else {
       directions[4].isMoving = action == 1;
