@@ -26,9 +26,9 @@ void WorldGenerator::populateChunk(const Ref<Chunk>& chunkRef) {
         BlockData::BlockType blockToPlace = BlockData::BlockType::stone;
 
         if (dy == 1) {
-          if (y == 64) {
+          if (y <= 64 && y >= 63) {
             blockToPlace = BlockData::BlockType::sand;
-          } else if (y < 64) {
+          } else if (y < 63) {
             blockToPlace = BlockData::BlockType::stone;
           } else {
             blockToPlace = BlockData::BlockType::grass;
