@@ -14,7 +14,7 @@ Texture::Texture(uint32_t image_type) : type(image_type) {
     glTexParameteri(type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
   }
 
-  glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+  glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
   glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   unbind();
