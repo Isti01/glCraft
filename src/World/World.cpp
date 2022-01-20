@@ -54,42 +54,36 @@ void World::update(const glm::vec3& playerPosition, float deltaTime) {
 }
 
 void World::render(glm::vec3 playerPos, glm::mat4 transform) {
-  static Ref<std::vector<glm::vec2>> sortedChunkIndices = std::make_shared<std::vector<glm::vec2>>();
+  static auto sortedChunkIndices = std::make_shared<std::vector<std::pair<glm::vec2, float>>>();
   sortedChunkIndices->clear();
   if (sortedChunkIndices->capacity() < chunks.size()) {
     sortedChunkIndices->reserve(chunks.size());
   }
 
-  for (const auto& [key, value]: chunks) { sortedChunkIndices->push_back(key); }
+  glm::vec2 playerChunk = glm::vec2(playerPos.x, playerPos.z);
+  for (const auto& [key, value]: chunks) {
+    sortedChunkIndices->push_back({
+       key,
+       glm::distance(playerChunk, glm::vec2(key) + glm::vec2(Chunk::HorizontalSize / 2.0f)),
+    });
+  }
 
-  glm::vec2 playerChunk = getChunkIndex(playerPos);
-  std::sort(sortedChunkIndices->begin(), sortedChunkIndices->end(), [&playerChunk](glm::vec2 a, glm::vec2 b) {
-    return glm::distance(playerChunk, a) > glm::distance(playerChunk, b);
-  });
+  std::sort(
+     sortedChunkIndices->begin(), sortedChunkIndices->end(),
+     [&playerChunk](std::pair<glm::vec2, float> a, std::pair<glm::vec2, float> b) { return b.second < a.second; });
 
   glm::vec2 animation{0};
   int32_t animationProgress = static_cast<int32_t>(textureAnimation) % 5;
 
-  switch (animationProgress) {
-    case 1:
-      animation = glm::vec2(1, 0);
-      break;
-    case 2:
-      animation = glm::vec2(2, 0);
-      break;
-    case 3:
-      animation = glm::vec2(1, 1);
-      break;
-    case 4:
-      animation = glm::vec2(2, 1);
-      break;
+  if (textureAnimation != 0) {
+    animation = glm::vec2(2 - (animationProgress % 2), (animationProgress - 1) / 2);
   }
 
   shader->setVec2("textureAnimation", animation);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  for (const auto& index: *sortedChunkIndices) { chunks[index]->render(transform, *this); }
+  for (const auto& index: *sortedChunkIndices) { chunks[index.first]->render(transform, *this); }
 
   glDisable(GL_BLEND);
 }
