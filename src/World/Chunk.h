@@ -11,11 +11,11 @@ class World;
 
 class Chunk {
 public:
-  constexpr static int32_t HorizontalSize = 16;
-  constexpr static int32_t VerticalSize = 256;
+  static constexpr int32_t HorizontalSize = 16;
+  static constexpr int32_t VerticalSize = 256;
 
-  constexpr static int32_t BlockCount = HorizontalSize * HorizontalSize * VerticalSize;
-  constexpr static int32_t MaxVertexCount = BlockCount * 8;
+  static constexpr int32_t BlockCount = HorizontalSize * HorizontalSize * VerticalSize;
+  static constexpr int32_t MaxVertexCount = BlockCount * 8;
 
 private:
   enum class RenderState {
@@ -57,7 +57,6 @@ public:
   [[nodiscard]] BlockData getBlockAt(const glm::ivec3& position) const {
     return data[position.x][position.y][position.z];
   }
-
 
   static bool isInBounds(int32_t x, int32_t y, int32_t z) {
     return x >= 0 && x < HorizontalSize && y >= 0 && y < VerticalSize && z >= 0 && z < HorizontalSize;

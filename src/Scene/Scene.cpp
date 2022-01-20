@@ -56,6 +56,14 @@ void Scene::renderGui() {
     ImGui::Spacing();
     ImGui::Spacing();
 
+    bool isSurvival = player.getIsSurvivalMovement();
+    if (ImGui::Checkbox("Enable \"physics\"", &isSurvival)) {
+      player.setSurvivalMovement(isSurvival);
+    }
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+
     BlockData::BlockType blockToPlace = player.getBlockToPlace();
     ImGui::Text("Selected Block: %s", BlockName::blockTypeToName(blockToPlace));
 

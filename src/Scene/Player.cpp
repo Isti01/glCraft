@@ -7,7 +7,6 @@ const glm::mat4& Player::updateView() {
   return view = calcView();
 }
 
-
 const glm::mat4& Player::lookAt(glm::vec3 eye, glm::vec3 center) {
   position = eye;
   updatePlayerDirection(center);
@@ -20,6 +19,7 @@ const glm::mat4& Player::setPosition(glm::vec3 eye) {
 }
 
 void Player::update(float deltaTime) {
+  gravity += glm::vec3(0, -1, 0) * GravityConstant * deltaTime;
   auto moveDirection = glm::vec3(0);
 
   for (const auto& [isMoving, direction]: directions) {
@@ -30,11 +30,32 @@ void Player::update(float deltaTime) {
     moveDirection += direction;
   }
 
+  canJump = false;
+  glm::vec3 movement(0);
   if (glm::length(moveDirection) > 0) {
     float movementSpeed = isRunning ? runningSpeed : walkingSpeed;
-    position += glm::normalize(moveDirection) * movementSpeed * deltaTime;
-    updateView();
+    movement = glm::normalize(moveDirection) * movementSpeed * deltaTime;
   }
+
+  if (isSurvivalMovement) {
+    glm::vec3 nextPosition = position + movement;
+    if (MovementSimulation::canMove(position, nextPosition, *world)) {
+      position = nextPosition;
+    }
+
+    nextPosition = position + gravity * deltaTime;
+    if (MovementSimulation::canMove(position, nextPosition, *world)) {
+      position = nextPosition;
+    } else {
+      canJump = true;
+      gravity = glm::vec3(0);
+    }
+
+  } else {
+    position += movement;
+  }
+
+  updateView();
 }
 
 
@@ -52,9 +73,18 @@ void Player::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t m
   } else if (key == 68 || key == 262) {  // right
     directions[3].isMoving = action == 1;
   } else if (key == 32) {  // space
-    directions[4].isMoving = action == 1;
+    if (isSurvivalMovement) {
+      if (canJump && action == 1) {
+        gravity = glm::vec3(0, GravityConstant / 4, 0);
+      }
+    } else {
+      directions[4].isMoving = action == 1;
+    }
   } else if (key == 340) {  // shift
-    directions[5].isMoving = action == 1;
+    if (isSurvivalMovement) {
+    } else {
+      directions[5].isMoving = action == 1;
+    }
   } else if (key == 341) {  // ctrl
     isRunning = action == 1;
   }
