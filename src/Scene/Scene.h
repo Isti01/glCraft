@@ -7,13 +7,12 @@
 #include "../Rendering/VertexArray.h"
 #include "../World/World.h"
 #include "../glCraft.h"
+#include "BlockOutline.h"
 #include "Crosshair.h"
 #include "Player.h"
 #include "Skybox.h"
-#include "BlockOutline.h"
 
 class Scene {
-  bool initialized = false;
   bool isMenuOpen = false;
 
   Ref<World> world = std::make_shared<World>();
@@ -32,7 +31,6 @@ class Scene {
 public:
   Scene();
 
-  void init();
   void update(float deltaTime);
 
   void render();

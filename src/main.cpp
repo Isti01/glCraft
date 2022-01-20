@@ -3,8 +3,6 @@
 
 int main() {
   Application &app = Application::instance();
-  Ref<Scene> scene = std::make_shared<Scene>();
-  app.setScene(scene);
-
+  app.setScene(std::make_shared<Scene>());
   return app.run();
 }

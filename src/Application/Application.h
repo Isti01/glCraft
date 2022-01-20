@@ -36,7 +36,7 @@ public:
     return app;
   };
 
-  void setScene(Ref<Scene> &newScene) { scene = newScene; };
+  void setScene(const Ref<Scene> &newScene) { scene = newScene; };
   int32_t getWindowWidth() { return window.getWindowWidth(); }
   int32_t getWindowHeight() { return window.getWindowHeight(); }
   Window &getWindow() { return window; };
