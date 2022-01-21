@@ -19,7 +19,7 @@ struct AABB {
   explicit AABB(const std::array<glm::vec3, 8>& points) : points(points) {}
 
   static AABB fromBlockPosition(const glm::vec3& position) {
-    return AABB({{
+    return AABB({
        position,
        position + glm::vec3{1, 1, 1},
        position + glm::vec3{1, 1, 0},
@@ -28,7 +28,7 @@ struct AABB {
        position + glm::vec3{0, 1, 1},
        position + glm::vec3{0, 1, 0},
        position + glm::vec3{0, 0, 1},
-    }});
+    });
   }
 
   [[nodiscard]] bool intersect(const AABB& aabb) const;
