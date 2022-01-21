@@ -11,5 +11,5 @@ public:
   WorldGenerator(int32_t seed);
   [[nodiscard]] int32_t getSeed() const { return seed; };
 
-  void populateChunk(const Ref<Chunk>& chunkRef) ;
+  void populateChunk(const Ref<Chunk>& chunkRef);
 };

@@ -3,7 +3,6 @@
 #include "../World/World.h"
 #include "../glCraft.h"
 
-
 class MovementSimulation {
 private:
   MovementSimulation() = default;
