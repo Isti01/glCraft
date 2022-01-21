@@ -99,6 +99,18 @@ void Scene::renderGui() {
       }
     }
   }
+
+  ImGui::Spacing();
+  ImGui::Spacing();
+
+  static char textureAtlasPath[256] = "";
+  ImGui::InputText("Save file path", textureAtlasPath, 256);
+  if (ImGui::Button("Load World")) {
+    if (std::filesystem::exists(textureAtlasPath)) {
+      Application::instance().setScene(std::make_shared<Scene>(textureAtlasPath));
+    }
+  }
+
   ImGui::End();
 }
 
