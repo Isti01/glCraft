@@ -2,6 +2,7 @@
 
 #include <utility>
 
+#include "../Persistence/Persistence.h"
 #include "../Rendering/ShaderProgram.h"
 #include "../Rendering/Texture.h"
 #include "../Rendering/VertexArray.h"
@@ -13,23 +14,23 @@
 #include "Skybox.h"
 
 class Scene {
-  bool isMenuOpen = false;
-
-  Ref<World> world = std::make_shared<World>();
+  Ref<Persistence> persistence;
+  Ref<World> world;
 
   Skybox skybox;
 
-  Player player{world};
+  Player player;
   glm::mat4 projectionMatrix = glm::mat4(1);
 
   Crosshair crosshair;
   BlockOutline outline;
+  bool isMenuOpen = false;
 
   void toggleMenu();
   void updateMouse();
 
 public:
-  Scene();
+  explicit Scene(const std::string& savePath);
 
   void update(float deltaTime);
 

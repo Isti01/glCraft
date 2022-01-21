@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../glCraft.h"
+#include "../glCraft.h"
 
 class AxisPlane {
   glm::vec3 planeNormal;

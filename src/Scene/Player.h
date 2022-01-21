@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Util/MovementSimulation.h"
+#include "../Physics/MovementSimulation.h"
 #include "../World/World.h"
 #include "../glCraft.h"
 

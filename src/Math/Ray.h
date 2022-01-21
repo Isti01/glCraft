@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../glCraft.h"
-#include "../World.h"
+#include "../World/World.h"
+#include "../glCraft.h"
 
 struct HitTarget {
   glm::vec3 position;

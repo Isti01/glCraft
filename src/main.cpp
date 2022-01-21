@@ -3,6 +3,6 @@
 
 int main() {
   Application &app = Application::instance();
-  app.setScene(std::make_shared<Scene>());
+  app.setScene(std::make_shared<Scene>("default_world.glc"));
   return app.run();
 }

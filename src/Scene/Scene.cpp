@@ -1,10 +1,14 @@
 #include "Scene.h"
 
 #include "../Application/Application.h"
+#include "../Persistence/Persistence.h"
 #include "../World/BlockName.h"
-#include "../World/RayCasting/Ray.h"
+#include "../Math/Ray.h"
 
-Scene::Scene() {
+Scene::Scene(const std::string& savePath)
+    : persistence(std::make_shared<Persistence>(savePath)),
+      world(std::make_shared<World>(persistence)),
+      player(world) {
   onResized(Application::instance().getWindowWidth(), Application::instance().getWindowHeight());
   updateMouse();
 }

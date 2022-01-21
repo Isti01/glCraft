@@ -1,7 +1,7 @@
 #include "MovementSimulation.h"
 
-#include "../World/RayCasting/Ray.h"
-#include "AABB.h"
+#include "../Math/Ray.h"
+#include "../Math/AABB.h"
 
 bool MovementSimulation::canMove(const glm::vec3& from, const glm::vec3& to, World& world) {
   AABB playerBox(AABB::PlayerBoxOffsets);

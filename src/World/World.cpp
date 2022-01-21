@@ -1,8 +1,8 @@
 #include "World.h"
 
-#include "../Util/Math.h"
+#include "../Util/Util.h"
 
-World::World(int32_t seed) : generator(seed) {
+World::World(const Ref<Persistence>& persistence, int32_t seed) : persistence(persistence), generator(seed) {
   shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
   setTextureAtlas(AssetManager::instance().loadTexture("assets/textures/default_texture.png"));
 }
@@ -63,8 +63,7 @@ void World::render(glm::vec3 playerPos, glm::mat4 transform) {
   glm::vec2 playerChunk = glm::vec2(playerPos.x, playerPos.z);
   for (const auto& [key, value]: chunks) {
     sortedChunkIndices->push_back({
-       key,
-       glm::distance(playerChunk, glm::vec2(key) + glm::vec2(Chunk::HorizontalSize / 2.0f)),
+       key, glm::distance(playerChunk, glm::vec2(key) + glm::vec2(Chunk::HorizontalSize / 2.0f)),  // todo fix this
     });
   }
 
@@ -115,8 +114,8 @@ bool World::placeBlock(BlockData block, glm::ivec3 position) {
   return true;
 }
 glm::ivec2 World::getChunkIndex(glm::ivec3 position) {
-  return {position.x - Math::positiveMod(position.x, Chunk::HorizontalSize),
-          position.z - Math::positiveMod(position.z, Chunk::HorizontalSize)};
+  return {position.x - Util::positiveMod(position.x, Chunk::HorizontalSize),
+          position.z - Util::positiveMod(position.z, Chunk::HorizontalSize)};
 }
 
 

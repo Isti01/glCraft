@@ -1,7 +1,7 @@
 #include "Player.h"
 
+#include "../Math/Ray.h"
 #include "../World/BlockName.h"
-#include "../World/RayCasting/Ray.h"
 
 const glm::mat4& Player::updateView() {
   return view = calcView();

@@ -1,7 +1,7 @@
 #include "Chunk.h"
 
 #include "../AssetManager/AssetManager.h"
-#include "../Util/Math.h"
+#include "../Util/Util.h"
 #include "World.h"
 
 Chunk::Chunk(const glm::ivec2& worldPosition) : worldPosition(worldPosition) {
@@ -103,6 +103,6 @@ void Chunk::createMesh(const World& world) {
 }
 
 glm::ivec3 Chunk::toChunkCoordinates(const glm::ivec3& globalPosition) {
-  return {Math::positiveMod(globalPosition.x, HorizontalSize), globalPosition.y,
-          Math::positiveMod(globalPosition.z, HorizontalSize)};
+  return {Util::positiveMod(globalPosition.x, HorizontalSize), globalPosition.y,
+          Util::positiveMod(globalPosition.z, HorizontalSize)};
 }
