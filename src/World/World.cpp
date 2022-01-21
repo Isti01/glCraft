@@ -65,16 +65,25 @@ void World::render(glm::vec3 playerPos, glm::mat4 transform) {
     sortedChunkIndices->reserve(chunks.size());
   }
 
+  std::array<glm::ivec2, 4> chunkCoordinateOffsets = {{{0, 16}, {16, 0}, {16, 16}}};
+
   glm::vec2 playerChunk = glm::vec2(playerPos.x, playerPos.z);
   for (const auto& [key, value]: chunks) {
-    sortedChunkIndices->push_back({
-       key, glm::distance(playerChunk, glm::vec2(key) + glm::vec2(Chunk::HorizontalSize / 2.0f)),  // todo fix this
-    });
+    float maxDistance = glm::distance(playerChunk, glm::vec2(key));
+
+    for (const auto& offset: chunkCoordinateOffsets) {
+      float distance = glm::distance(playerChunk, glm::vec2(key + offset));
+
+      if (distance > maxDistance) {
+        maxDistance = distance;
+      }
+    }
+
+    sortedChunkIndices->push_back({key, maxDistance});
   }
 
-  std::sort(
-     sortedChunkIndices->begin(), sortedChunkIndices->end(),
-     [&playerChunk](std::pair<glm::vec2, float> a, std::pair<glm::vec2, float> b) { return b.second < a.second; });
+  std::sort(sortedChunkIndices->begin(), sortedChunkIndices->end(),
+            [](const auto& a, const auto& b) { return b.second < a.second; });
 
   glm::vec2 animation{0};
   int32_t animationProgress = static_cast<int32_t>(textureAnimation) % 5;
