@@ -93,6 +93,9 @@ class IndexBuffer : public Buffer {
       case 4:
         return GL_UNSIGNED_INT;
     }
+
+    assert(false);
+    return 0;
   }
 
 public:
