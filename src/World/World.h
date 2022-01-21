@@ -8,15 +8,8 @@
 #include "Chunk.h"
 #include "WorldGenerator.h"
 
-class HashVec2 {
-public:
-  size_t operator()(const glm::ivec2& coord) const noexcept {
-    return std::hash<int32_t>{}(coord.x) | (std::hash<int32_t>{}(coord.y) << sizeof(int32_t) * 8);
-  };
-};
-
 class World {
-  std::unordered_map<glm::ivec2, Ref<Chunk>, HashVec2> chunks;
+  std::unordered_map<glm::ivec2, Ref<Chunk>, Util::HashVec2> chunks;
   Ref<const Texture> textureAtlas;
   Ref<const ShaderProgram> shader;
   Ref<Persistence> persistence;

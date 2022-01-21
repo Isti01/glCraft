@@ -7,6 +7,7 @@
 #include "../glCraft.h"
 #include "BlockData.h"
 
+class Persistence;
 class World;
 
 class Chunk {
@@ -23,19 +24,18 @@ private:
     ready,
     dirty
   };
-  int32_t solidVertexCount = 0;
-  int32_t semiTransparentVertexCount = 0;
-  Ref<VertexArray> mesh = nullptr;
+  int32_t solidVertexCount;
+  int32_t semiTransparentVertexCount;
+  Ref<VertexArray> mesh;
   Ref<const ShaderProgram> shader;
 
-  RenderState renderState = RenderState::initial;
+  RenderState renderState;
   glm::ivec2 worldPosition;
 
   BlockData data[HorizontalSize][VerticalSize][HorizontalSize];
 
-
   void createMesh(const World& world);
-
+  void init();
 
 public:
   explicit Chunk(const glm::ivec2& worldPosition);
@@ -66,4 +66,5 @@ public:
   static glm::ivec3 toChunkCoordinates(const glm::ivec3& globalPosition);
 
   glm::ivec2 getPosition() { return worldPosition; }
+  friend Persistence;
 };

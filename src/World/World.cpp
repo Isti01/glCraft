@@ -8,7 +8,12 @@ World::World(const Ref<Persistence>& persistence, int32_t seed) : persistence(pe
 }
 
 Ref<Chunk> World::generateOrLoadChunk(glm::ivec2 position) {
-  Ref<Chunk> chunk = std::make_shared<Chunk>(position);
+  Ref<Chunk> chunk = persistence->getChunk(position);
+  if (chunk != nullptr) {
+    return chunk;
+  }
+  chunk = std::make_shared<Chunk>(position);
+  persistence->commitChunk(chunk);
   generator.populateChunk(chunk);
 
   std::array<glm::ivec2, 4> chunksAround = {{{0, 16}, {16, 0}, {0, -16}, {-16, 0}}};

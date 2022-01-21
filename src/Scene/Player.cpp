@@ -2,6 +2,11 @@
 
 #include "../Math/Ray.h"
 
+Player::Player(const Ref<World>& world, const Ref<Persistence>& persistence)
+    : camera(persistence->getCamera()),
+      persistence(persistence),
+      world(world) {}
+
 void Player::update(float deltaTime) {
   gravity += glm::vec3(0, -1, 0) * GravityConstant * deltaTime;
 
@@ -114,4 +119,8 @@ void Player::onCursorPositionEvent(double x, double y) {
 
 void Player::resetMousePosition() {
   resetMouse = true;
+}
+
+Player::~Player() {
+  persistence->commitCamera(camera);
 }

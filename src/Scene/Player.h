@@ -11,14 +11,13 @@ class Player {
   Camera camera;
 
   Ref<World> world;
+  Ref<Persistence> persistence;
   BlockData::BlockType blockToPlace = BlockData::BlockType::grass;
-
 
   glm::vec3 gravity{0};
 
-
   float walkingSpeed = 4.317;
-  float runningSpeed = 5.612;
+  float runningSpeed = 5.612 * 5;
   float mouseSensitivity = .5;
   bool canJump = false;
   bool isRunning = false;
@@ -28,7 +27,7 @@ class Player {
 public:
   static constexpr float reach = 4.5f;
 
-  explicit Player(const Ref<World>& world) : world(world) {}
+  explicit Player(const Ref<World>& world, const Ref<Persistence>& persistence);
 
   void update(float deltaTime);
 
@@ -48,4 +47,6 @@ public:
   void setBlockToPlace(BlockData::BlockType block) { blockToPlace = block; };
 
   void resetMousePosition();
+
+  ~Player();
 };

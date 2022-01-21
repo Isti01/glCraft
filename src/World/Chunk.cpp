@@ -5,6 +5,14 @@
 #include "World.h"
 
 Chunk::Chunk(const glm::ivec2& worldPosition) : worldPosition(worldPosition) {
+  init();
+}
+
+void Chunk::init() {
+  solidVertexCount = 0;
+  semiTransparentVertexCount = 0;
+  mesh = nullptr;
+  renderState = RenderState::initial;
   shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
 }
 
