@@ -14,8 +14,8 @@ Scene::Scene(const std::string& savePath)
 
 void Scene::update(float deltaTime) {
   player.update(deltaTime);
-  world->update(player.getPosition(), deltaTime);
-  skybox.update(projectionMatrix, player.getViewMatrix(), deltaTime);
+  world->update(player.getCamera().getPosition(), deltaTime);
+  skybox.update(projectionMatrix, player.getCamera().getViewMatrix(), deltaTime);
 }
 
 void Scene::toggleMenu() {
@@ -35,10 +35,10 @@ void Scene::updateMouse() {
 void Scene::render() {
   skybox.render();
 
-  glm::mat4 mvp = projectionMatrix * player.getViewMatrix();
-  world->render(player.getPosition(), mvp);
+  glm::mat4 mvp = projectionMatrix * player.getCamera().getViewMatrix();
+  world->render(player.getCamera().getPosition(), mvp);
 
-  if (Ray ray{player.getPosition(), player.getLookDirection(), *world, Player::reach}) {
+  if (Ray ray{player.getCamera().getPosition(), player.getCamera().getLookDirection(), *world, Player::reach}) {
     outline.render(mvp * glm::translate(ray.getHitTarget().position));
   }
 
@@ -51,9 +51,9 @@ void Scene::renderGui() {
   }
 
   if (ImGui::Begin("Menu")) {
-    glm::vec3 position = player.getPosition();
+    glm::vec3 position = player.getCamera().getPosition();
     ImGui::Text("Player position: x:%f, y:%f, z:%f", position.x, position.y, position.z);
-    glm::vec3 lookDirection = player.getLookDirection();
+    glm::vec3 lookDirection = player.getCamera().getLookDirection();
     ImGui::Text("Player direction: x:%f, y:%f, z:%f", lookDirection.x, lookDirection.y, lookDirection.z);
 
     ImGui::Spacing();
