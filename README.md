@@ -59,7 +59,7 @@ software that I used to make this.
         - One that is similar to the movement in survival.
     - The game has block placing, block picking and block breaking. - *maybe the most essential feature*
     - Implemented a basic UI to change the active block, load saves, and load custom textures for the world.
-    - The world is generated procedurally using a seed, and loaded dynamically as the player moves across the world.
+    - The world is generated procedurally using a seed, and loaded dynamically as the player moves across it.
 
 ## Libraries that I used
 
