@@ -25,7 +25,7 @@ software that I used to make this.
   git clone --recursive https://github.com/Isti01/glCraft.git
   ```
 
-    - Build the project
+    - Build the project *the build_type can be either Release or Debug*
   ```shell
   cd glCraft
   mkdir build
@@ -34,12 +34,12 @@ software that I used to make this.
   cmake --build .
   ```
 
-    - Run the game on Linux:
+    - Run the game on Linux *with an optional save to load*:
   ```shell
   ./main <saved-world.glc>
   ```
 
-    - Or on Windows
+    - Or on Windows *with an optional save to load*
   ```batch
   main.exe <saved-world.glc>
   ```
