@@ -18,7 +18,7 @@ software that I used to make this.
 
     - Open it in CLion and press the green magic button.
 
-- How to build it using cmake
+- How to build it using CMake
   - 
     - Clone the repository
   ```shell
