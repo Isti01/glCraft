@@ -34,7 +34,7 @@ public:
   bool placeBlock(BlockData block, glm::ivec3 position);
 
   void update(const glm::vec3& playerPosition, float deltaTime);
-  void render(glm::vec3 playerPos, glm::mat4 transform);
+  void render(glm::vec3 playerPos, glm::mat4 transform, float rotation);
 
   static bool isValidBlockPosition(glm::ivec3 position);
   void setTextureAtlas(const Ref<const Texture>& texture);

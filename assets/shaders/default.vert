@@ -3,10 +3,15 @@
 layout(location = 0) in uint vertexData;
 
 uniform mat4 MVP = mat4(1);
+uniform vec3 lightDirection = vec3(1, 1, 1);
 
+flat out float vert_lighting;
 flat out uint animated;
+
 out vec3 vert_pos;
 out vec2 vert_uv;
+
+vec3 normals[6] = { vec3(0, 1, 0), vec3(1, 0, 0), vec3(-1, 0, 0), vec3(0, 0, -1), vec3(0, 0, 1), vec3(0, -1, 0) };
 
 uint extractByte(uint data, uint offset){
     return (data & (0xffu << offset)) >> offset;
@@ -34,5 +39,9 @@ void main() {
     uint yUv = (uvCoords & 0xf0u) >> 4;
     vert_uv = vec2(xUv, yUv);
 
+    uint normalIndex = extractByte(flags, 4);
+    vec3 normal = normals[normalIndex];
+
+    vert_lighting = min(max(dot(normalize(lightDirection), normal), 0) + 0.85f, 1);
     gl_Position = MVP * vec4(vert_pos, 1);
 }

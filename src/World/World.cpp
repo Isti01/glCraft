@@ -58,7 +58,7 @@ void World::update(const glm::vec3& playerPosition, float deltaTime) {
   }
 }
 
-void World::render(glm::vec3 playerPos, glm::mat4 transform) {
+void World::render(glm::vec3 playerPos, glm::mat4 transform, float rotation) {
   static auto sortedChunkIndices = std::make_shared<std::vector<std::pair<glm::vec2, float>>>();
   sortedChunkIndices->clear();
   if (sortedChunkIndices->capacity() < chunks.size()) {
@@ -93,6 +93,7 @@ void World::render(glm::vec3 playerPos, glm::mat4 transform) {
   }
 
   shader->setVec2("textureAnimation", animation);
+  shader->setVec3("lightDirection", glm::vec3{0, glm::cos(rotation), glm::sin(rotation)});
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

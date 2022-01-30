@@ -36,7 +36,8 @@ void Scene::render() {
   skybox.render();
 
   glm::mat4 mvp = projectionMatrix * player.getCamera().getViewMatrix();
-  world->render(player.getCamera().getPosition(), mvp);
+  float rotation = skybox.getRotation();
+  world->render(player.getCamera().getPosition(), mvp, rotation);
 
   if (Ray ray{player.getCamera().getPosition(), player.getCamera().getLookDirection(), *world, Player::reach}) {
     outline.render(mvp * glm::translate(ray.getHitTarget().position));
@@ -83,7 +84,7 @@ void Scene::renderGui() {
     ImGui::Spacing();
 
     float speed = skybox.getRotationSpeed();
-    if (ImGui::SliderFloat("Night/Day cycle speed", &speed, 0.1, 10)) {
+    if (ImGui::SliderFloat("Night/Day cycle speed", &speed, 0.01, 10)) {
       skybox.setRotationSpeed(speed);
     }
 

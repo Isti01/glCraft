@@ -1,10 +1,17 @@
 #include "BlockVertex.h"
 
-BlockVertex::BlockVertex(const glm::ivec3& position, const glm::ivec2& uv) {
+BlockVertex::BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, uint8_t normalIndex) {
   offset(position.x, position.y, position.z);
   offsetUv(uv.x, uv.y);
+  setNormal(normalIndex);
 }
 
+
+void BlockVertex::setNormal(uint8_t normalIndex) {
+  assert(normalIndex < 6);
+  flags &= 0b1111;
+  flags += normalIndex << 4;
+}
 
 void BlockVertex::setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, BlockData::BlockType type) {
   switch (type) {
