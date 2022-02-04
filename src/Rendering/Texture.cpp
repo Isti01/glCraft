@@ -3,7 +3,7 @@
 #include "../AssetManager/AssetManager.h"
 #include "Image.h"
 
-Texture::Texture(uint32_t image_type) : type(image_type) {
+Texture::Texture(uint32_t image_type, int32_t maxLod) : type(image_type) {
   assert(type == GL_TEXTURE_2D || type == GL_TEXTURE_CUBE_MAP);
   glGenTextures(1, &id);
   bind();
@@ -16,6 +16,7 @@ Texture::Texture(uint32_t image_type) : type(image_type) {
 
   glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
   glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(type, GL_TEXTURE_MAX_LOD, maxLod);
 
   unbind();
 }
@@ -55,19 +56,13 @@ void Texture::unbind() const {
   glBindTexture(type, 0);
 }
 
-Texture::~Texture() {
-  if (isValid()) {
-    glDeleteTextures(1, &id);
-  }
-}
-
 Ref<const Texture> Texture::loadTexture2D(const std::string& name) {
   Ref<const Image> image = AssetManager::instance().loadImage(name);
   if (image == nullptr) {
     return nullptr;
   }
 
-  Ref<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_2D);
+  Ref<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_2D, 4);
   texture->buffer2DRGBAData(*image);
   return texture;
 }
@@ -93,4 +88,10 @@ Ref<const Texture> Texture::loadCubeMapTexture(const std::string& name) {
   Ref<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_CUBE_MAP);
   texture->bufferCubeMapRGBAData(images);
   return texture;
+}
+
+Texture::~Texture() {
+  if (isValid()) {
+    glDeleteTextures(1, &id);
+  }
 }

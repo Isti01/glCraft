@@ -12,7 +12,7 @@ public:
   Texture(Texture&) = delete;
   Texture(Texture&&) = delete;
 
-  Texture(uint32_t type);
+  Texture(uint32_t type, int32_t maxLod = 1000);
 
   [[nodiscard]] bool isValid() const { return id != 0; };
 
