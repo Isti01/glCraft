@@ -25,7 +25,7 @@ public:
   explicit World(const Ref<Persistence>& persistence, int32_t seed = 1337);
 
   Ref<Chunk> getChunk(glm::ivec2 position);
-  void addChunk(glm::ivec2 position, const Ref<Chunk>& chunk) { chunks[position] = chunk; };
+  void addChunk(glm::ivec2 position, const Ref<Chunk>& chunk);
   [[nodiscard]] static glm::ivec2 getChunkIndex(glm::ivec3 position);
 
   [[nodiscard]] BlockData getBlockAt(glm::ivec3 position);

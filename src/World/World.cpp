@@ -13,18 +13,8 @@ Ref<Chunk> World::generateOrLoadChunk(glm::ivec2 position) {
     return chunk;
   }
   chunk = std::make_shared<Chunk>(position);
-  persistence->commitChunk(chunk);
   generator.populateChunk(chunk);
-
-  std::array<glm::ivec2, 4> chunksAround = {{{0, 16}, {16, 0}, {0, -16}, {-16, 0}}};
-  for (const glm::ivec2& offset: chunksAround) {
-    glm::ivec2 neighborPosition = position + offset;
-
-    if (!isChunkLoaded(neighborPosition))
-      continue;
-
-    chunks[neighborPosition]->setDirty();
-  }
+  persistence->commitChunk(chunk);
 
   return chunk;
 }
@@ -52,7 +42,7 @@ void World::update(const glm::vec3& playerPosition, float deltaTime) {
 
       float distance = glm::abs(glm::distance(glm::vec2(position), playerChunkPosition));
       if (distance <= loadDistance) {
-        chunks[position] = generateOrLoadChunk(position);
+        addChunk(position, generateOrLoadChunk(position));
       }
     }
   }
@@ -142,6 +132,19 @@ Ref<Chunk> World::getChunk(glm::ivec2 position) {
   return chunks.at(position);
 }
 
+void World::addChunk(glm::ivec2 position, const Ref<Chunk>& chunk) {
+  chunks[position] = chunk;
+  std::array<glm::ivec2, 4> chunksAround = {{{0, 16}, {16, 0}, {0, -16}, {-16, 0}}};
+  for (const glm::ivec2& offset: chunksAround) {
+    glm::ivec2 neighborPosition = position + offset;
+
+    if (!isChunkLoaded(neighborPosition))
+      continue;
+
+    chunks[neighborPosition]->setDirty();
+  }
+}
+
 void World::setTextureAtlas(const Ref<const Texture>& texture) {
   textureAtlas = texture;
   shader->setTexture("atlas", textureAtlas, 0);
@@ -155,7 +158,6 @@ std::optional<BlockData> World::getBlockAtIfLoaded(glm::ivec3 position) const {
 
   return chunks.at(index)->getBlockAt(Chunk::toChunkCoordinates(position));
 }
-
 bool World::isChunkLoaded(glm::ivec2 position) const {
   return chunks.contains(position);
 }
