@@ -67,7 +67,7 @@ void Window::setupCallbacks() {
   glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
   glDebugMessageCallback(onOpenGlMessage, nullptr);
   glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-  glfwSwapInterval(2);  // note: maybe change this later
+  glfwSwapInterval(1);
 
   glfwSetWindowRefreshCallback(window, onRefreshWindow);
   glfwSetErrorCallback(Window::onWindowError);
