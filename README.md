@@ -7,6 +7,17 @@ use it to create a minecraft clone, so I made this, which is also my first C++ p
 I learnt a lot. I created the game entirely from scratch except the libraries, compilers, the operating system and other
 software that I used to make this.
 
+## Screenshots
+
+- Building and destroying blocks
+![Building and destroying blocks](./screenshots/building.png)
+- Procedural world generation
+![Procedural world generation](./screenshots/procedural-world-generation.png)
+- Semi-transparent blocks
+![Semi-transparent blocks](./screenshots/semi-transparent-blocks.png)
+- The chunks are hollow on the inside
+![The chunks are hollow on the inside](./screenshots/optimized-chunk-rendering.png)
+
 ## Building the project
 
 - How to build it in CLion
