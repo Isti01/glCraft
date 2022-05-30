@@ -47,21 +47,21 @@ void Player::update(float deltaTime) {
 }
 
 void Player::onKeyEvent(int32_t key, int32_t, int32_t action, int32_t) {
-  if (action == 2) {
+  if (action == GLFW_REPEAT) {
     return;  // don't respond to repeatedly pressed buttons
   }
 
-  bool isButtonPressed = action == 1;
+  bool isButtonPressed = action == GLFW_PRESS;
 
-  if (key == 87 || key == 265) {  // forward
+  if (key == GLFW_KEY_W || key == GLFW_KEY_UP) {
     camera.setIsMovingForward(isButtonPressed);
-  } else if (key == 83 || key == 264) {  // backward
+  } else if (key == GLFW_KEY_S || key == GLFW_KEY_DOWN) {
     camera.setIsMovingBackward(isButtonPressed);
-  } else if (key == 65 || key == 263) {  // left
+  } else if (key == GLFW_KEY_A || key == GLFW_KEY_LEFT) {
     camera.setIsMovingLeft(isButtonPressed);
-  } else if (key == 68 || key == 262) {  // right
+  } else if (key == GLFW_KEY_D || key == GLFW_KEY_RIGHT) {
     camera.setIsMovingRight(isButtonPressed);
-  } else if (key == 32) {  // space
+  } else if (key == GLFW_KEY_SPACE) {
     if (isSurvivalMovement) {
       camera.setIsMovingUp(false);
       if (canJump && isButtonPressed) {
@@ -70,31 +70,36 @@ void Player::onKeyEvent(int32_t key, int32_t, int32_t action, int32_t) {
     } else {
       camera.setIsMovingUp(isButtonPressed);
     }
-  } else if (key == 340) {  // shift
+  } else if (key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) {
     if (isSurvivalMovement) {
       camera.setIsMovingDown(false);
     } else {
       camera.setIsMovingDown(isButtonPressed);
     }
-  } else if (key == 341) {  // ctrl
+  } else if (key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL) {
     isRunning = isButtonPressed;
   }
 }
 
 void Player::onMouseButtonEvent(int32_t button, int32_t action, int32_t) {
-  if (action != 1)
-    return;  // ignore the input on mouse button release
+  if (action != GLFW_PRESS) {
+    return;
+  }
 
-  if (button == 0) {  // left click
+  const int leftClick = GLFW_MOUSE_BUTTON_1;
+  const int rightClick = GLFW_MOUSE_BUTTON_2;
+  const int middleClick = GLFW_MOUSE_BUTTON_3;
+
+  if (button == leftClick) {
     if (Ray ray{camera.getPosition(), camera.getLookDirection(), *world, reach}) {
       world->placeBlock(BlockData::BlockType::air, ray.getHitTarget().position);
     }
-  } else if (button == 1) {  // right click
+  } else if (button == rightClick) {
     Ray ray{camera.getPosition(), camera.getLookDirection(), *world, reach};
     if (ray && ray.getHitTarget().hasNeighbor) {
       world->placeBlock(blockToPlace, ray.getHitTarget().neighbor);
     }
-  } else if (button == 2) {  // middle click
+  } else if (button == middleClick) {
     if (Ray ray{camera.getPosition(), camera.getLookDirection(), *world, reach}) {
       blockToPlace = ray.getHitTarget().block.type;
     }

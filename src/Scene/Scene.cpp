@@ -128,7 +128,7 @@ void Scene::onResized(int32_t width, int32_t height) {
 
 void Scene::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {
   if (key == GLFW_KEY_ESCAPE) {
-    if (action == GLFW_KEY_DOWN) {
+    if (action == GLFW_PRESS) {
       toggleMenu();
     }
     return;
