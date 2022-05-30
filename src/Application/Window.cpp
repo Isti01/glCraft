@@ -2,7 +2,11 @@
 
 #include "Application.h"
 
+Window *Window::instancePtr = nullptr;
+
 Window::Window() {
+  assert(instancePtr == nullptr && "The window is already instantiated");
+  instancePtr = this;
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -205,5 +209,6 @@ glm::dvec2 Window::getCursorPosition() {
 }
 
 Window::~Window() {
+  instancePtr = nullptr;
   glfwTerminate();
 }

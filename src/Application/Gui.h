@@ -3,19 +3,20 @@
 #include "../glCraft.h"
 
 class Gui {
-  Gui();
+private:
+  static Gui *instancePtr;
 
 public:
-  Gui(const Gui &) = delete;
-  Gui(Gui &&) = delete;
-  Gui(Gui &) = delete;
+  Gui();
+  ~Gui();
 
-  static Gui &instance() {
-    static Gui gui;
-    return gui;
-  }
+  static Gui &instance() { return *instancePtr; }
   void update();
   void finalizeFrame();
 
-  ~Gui();
+  Gui(const Gui &) = delete;
+  Gui(Gui &&) noexcept = delete;
+  Gui(Gui &) = delete;
+  Gui &operator=(Gui &) = delete;
+  Gui &operator=(Gui &&) noexcept = delete;
 };

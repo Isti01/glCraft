@@ -1,6 +1,11 @@
 #include "Application.h"
 
-Application::Application() : gui(Gui::instance()) {}
+Application* Application::instancePtr = nullptr;
+
+Application::Application() {
+  assert(instancePtr == nullptr && "The application is already instantiated");
+  instancePtr = this;
+}
 
 int32_t Application::run() {
   if (!scene || !window.isValid()) {
@@ -49,4 +54,8 @@ void Application::onRefreshWindow() {
 
 void Application::onCursorPositionEvent(double x, double y) {
   scene->onCursorPositionEvent(x, y);
+}
+
+Application::~Application() {
+  instancePtr = nullptr;
 }
