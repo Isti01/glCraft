@@ -39,7 +39,7 @@ void Scene::render() {
   float rotation = skybox.getRotation();
   world->render(player.getCamera().getPosition(), mvp, rotation);
 
-  if (Ray ray{player.getCamera().getPosition(), player.getCamera().getLookDirection(), *world, Player::reach}) {
+  if (Ray ray{player.getCamera().getPosition(), player.getCamera().getLookDirection(), *world, Player::Reach}) {
     outline.render(mvp * glm::translate(ray.getHitTarget().position));
   }
 
@@ -91,6 +91,20 @@ void Scene::renderGui() {
     float movementSpeed = player.getMovementSpeedMultiplier();
     if (ImGui::SliderFloat("Player movement speed multiplier", &movementSpeed, 1.0f, 10.0f)) {
       player.setMovementSpeedMultiplier(movementSpeed);
+    }
+
+    float jumpHeight = player.getJumpHeightMultiplier();
+    if (ImGui::SliderFloat("Player jump height multiplier", &jumpHeight, 1.0f, 10.0f)) {
+      player.setJumpHeightMultiplier(jumpHeight);
+    }
+
+    float gravity = player.getGravityConstant() / 10;
+    if (ImGui::SliderFloat("Gravity", &gravity, -5, 10.0f)) {
+      player.setGravityConstant(gravity * 10);
+    }
+
+    if (ImGui::Button("Reset gravity")) {
+      player.setGravityConstant(Player::DefaultGravity);
     }
 
     ImGui::Spacing();

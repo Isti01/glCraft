@@ -8,7 +8,7 @@ Player::Player(const Ref<World>& world, const Ref<Persistence>& persistence)
       world(world) {}
 
 void Player::update(float deltaTime) {
-  gravity += glm::vec3(0, -1, 0) * GravityConstant * deltaTime;
+  gravity += glm::vec3(0, -1, 0) * gravityConstant * deltaTime;
 
   glm::vec3 moveDirection = camera.getMoveDirection();
 
@@ -65,7 +65,7 @@ void Player::onKeyEvent(int32_t key, int32_t, int32_t action, int32_t) {
     if (isSurvivalMovement) {
       camera.setIsMovingUp(false);
       if (canJump && isButtonPressed) {
-        gravity = glm::vec3(0, GravityConstant / 4.5, 0);
+        gravity = glm::vec3(0, getJumpSpeed(), 0);
       }
     } else {
       camera.setIsMovingUp(isButtonPressed);
@@ -86,21 +86,17 @@ void Player::onMouseButtonEvent(int32_t button, int32_t action, int32_t) {
     return;
   }
 
-  const int leftClick = GLFW_MOUSE_BUTTON_1;
-  const int rightClick = GLFW_MOUSE_BUTTON_2;
-  const int middleClick = GLFW_MOUSE_BUTTON_3;
-
-  if (button == leftClick) {
-    if (Ray ray{camera.getPosition(), camera.getLookDirection(), *world, reach}) {
+  if (button == GLFW_MOUSE_BUTTON_LEFT) {
+    if (Ray ray{camera.getPosition(), camera.getLookDirection(), *world, Reach}) {
       world->placeBlock(BlockData::BlockType::air, ray.getHitTarget().position);
     }
-  } else if (button == rightClick) {
-    Ray ray{camera.getPosition(), camera.getLookDirection(), *world, reach};
+  } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+    Ray ray{camera.getPosition(), camera.getLookDirection(), *world, Reach};
     if (ray && ray.getHitTarget().hasNeighbor) {
       world->placeBlock(blockToPlace, ray.getHitTarget().neighbor);
     }
-  } else if (button == middleClick) {
-    if (Ray ray{camera.getPosition(), camera.getLookDirection(), *world, reach}) {
+  } else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
+    if (Ray ray{camera.getPosition(), camera.getLookDirection(), *world, Reach}) {
       blockToPlace = ray.getHitTarget().block.type;
     }
   }
@@ -110,8 +106,8 @@ void Player::onCursorPositionEvent(double x, double y) {
   static double lastX = x;
   static double lastY = y;
 
-  if (resetMouse) {
-    resetMouse = false;
+  if (shouldResetMouse) {
+    shouldResetMouse = false;
     lastX = x;
     lastY = y;
   }
@@ -125,7 +121,7 @@ void Player::onCursorPositionEvent(double x, double y) {
 }
 
 void Player::resetMousePosition() {
-  resetMouse = true;
+  shouldResetMouse = true;
 }
 
 Player::~Player() {
