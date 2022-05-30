@@ -21,6 +21,12 @@ Texture::Texture(uint32_t image_type, int32_t maxLod) : type(image_type) {
   unbind();
 }
 
+Texture::~Texture() {
+  if (isValid()) {
+    glDeleteTextures(1, &id);
+  }
+}
+
 void Texture::buffer2DRGBAData(const Image& image) {
   assert(type == GL_TEXTURE_2D);
   bind();
@@ -88,10 +94,4 @@ Ref<const Texture> Texture::loadCubeMapTexture(const std::string& name) {
   Ref<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_CUBE_MAP);
   texture->bufferCubeMapRGBAData(images);
   return texture;
-}
-
-Texture::~Texture() {
-  if (isValid()) {
-    glDeleteTextures(1, &id);
-  }
 }

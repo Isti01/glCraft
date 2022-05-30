@@ -33,15 +33,8 @@ class VertexArray {
   Ref<IndexBuffer> indexBuffer;
 
 public:
-  explicit VertexArray() {
-    glGenVertexArrays(1, &id);
-    bind();
-
-    vertexBuffer = VertexBuffer::createRef();
-    vertexBuffer->bind();
-
-    unbind();
-  }
+  explicit VertexArray();
+  ~VertexArray();
 
   template<typename VertexT>
   explicit VertexArray(const std::vector<VertexT> &vertices, bool dynamic = false) {
@@ -90,9 +83,6 @@ public:
     addVertexAttributes(vertexAttributes, sizeof(VertexT));
   };
 
-  VertexArray(const VertexArray &) = delete;
-  VertexArray(VertexArray &) = delete;
-  VertexArray(VertexArray &&) = delete;
 
   void bind();
   void addVertexAttributes(const std::vector<VertexAttribute> &vector, int32_t defaultVertexSize);
@@ -105,5 +95,9 @@ public:
 
   [[nodiscard]] bool isValid() const { return id != 0; };
 
-  ~VertexArray();
+  VertexArray(const VertexArray &) = delete;
+  VertexArray(VertexArray &) = delete;
+  VertexArray(VertexArray &&) noexcept = delete;
+  VertexArray &operator=(VertexArray &) = delete;
+  VertexArray &operator=(VertexArray &&) noexcept = delete;
 };

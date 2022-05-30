@@ -7,7 +7,9 @@ bool MovementSimulation::canMove(const glm::vec3& from, const glm::vec3& to, Wor
   AABB playerBox(AABB::PlayerBoxOffsets);
 
   glm::vec3 movementDirection = from - to;
-  for (auto& point: playerBox.points) { point += to; }
+  for (auto& point: playerBox.points) {
+    point += to;
+  }
 
   for (const auto& point: playerBox.points) {
     // I used ray casting to determine which blocks should be used in collision calculation

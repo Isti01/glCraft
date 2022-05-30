@@ -13,9 +13,10 @@ protected:
   Buffer(uint32_t type) : type(type) { glGenBuffers(1, &id); }
 
 public:
-  Buffer(const Buffer &) = delete;
-  Buffer(Buffer &) = delete;
-  Buffer(Buffer &&) = delete;
+  ~Buffer() {
+    if (isValid())
+      glDeleteBuffers(1, &id);
+  };
 
   void bind() { glBindBuffer(type, id); }
 
@@ -67,10 +68,12 @@ public:
   [[maybe_unused]] [[nodiscard]] uint32_t getId() const { return id; };
   [[nodiscard]] bool isValid() const { return id != 0; };
 
-  ~Buffer() {
-    if (isValid())
-      glDeleteBuffers(1, &id);
-  };
+
+  Buffer(const Buffer &) = delete;
+  Buffer(Buffer &) = delete;
+  Buffer(Buffer &&) noexcept = delete;
+  Buffer &operator=(Buffer &) = delete;
+  Buffer &operator=(Buffer &&) noexcept = delete;
 };
 
 class VertexBuffer : public Buffer {

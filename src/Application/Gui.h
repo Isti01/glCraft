@@ -11,6 +11,7 @@ public:
   ~Gui();
 
   static Gui &instance() { return *instancePtr; }
+
   void update();
   void finalizeFrame();
 

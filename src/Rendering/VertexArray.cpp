@@ -1,5 +1,21 @@
 #include "VertexArray.h"
 
+VertexArray::VertexArray() {
+  glGenVertexArrays(1, &id);
+  bind();
+
+  vertexBuffer = VertexBuffer::createRef();
+  vertexBuffer->bind();
+
+  unbind();
+}
+
+VertexArray::~VertexArray() {
+  if (isValid()) {
+    glDeleteVertexArrays(1, &id);
+  }
+}
+
 void VertexArray::bind() {
   glBindVertexArray(id);
   if (vertexBuffer)
@@ -18,12 +34,6 @@ void VertexArray::renderIndexed(int32_t type) {
   bind();
   glDrawElements(type, indexBuffer->getSize(), indexBuffer->getType(), nullptr);
   unbind();
-}
-
-VertexArray::~VertexArray() {
-  if (isValid()) {
-    glDeleteVertexArrays(1, &id);
-  }
 }
 
 void VertexArray::renderVertexStream(int32_t type) {

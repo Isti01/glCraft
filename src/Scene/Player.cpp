@@ -51,31 +51,33 @@ void Player::onKeyEvent(int32_t key, int32_t, int32_t action, int32_t) {
     return;  // don't respond to repeatedly pressed buttons
   }
 
+  bool isButtonPressed = action == 1;
+
   if (key == 87 || key == 265) {  // forward
-    camera.setIsMovingForward(action == 1);
+    camera.setIsMovingForward(isButtonPressed);
   } else if (key == 83 || key == 264) {  // backward
-    camera.setIsMovingBackward(action == 1);
+    camera.setIsMovingBackward(isButtonPressed);
   } else if (key == 65 || key == 263) {  // left
-    camera.setIsMovingLeft(action == 1);
+    camera.setIsMovingLeft(isButtonPressed);
   } else if (key == 68 || key == 262) {  // right
-    camera.setIsMovingRight(action == 1);
+    camera.setIsMovingRight(isButtonPressed);
   } else if (key == 32) {  // space
     if (isSurvivalMovement) {
       camera.setIsMovingUp(false);
-      if (canJump && action == 1) {
+      if (canJump && isButtonPressed) {
         gravity = glm::vec3(0, GravityConstant / 4.5, 0);
       }
     } else {
-      camera.setIsMovingUp(action == 1);
+      camera.setIsMovingUp(isButtonPressed);
     }
   } else if (key == 340) {  // shift
     if (isSurvivalMovement) {
       camera.setIsMovingDown(false);
     } else {
-      camera.setIsMovingDown(action == 1);
+      camera.setIsMovingDown(isButtonPressed);
     }
   } else if (key == 341) {  // ctrl
-    isRunning = action == 1;
+    isRunning = isButtonPressed;
   }
 }
 

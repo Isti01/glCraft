@@ -10,11 +10,8 @@ class ShaderProgram {
   [[nodiscard]] int32_t getUniformLocation(const std::string &location) const;
 
 public:
-  ShaderProgram(const ShaderProgram &) = delete;
-  ShaderProgram(ShaderProgram &) = delete;
-  ShaderProgram(ShaderProgram &&) = delete;
-
   explicit ShaderProgram(const std::string &name);
+  ~ShaderProgram();
 
   [[nodiscard]] bool isValid() const { return shaderProgram; };
   void bind() const;
@@ -26,5 +23,9 @@ public:
   void setMat4(const std::string &location, const glm::mat4 &value) const;
   void setTexture(const std::string &location, const Ref<const Texture> &texture, int32_t slot) const;
 
-  ~ShaderProgram();
+  ShaderProgram(const ShaderProgram &) = delete;
+  ShaderProgram(ShaderProgram &) = delete;
+  ShaderProgram(ShaderProgram &&) noexcept = delete;
+  ShaderProgram &operator=(ShaderProgram &) = delete;
+  ShaderProgram &operator=(ShaderProgram &&) noexcept = delete;
 };
