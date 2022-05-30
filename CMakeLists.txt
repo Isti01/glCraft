@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.22.1)
 project(glCraft)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -9,9 +9,9 @@ elseif (CMAKE_BUILD_TYPE MATCHES Debug)
     set(CMAKE_CXX_FLAGS "-g")
 endif ()
 
-file(GLOB_RECURSE main_sources src/*.cpp)
-add_executable(main ${main_sources})
-target_precompile_headers(main PRIVATE src/glCraft.h)
+file(GLOB_RECURSE glCraftSources src/*.cpp src/*.h)
+add_executable(glCraft ${glCraftSources})
+target_precompile_headers(glCraft PRIVATE src/glCraft.h)
 
 # glfw
 add_subdirectory(third_party/glfw EXCLUDE_FROM_ALL)
@@ -44,19 +44,19 @@ add_library(
 include_directories(imgui third_party/imgui third_party/imgui/backends)
 
 # include FastNoiseLite
-include_directories(main third_party/FastNoiseLite)
+include_directories(glCraft third_party/FastNoiseLite)
 
 # lodepng
 add_library(lodepng EXCLUDE_FROM_ALL third_party/lodepng/lodepng.h third_party/lodepng/lodepng.cpp)
 include_directories(lodepng third_party/lodepng)
 
-# link glfw to imgui and link everything to the main app
+# link glfw to imgui and link everything to the glCraft app
 target_link_libraries(imgui PRIVATE glfw)
-target_link_libraries(main PRIVATE glfw glm glad imgui lodepng)
+target_link_libraries(glCraft PRIVATE glfw glm glad imgui lodepng)
 
 # set a symlink to the assets dir
 add_custom_command(
-        TARGET main PRE_BUILD COMMAND
+        TARGET glCraft PRE_BUILD COMMAND
         ${CMAKE_COMMAND} -E create_symlink
         ${CMAKE_SOURCE_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets
 )
