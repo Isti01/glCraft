@@ -88,6 +88,11 @@ void Scene::renderGui() {
       skybox.setRotationSpeed(speed);
     }
 
+    float movementSpeed = player.getMovementSpeedMultiplier();
+    if (ImGui::SliderFloat("Player movement speed multiplier", &movementSpeed, 1.0f, 10.0f)) {
+      player.setMovementSpeedMultiplier(movementSpeed);
+    }
+
     ImGui::Spacing();
     ImGui::Spacing();
 
@@ -122,8 +127,8 @@ void Scene::onResized(int32_t width, int32_t height) {
 }
 
 void Scene::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {
-  if (key == 256) {
-    if (action == 1) {
+  if (key == GLFW_KEY_ESCAPE) {
+    if (action == GLFW_KEY_DOWN) {
       toggleMenu();
     }
     return;

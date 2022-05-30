@@ -16,8 +16,7 @@ class Player {
 
   glm::vec3 gravity{0};
 
-  float walkingSpeed = 4.317;
-  float runningSpeed = 5.612;
+  float movementSpeedMultiplier = 1;
   float mouseSensitivity = .5;
   bool canJump = false;
   bool isRunning = false;
@@ -38,6 +37,12 @@ public:
   };
 
   [[nodiscard]] const Camera& getCamera() const { return camera; };
+
+  [[nodiscard]] float getMovementSpeedMultiplier() const { return movementSpeedMultiplier; };
+  void setMovementSpeedMultiplier(float movementSpeed) { movementSpeedMultiplier = movementSpeed; }
+
+  [[nodiscard]] float getWalkingSpeed() const { return movementSpeedMultiplier * 4.317f; };
+  [[nodiscard]] float getRunningSpeed() const { return movementSpeedMultiplier * 5.612f; };
 
   void onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode);
   void onMouseButtonEvent(int32_t button, int32_t action, int32_t mods);

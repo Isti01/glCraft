@@ -15,7 +15,7 @@ void Player::update(float deltaTime) {
   canJump = false;
   glm::vec3 movement(0);
   if (glm::length(moveDirection) > 0) {
-    float movementSpeed = isRunning ? runningSpeed : walkingSpeed;
+    float movementSpeed = isRunning ? getRunningSpeed() : getWalkingSpeed();
     movement = glm::normalize(moveDirection) * movementSpeed * deltaTime;
   }
 
