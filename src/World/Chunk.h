@@ -72,7 +72,7 @@ public:
     return x >= 0 && x < HorizontalSize && y >= 0 && y < VerticalSize && z >= 0 && z < HorizontalSize;
   }
 
-  const BlockData* getBlockAtOptimized(const glm::ivec3& pos, const World& world) const;
+  [[nodiscard]] const BlockData* getBlockAtOptimized(const glm::ivec3& pos, const World& world) const;
   static bool isValidPosition(glm::ivec3 position) { return position.y >= 0 && position.y < VerticalSize; }
   static glm::ivec3 toChunkCoordinates(const glm::ivec3& globalPosition);
 

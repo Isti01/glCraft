@@ -41,24 +41,25 @@ const BlockData* Chunk::getBlockAtOptimized(const glm::ivec3& pos, const World& 
   return nullptr;
 }
 
+bool hasNonAirAt(const glm::ivec3& pos, const Chunk& chunk, const World& world) {
+  const BlockData* block = chunk.getBlockAtOptimized(pos, world);
+  return block != nullptr && block->blockClass != BlockData::BlockClass::air;
+}
+
 uint8_t calculateOcclusionLevel(const glm::ivec3& blockPos,
                                 const glm::ivec3& vertOffset,
                                 const Chunk& chunk,
                                 const World& world) {
   glm::ivec3 direction = glm::sign(glm::vec3(vertOffset) - glm::vec3(.5));
 
-  const BlockData* side1Block = chunk.getBlockAtOptimized(blockPos + direction * glm::ivec3(1, 1, 0), world);
-  const BlockData* side2Block = chunk.getBlockAtOptimized(blockPos + direction * glm::ivec3(0, 1, 1), world);
-  const BlockData* cornerBlock = chunk.getBlockAtOptimized(blockPos + direction * glm::ivec3(1, 1, 1), world);
-
-  uint8_t side1 = (side1Block != nullptr && side1Block->blockClass != BlockData::BlockClass::air) ? 1 : 0;
-  uint8_t side2 = (side2Block != nullptr && side2Block->blockClass != BlockData::BlockClass::air) ? 1 : 0;
-  uint8_t corner = (cornerBlock != nullptr && cornerBlock->blockClass != BlockData::BlockClass::air) ? 1 : 0;
-
+  uint8_t side1 = hasNonAirAt(blockPos + direction * glm::ivec3(1, 1, 0), chunk, world) ? 1 : 0;
+  uint8_t side2 = hasNonAirAt(blockPos + direction * glm::ivec3(0, 1, 1), chunk, world) ? 1 : 0;
   if (side1 && side2) {
     return 0;
   }
 
+  //  uint8_t top = hasNonAirAt(blockPos + glm::ivec3(0, 1, 0), chunk, world) ? 1 : 0;
+  uint8_t corner = hasNonAirAt(blockPos + direction * glm::ivec3(1, 1, 1), chunk, world) ? 1 : 0;
   return 3 - (side1 + side2 + corner);
 }
 
@@ -70,7 +71,6 @@ void Chunk::createMesh(const World& world) {
   solidVertexCount = 0;
   semiTransparentVertexCount = 0;
 
-  // used tuple, because glm::ivec3 cannot be destructured
   const std::array<glm::ivec3, 6> offsetsToCheck = {{
      {1, 0, 0},
      {-1, 0, 0},
@@ -91,7 +91,8 @@ void Chunk::createMesh(const World& world) {
 
         for (const glm::ivec3& offset: offsetsToCheck) {
           const BlockData* block = getBlockAtOptimized(blockPos + offset, world);
-          if (block != nullptr && block->blockClass == blockClass) {
+          if (block != nullptr &&
+              (block->blockClass == blockClass || block->blockClass == BlockData::BlockClass::solid)) {
             continue;
           }
 
@@ -99,15 +100,16 @@ void Chunk::createMesh(const World& world) {
             BlockVertex vert = vertex;
             vert.offset(x, y, z);
             vert.setType(offset, type);
+
+            uint8_t occlusionLevel = 3;
             if (useAmbientOcclusion) {
               if (offset.y == -1) {
-                vert.setOcclusionLevel(0);
+                occlusionLevel = 0;
               } else {
-                vert.setOcclusionLevel(calculateOcclusionLevel(blockPos, vert.getPosition() - blockPos, *this, world));
+                occlusionLevel = calculateOcclusionLevel(blockPos, vert.getPosition() - blockPos, *this, world);
               }
-            } else {
-              vert.setOcclusionLevel(3);
             }
+            vert.setOcclusionLevel(occlusionLevel);
 
             if (blockClass == BlockData::BlockClass::semiTransparent ||
                 blockClass == BlockData::BlockClass::transparent) {

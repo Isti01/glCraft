@@ -83,7 +83,7 @@ void Scene::renderGui() {
     ImGui::Spacing();
     ImGui::Spacing();
 
-    int32_t useOcclusion = world->getUseAmbientOcclusion() ? 1:0;
+    int32_t useOcclusion = world->getUseAmbientOcclusion() ? 1 : 0;
     if (ImGui::SliderInt("Use ambient occlusion", &useOcclusion, 0, 1)) {
       world->setUseAmbientOcclusion(useOcclusion == 1);
     }
@@ -98,7 +98,7 @@ void Scene::renderGui() {
     ImGui::Spacing();
 
     float speed = skybox.getRotationSpeed();
-    if (ImGui::SliderFloat("Night/Day cycle speed", &speed, 0.01, 10)) {
+    if (ImGui::SliderFloat("Night/Day cycle speed", &speed, 0, 10)) {
       skybox.setRotationSpeed(speed);
     }
 
@@ -171,7 +171,9 @@ void Scene::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mo
     }
     return;
   }
-  player.onKeyEvent(key, scancode, action, mode);
+  if (!isMenuOpen) {
+    player.onKeyEvent(key, scancode, action, mode);
+  }
 }
 
 void Scene::onMouseButtonEvent(int32_t button, int32_t action, int32_t mods) {
