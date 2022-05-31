@@ -1,9 +1,8 @@
 #include "BlockVertex.h"
 
-BlockVertex::BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, uint8_t normalIndex) {
+BlockVertex::BlockVertex(const glm::ivec3& position, const glm::ivec2& uv) {
   offset(position.x, position.y, position.z);
   offsetUv(uv.x, uv.y);
-  setNormal(normalIndex);
 }
 
 void BlockVertex::offsetUv(uint8_t x, uint8_t y) {
@@ -30,12 +29,16 @@ void BlockVertex::setAnimated() {
   data |= 0b1 << 27;
 }
 
-void BlockVertex::setNormal(uint8_t normalIndex) {
-  assert(normalIndex < 6);
-  data |= normalIndex << 29;
+glm::ivec3 BlockVertex::getPosition() const {
+  return {(data >> 9) & 0x1fu, data & 0x1ffu, (data >> 14) & 0x1fu};
 }
 
-void BlockVertex::setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, BlockData::BlockType type) {
+void BlockVertex::setOcclusionLevel(uint8_t occlusionLevel) {
+  assert(occlusionLevel < 4 && "The occlusion level is out of bounds");
+  data |= occlusionLevel << 29;
+}
+
+void BlockVertex::setType(const glm::ivec3& offset, BlockData::BlockType type) {
   switch (type) {
     case BlockData::BlockType::bedrock:
       offsetUv(1, 1);
@@ -67,9 +70,9 @@ void BlockVertex::setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, Blo
       offsetUv(0, 3);
       break;
     case BlockData::BlockType::grass:
-      if (offsetY == 1) {
+      if (offset.y == 1) {
         offsetUv(0, 0);
-      } else if (offsetY == -1) {
+      } else if (offset.y == -1) {
         offsetUv(2, 0);
       } else {
         offsetUv(3, 0);
@@ -91,7 +94,7 @@ void BlockVertex::setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, Blo
       offsetUv(1, 3);
       break;
     case BlockData::BlockType::oak_wood:
-      if (offsetY == 1 || offsetY == -1) {
+      if (offset.y == 1 || offset.y == -1) {
         offsetUv(5, 1);
       } else {
         offsetUv(4, 1);

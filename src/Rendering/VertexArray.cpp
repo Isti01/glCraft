@@ -61,6 +61,7 @@ void VertexArray::addVertexAttributes(const std::vector<VertexAttribute> &vector
       case VertexAttribute::UShort:
       case VertexAttribute::Int:
       case VertexAttribute::UInt:
+      case VertexAttribute::Byte:
         glVertexAttribIPointer(i, componentCount, type, stride, reinterpret_cast<void *>(offset));
         break;
       case VertexAttribute::Float:

@@ -87,12 +87,15 @@ void World::render(glm::vec3 playerPos, glm::mat4 transform, float rotation) {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  for (const auto& index: *sortedChunkIndices) { chunks[index.first]->render(transform, *this); }
+  for (const auto& index: *sortedChunkIndices) {
+    chunks[index.first]->setUseAmbientOcclusion(useAmbientOcclusion);
+    chunks[index.first]->render(transform, *this);
+  }
 
   glDisable(GL_BLEND);
 }
 
-BlockData World::getBlockAt(glm::ivec3 position) {
+const BlockData* World::getBlockAt(glm::ivec3 position) {
   return getChunk(getChunkIndex(position))->getBlockAt(Chunk::toChunkCoordinates(position));
 }
 
@@ -150,14 +153,15 @@ void World::setTextureAtlas(const Ref<const Texture>& texture) {
   shader->setTexture("atlas", textureAtlas, 0);
 }
 
-std::optional<BlockData> World::getBlockAtIfLoaded(glm::ivec3 position) const {
+const BlockData* World::getBlockAtIfLoaded(glm::ivec3 position) const {
   glm::ivec2 index = getChunkIndex(position);
   if (!isChunkLoaded(index)) {
-    return {};
+    return nullptr;
   }
 
   return chunks.at(index)->getBlockAt(Chunk::toChunkCoordinates(position));
 }
+
 bool World::isChunkLoaded(glm::ivec2 position) const {
   return chunks.contains(position);
 }

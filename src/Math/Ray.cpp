@@ -21,14 +21,14 @@ Ray::Ray(glm::vec3 position, glm::vec3 direction, World& world, float reach = 10
 
     if (maybeBlockPosition.has_value() && World::isValidBlockPosition(maybeBlockPosition.value())) {
       glm::vec3 blockPosition = maybeBlockPosition.value();
-      BlockData block = world.getBlockAt(blockPosition);
+      const BlockData* block = world.getBlockAt(blockPosition);
 
-      if (block.type != BlockData::BlockType::air) {
+      if (block->type != BlockData::BlockType::air) {
         successful = true;
         std::optional<glm::ivec3> maybeNeighbor =
            AxisPlane::rayHitsToBlockPosition(prevClosestHits[0], prevClosestHits[1]);
 
-        hitTarget = {blockPosition, block, maybeNeighbor.value(), hasNeighbor && maybeNeighbor.has_value()};
+        hitTarget = {blockPosition, *block, maybeNeighbor.value(), hasNeighbor && maybeNeighbor.has_value()};
       }
     }
 

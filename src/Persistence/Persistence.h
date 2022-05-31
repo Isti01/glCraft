@@ -12,17 +12,11 @@ class Persistence {
 
 public:
   explicit Persistence(std::string path);
-
-  void commitChunk(const Ref<Chunk>& chunk) { chunks[chunk->getPosition()] = chunk; }
-  [[nodiscard]] Ref<Chunk> getChunk(glm::ivec2 position) const {
-    if (!chunks.contains(position)) {
-      return nullptr;
-    }
-    return chunks.at(position);
-  };
-
-  void commitCamera(const Camera& newCamera) { camera = newCamera; }
-  [[nodiscard]] const Camera& getCamera() const { return camera; };
-
   ~Persistence();
+
+  void commitChunk(const Ref<Chunk>& chunk);
+  [[nodiscard]] Ref<Chunk> getChunk(glm::ivec2 position) const;
+
+  void commitCamera(const Camera& newCamera);
+  [[nodiscard]] const Camera& getCamera() const;
 };

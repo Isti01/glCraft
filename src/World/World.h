@@ -15,7 +15,9 @@ class World {
   Ref<Persistence> persistence;
   WorldGenerator generator;
 
-  int32_t viewDistance = 10;
+  bool useAmbientOcclusion = true;
+
+  int32_t viewDistance = 8;
   float textureAnimation = 0;
   static constexpr float TextureAnimationSpeed = 2;
 
@@ -28,8 +30,14 @@ public:
   void addChunk(glm::ivec2 position, const Ref<Chunk>& chunk);
   [[nodiscard]] static glm::ivec2 getChunkIndex(glm::ivec3 position);
 
-  [[nodiscard]] BlockData getBlockAt(glm::ivec3 position);
-  [[nodiscard]] std::optional<BlockData> getBlockAtIfLoaded(glm::ivec3 position) const;
+  [[nodiscard]] int32_t getViewDistance() const { return viewDistance; };
+  void setViewDistance(int32_t distance) { viewDistance = distance; };
+
+  [[nodiscard]] bool getUseAmbientOcclusion() const { return useAmbientOcclusion; };
+  void setUseAmbientOcclusion(bool enabled) { useAmbientOcclusion = enabled; };
+
+  [[nodiscard]] const BlockData* getBlockAt(glm::ivec3 position);
+  [[nodiscard]] const BlockData* getBlockAtIfLoaded(glm::ivec3 position) const;
   [[nodiscard]] bool isChunkLoaded(glm::ivec2 position) const;
   bool placeBlock(BlockData block, glm::ivec3 position);
 

@@ -3,10 +3,10 @@
 #include "BlockVertex.h"
 
 struct BlockMesh {
-  static const std::array<BlockVertex, 6>& getVerticesFromDirection(int32_t x, int32_t y, int32_t z) {
-    assert(glm::abs(x) + glm::abs(y) + glm::abs(z) == 1);
+  static const std::array<BlockVertex, 6>& getVerticesFromDirection(const glm::ivec3& vec) {
+    assert(glm::abs(vec.x) + glm::abs(vec.y) + glm::abs(vec.z) == 1);
 
-    switch (x) {
+    switch (vec.x) {
       case 1:
         return vertices[1];
       case -1:
@@ -15,7 +15,7 @@ struct BlockMesh {
         break;
     }
 
-    switch (y) {
+    switch (vec.y) {
       case 1:
         return vertices[0];
       case -1:
@@ -24,7 +24,7 @@ struct BlockMesh {
         break;
     }
 
-    switch (z) {
+    switch (vec.z) {
       case 1:
         return vertices[4];
       case -1:

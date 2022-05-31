@@ -83,25 +83,47 @@ void Scene::renderGui() {
     ImGui::Spacing();
     ImGui::Spacing();
 
+    int32_t useOcclusion = world->getUseAmbientOcclusion() ? 1:0;
+    if (ImGui::SliderInt("Use ambient occlusion", &useOcclusion, 0, 1)) {
+      world->setUseAmbientOcclusion(useOcclusion == 1);
+    }
+
+    ImGui::Spacing();
+
+    int32_t distance = world->getViewDistance();
+    if (ImGui::SliderInt("Max render distance", &distance, 1, 13)) {
+      world->setViewDistance(distance);
+    }
+
+    ImGui::Spacing();
+
     float speed = skybox.getRotationSpeed();
     if (ImGui::SliderFloat("Night/Day cycle speed", &speed, 0.01, 10)) {
       skybox.setRotationSpeed(speed);
     }
+
+    ImGui::Spacing();
 
     float movementSpeed = player.getMovementSpeedMultiplier();
     if (ImGui::SliderFloat("Player movement speed multiplier", &movementSpeed, 1.0f, 10.0f)) {
       player.setMovementSpeedMultiplier(movementSpeed);
     }
 
+    ImGui::Spacing();
+
     float jumpHeight = player.getJumpHeightMultiplier();
     if (ImGui::SliderFloat("Player jump height multiplier", &jumpHeight, 1.0f, 10.0f)) {
       player.setJumpHeightMultiplier(jumpHeight);
     }
 
+    ImGui::Spacing();
+
     float gravity = player.getGravityConstant() / 10;
     if (ImGui::SliderFloat("Gravity", &gravity, -5, 10.0f)) {
       player.setGravityConstant(gravity * 10);
     }
+
+    ImGui::Spacing();
 
     if (ImGui::Button("Reset gravity")) {
       player.setGravityConstant(Player::DefaultGravity);
@@ -110,8 +132,9 @@ void Scene::renderGui() {
     ImGui::Spacing();
     ImGui::Spacing();
 
-    static char textureAtlasPath[256] = "";
-    ImGui::InputText("Custom texture atlas path", textureAtlasPath, 256);
+    const uint32_t pathLength = 256;
+    static char textureAtlasPath[pathLength] = "";
+    ImGui::InputText("Custom texture atlas path", textureAtlasPath, pathLength);
     if (ImGui::Button("Load texture atlas")) {
       Ref<const Texture> atlas = AssetManager::instance().loadTexture(textureAtlasPath);
       if (atlas != nullptr) {
@@ -123,8 +146,9 @@ void Scene::renderGui() {
   ImGui::Spacing();
   ImGui::Spacing();
 
-  static char textureAtlasPath[256] = "";
-  ImGui::InputText("Save file path", textureAtlasPath, 256);
+  const uint32_t pathLength = 256;
+  static char textureAtlasPath[pathLength] = "";
+  ImGui::InputText("Save file path", textureAtlasPath, pathLength);
   if (ImGui::Button("Load World")) {
     if (std::filesystem::exists(textureAtlasPath)) {
       Application::instance().setScene(std::make_shared<Scene>(textureAtlasPath));

@@ -48,6 +48,6 @@ std::optional<glm::ivec3> AxisPlane::rayHitsToBlockPosition(const glm::vec3& hit
   glm::vec3 diff = glm::abs(hit1 - hit2);
 
   if (diff.x > 1.001f || diff.y > 1.001f || diff.z > 1.001f)
-    return {};
+    return std::nullopt;
   return glm::floor((hit1 + hit2) / 2.0f);
 }

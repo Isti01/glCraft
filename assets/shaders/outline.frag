@@ -1,5 +1,7 @@
 #version 450 core
 
+layout(depth_less) out float gl_FragDepth;
+
 in vec3 vert_pos;
 in vec2 vert_uv;
 out vec4 color;

@@ -1,9 +1,11 @@
 #version 450 core
 
-flat in float vert_lighting;
 flat in uint animated;
+
+in float vert_lighting;
 in vec3 vert_pos;
 in vec2 vert_uv;
+
 out vec4 color;
 
 uniform vec2 textureAnimation = vec2(0);

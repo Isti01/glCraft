@@ -10,6 +10,7 @@ struct VertexAttribute {
     UShort = GL_UNSIGNED_SHORT,
     Int = GL_INT,
     UInt = GL_UNSIGNED_INT,
+    Byte = GL_BYTE,
     Float = GL_FLOAT,
   };
 

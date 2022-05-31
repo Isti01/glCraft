@@ -1,7 +1,6 @@
 #include "Chunk.h"
 
 #include "../AssetManager/AssetManager.h"
-#include "../Util/Util.h"
 #include "World.h"
 
 Chunk::Chunk(const glm::ivec2& worldPosition) : worldPosition(worldPosition) {
@@ -29,6 +28,40 @@ void Chunk::render(const glm::mat4& transform, const World& world) {
   mesh->renderVertexSubStream(semiTransparentVertexCount, solidVertexCount);
 }
 
+const BlockData* Chunk::getBlockAtOptimized(const glm::ivec3& pos, const World& world) const {
+  const glm::ivec2& worldPos = worldPosition;
+  if (pos.y >= 0 && pos.y < Chunk::VerticalSize) {
+    if (pos.x >= 0 && pos.x < Chunk::HorizontalSize && pos.z >= 0 && pos.z < Chunk::HorizontalSize) {
+      return &data[pos.x][pos.y][pos.z];
+    } else {
+      return world.getBlockAtIfLoaded(glm::ivec3(pos.x + worldPos.x, pos.y, pos.z + worldPos.y));
+    }
+  }
+
+  return nullptr;
+}
+
+uint8_t calculateOcclusionLevel(const glm::ivec3& blockPos,
+                                const glm::ivec3& vertOffset,
+                                const Chunk& chunk,
+                                const World& world) {
+  glm::ivec3 direction = glm::sign(glm::vec3(vertOffset) - glm::vec3(.5));
+
+  const BlockData* side1Block = chunk.getBlockAtOptimized(blockPos + direction * glm::ivec3(1, 1, 0), world);
+  const BlockData* side2Block = chunk.getBlockAtOptimized(blockPos + direction * glm::ivec3(0, 1, 1), world);
+  const BlockData* cornerBlock = chunk.getBlockAtOptimized(blockPos + direction * glm::ivec3(1, 1, 1), world);
+
+  uint8_t side1 = (side1Block != nullptr && side1Block->blockClass != BlockData::BlockClass::air) ? 1 : 0;
+  uint8_t side2 = (side2Block != nullptr && side2Block->blockClass != BlockData::BlockClass::air) ? 1 : 0;
+  uint8_t corner = (cornerBlock != nullptr && cornerBlock->blockClass != BlockData::BlockClass::air) ? 1 : 0;
+
+  if (side1 && side2) {
+    return 0;
+  }
+
+  return 3 - (side1 + side2 + corner);
+}
+
 void Chunk::createMesh(const World& world) {
   static Ref<std::vector<BlockVertex>> solidVertices = std::make_shared<std::vector<BlockVertex>>(MaxVertexCount);
   static Ref<std::vector<BlockVertex>> semiTransparentVertices =
@@ -38,7 +71,7 @@ void Chunk::createMesh(const World& world) {
   semiTransparentVertexCount = 0;
 
   // used tuple, because glm::ivec3 cannot be destructured
-  const std::array<std::tuple<int32_t, int32_t, int32_t>, 6> offsetsToCheck = {{
+  const std::array<glm::ivec3, 6> offsetsToCheck = {{
      {1, 0, 0},
      {-1, 0, 0},
      {0, 1, 0},
@@ -47,43 +80,41 @@ void Chunk::createMesh(const World& world) {
      {0, 0, -1},
   }};
 
-  for (int32_t x = 0; x < HorizontalSize; x++) {
-    for (int32_t y = 0; y < VerticalSize; y++) {
-      for (int32_t z = 0; z < HorizontalSize; z++) {
+  for (int32_t x = HorizontalSize - 1; x >= 0; --x) {
+    for (int32_t y = VerticalSize - 1; y >= 0; --y) {
+      for (int32_t z = HorizontalSize - 1; z >= 0; --z) {
+        glm::ivec3 blockPos = {x, y, z};
         const auto& [type, blockClass] = data[x][y][z];
         if (blockClass == BlockData::BlockClass::air) {
           continue;
         }
 
-        for (const auto& [ox, oy, oz]: offsetsToCheck) {
-          int32_t nx = x + ox;
-          int32_t ny = y + oy;
-          int32_t nz = z + oz;
-
-          if (ny >= 0 && ny < VerticalSize) {
-            if (nx >= 0 && nx < HorizontalSize && nz >= 0 && nz < HorizontalSize) {
-              if (blockClass == data[nx][ny][nz].blockClass) {
-                continue;
-              }
-            } else if (std::optional<BlockData> block =
-                          world.getBlockAtIfLoaded(glm::ivec3(nx + worldPosition.x, ny, nz + worldPosition.y))) {
-              if (blockClass == block->blockClass) {
-                continue;
-              }
-            }
+        for (const glm::ivec3& offset: offsetsToCheck) {
+          const BlockData* block = getBlockAtOptimized(blockPos + offset, world);
+          if (block != nullptr && block->blockClass == blockClass) {
+            continue;
           }
 
-          for (const auto& vertex: BlockMesh::getVerticesFromDirection(ox, oy, oz)) {
+          for (const auto& vertex: BlockMesh::getVerticesFromDirection(offset)) {
+            BlockVertex vert = vertex;
+            vert.offset(x, y, z);
+            vert.setType(offset, type);
+            if (useAmbientOcclusion) {
+              if (offset.y == -1) {
+                vert.setOcclusionLevel(0);
+              } else {
+                vert.setOcclusionLevel(calculateOcclusionLevel(blockPos, vert.getPosition() - blockPos, *this, world));
+              }
+            } else {
+              vert.setOcclusionLevel(3);
+            }
+
             if (blockClass == BlockData::BlockClass::semiTransparent ||
                 blockClass == BlockData::BlockClass::transparent) {
-              semiTransparentVertices->at(semiTransparentVertexCount) = vertex;
-              semiTransparentVertices->at(semiTransparentVertexCount).offset(x, y, z);
-              semiTransparentVertices->at(semiTransparentVertexCount).setType(ox, oy, oz, type);
+              semiTransparentVertices->at(semiTransparentVertexCount) = vert;
               semiTransparentVertexCount++;
             } else {
-              solidVertices->at(solidVertexCount) = vertex;
-              solidVertices->at(solidVertexCount).offset(x, y, z);
-              solidVertices->at(solidVertexCount).setType(ox, oy, oz, type);
+              solidVertices->at(solidVertexCount) = vert;
               solidVertexCount++;
             }
           }

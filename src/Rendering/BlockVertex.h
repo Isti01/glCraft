@@ -19,16 +19,18 @@ private:
   uint32_t data = 0;
 
   void offsetUv(uint8_t x, uint8_t y);
+
 public:
   BlockVertex() = default;
-  BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, uint8_t normalIndex);
+  BlockVertex(const glm::ivec3& position, const glm::ivec2& uv);
 
   void offset(uint32_t x, uint32_t y, uint32_t z);
   void setAnimated();
-  void setNormal(uint8_t normalIndex);
-  void setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, BlockData::BlockType type);
+  void setType(const glm::ivec3& offset, BlockData::BlockType type);
+  [[nodiscard]] glm::ivec3 getPosition() const;
 
   static std::vector<VertexAttribute> vertexAttributes() { return {VertexAttribute(1, VertexAttribute::UInt, 0)}; }
+  void setOcclusionLevel(uint8_t occlusionLevel);
 };
 
 static_assert(sizeof(BlockVertex) == sizeof(uint32_t), "The BlockVertex struct must not have padding");
