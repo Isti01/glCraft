@@ -13,33 +13,19 @@ out vec2 vert_uv;
 
 vec3 normals[6] = { vec3(0, 1, 0), vec3(1, 0, 0), vec3(-1, 0, 0), vec3(0, 0, -1), vec3(0, 0, 1), vec3(0, -1, 0) };
 
-uint extractByte(uint data, uint offset){
-    return (data & (0xffu << offset)) >> offset;
-}
-
-uint useValueIfFlag(uint originalValue, uint flagValue, uint flags, uint offset){
-    uint flag = (flags >> offset) & 0x1u;
-    return originalValue * (1 - flag) + flagValue * flag;
-}
-
 void main() {
-    uint xzPos = extractByte(vertexData, 8);
-    uint uvCoords = extractByte(vertexData, 16);
-    uint flags = extractByte(vertexData, 24);
+    animated = (vertexData >> 27) & 1u;
 
-    animated = flags & 1u;
-
-    uint yPos = useValueIfFlag(extractByte(vertexData, 0), 256, flags, 1);
-    uint xPos = useValueIfFlag(xzPos & 0x0fu, 16, flags, 2);
-    uint zPos = useValueIfFlag((xzPos & 0xf0u) >> 4, 16, flags, 3);
-
+    uint yPos = vertexData & 0x1ffu;
+    uint xPos = (vertexData >> 9) & 0x1fu;
+    uint zPos = (vertexData >> 14) & 0x1fu;
     vert_pos = vec3(xPos, yPos, zPos);
 
-    uint xUv = uvCoords & 0x0fu;
-    uint yUv = (uvCoords & 0xf0u) >> 4;
+    uint xUv = (vertexData >> 19) & 0xfu;
+    uint yUv = (vertexData >> 23) & 0xfu;
     vert_uv = vec2(xUv, yUv);
 
-    uint normalIndex = extractByte(flags, 4);
+    uint normalIndex = (vertexData >> 29) & 7u;
     vec3 normal = normals[normalIndex];
 
     vert_lighting = min(max(dot(normalize(lightDirection), normal), 0) + 0.85f, 1);

@@ -6,11 +6,33 @@ BlockVertex::BlockVertex(const glm::ivec3& position, const glm::ivec2& uv, uint8
   setNormal(normalIndex);
 }
 
+void BlockVertex::offsetUv(uint8_t x, uint8_t y) {
+  assert(x < 16 && "Coordinate is out of bounds");
+  assert(y < 16 && "Coordinate is out of bounds");
+
+  uint8_t uv = x | (y << 4);
+  assert((((data >> 19) & 0xff) + uv) <= 0xff && "UV Coordinates are out of bounds");
+
+  data += uv << 19;
+};
+
+void BlockVertex::offset(uint32_t x, uint32_t y, uint32_t z) {
+  assert((((data >> 9) & 0x1fu) + x) <= 16 && "Coordinate is out of bounds");
+  assert((((data >> 14) & 0x1fu) + z) <= 16 && "Coordinate is out of bounds");
+  assert(((data & 0x1ffu) + y) <= 256 && "Coordinate is out of bounds");
+
+  data += y;
+  data += x << 9;
+  data += z << 14;
+}
+
+void BlockVertex::setAnimated() {
+  data |= 0b1 << 27;
+}
 
 void BlockVertex::setNormal(uint8_t normalIndex) {
   assert(normalIndex < 6);
-  flags &= 0b1111;
-  flags += normalIndex << 4;
+  data |= normalIndex << 29;
 }
 
 void BlockVertex::setType(int32_t offsetX, int32_t offsetY, int32_t offsetZ, BlockData::BlockType type) {
