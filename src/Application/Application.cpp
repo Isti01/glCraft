@@ -7,6 +7,10 @@ Application::Application() {
   instancePtr = this;
 }
 
+Application::~Application() {
+  instancePtr = nullptr;
+}
+
 int32_t Application::run() {
   if (!scene || !window.isValid()) {
     return -1;
@@ -54,8 +58,4 @@ void Application::onRefreshWindow() {
 
 void Application::onCursorPositionEvent(double x, double y) {
   scene->onCursorPositionEvent(x, y);
-}
-
-Application::~Application() {
-  instancePtr = nullptr;
 }

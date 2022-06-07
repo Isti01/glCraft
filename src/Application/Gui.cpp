@@ -20,6 +20,13 @@ Gui::Gui() {
   ImGui_ImplOpenGL3_Init("#version 450 core");
 }
 
+Gui::~Gui() {
+  instancePtr = nullptr;
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
+}
+
 void Gui::update() {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
@@ -29,11 +36,4 @@ void Gui::update() {
 void Gui::finalizeFrame() {
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-Gui::~Gui() {
-  instancePtr = nullptr;
-  ImGui_ImplOpenGL3_Shutdown();
-  ImGui_ImplGlfw_Shutdown();
-  ImGui::DestroyContext();
 }

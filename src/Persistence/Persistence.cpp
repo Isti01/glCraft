@@ -36,6 +36,24 @@ Persistence::Persistence(std::string newPath) : path(std::move(newPath)) {
 #endif
 }
 
+Persistence::~Persistence() {
+#ifdef SERIALIZE_DATA
+  std::ofstream file(path, std::ios::out | std::ios::binary);
+  if (!file) {
+    std::cerr << "Failed to open the file: " << path << std::endl;
+    return;
+  }
+
+  file.write(reinterpret_cast<char*>(&camera), sizeof(camera));
+
+  for (auto& [key, chunk]: chunks) {
+    glm::ivec2 worldPosition = key;
+    file.write(reinterpret_cast<char*>(&worldPosition[0]), sizeof(glm::ivec2));
+    file.write(reinterpret_cast<char*>(&chunk->data[0]), sizeof(Chunk::data));
+  }
+#endif
+}
+
 void Persistence::commitChunk(const Ref<Chunk>& chunk) {
 #ifdef SERIALIZE_DATA
   chunks[chunk->getPosition()] = chunk;
@@ -57,22 +75,4 @@ void Persistence::commitCamera(const Camera& newCamera) {
 
 const Camera& Persistence::getCamera() const {
   return camera;
-}
-
-Persistence::~Persistence() {
-#ifdef SERIALIZE_DATA
-  std::ofstream file(path, std::ios::out | std::ios::binary);
-  if (!file) {
-    std::cerr << "Failed to open the file: " << path << std::endl;
-    return;
-  }
-
-  file.write(reinterpret_cast<char*>(&camera), sizeof(camera));
-
-  for (auto& [key, chunk]: chunks) {
-    glm::ivec2 worldPosition = key;
-    file.write(reinterpret_cast<char*>(&worldPosition[0]), sizeof(glm::ivec2));
-    file.write(reinterpret_cast<char*>(&chunk->data[0]), sizeof(Chunk::data));
-  }
-#endif
 }

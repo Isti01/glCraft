@@ -58,7 +58,6 @@ uint8_t calculateOcclusionLevel(const glm::ivec3& blockPos,
     return 0;
   }
 
-  //  uint8_t top = hasNonAirAt(blockPos + glm::ivec3(0, 1, 0), chunk, world) ? 1 : 0;
   uint8_t corner = hasNonAirAt(blockPos + direction * glm::ivec3(1, 1, 1), chunk, world) ? 1 : 0;
   return 3 - (side1 + side2 + corner);
 }

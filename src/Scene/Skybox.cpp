@@ -20,8 +20,8 @@ void Skybox::update(const glm::mat4& projection, const glm::mat4& cameraView, fl
 }
 
 void Skybox::render() {
-  glDisable(GL_CULL_FACE);
   glDepthFunc(GL_LEQUAL);
+  glDisable(GL_CULL_FACE);
 
   shader->bind();
   shader->setTexture("cubeMap", cubeMap, 1);

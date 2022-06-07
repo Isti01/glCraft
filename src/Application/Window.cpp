@@ -32,6 +32,11 @@ Window::Window() {
   setupCallbacks();
 }
 
+Window::~Window() {
+  instancePtr = nullptr;
+  glfwTerminate();
+}
+
 void Window::onWindowError(int32_t errorCode, const char *description) {
   std::cerr << "GLFW: **ERROR** error=" << errorCode << " description=" << description << std::endl;
 }
@@ -206,9 +211,4 @@ glm::dvec2 Window::getCursorPosition() {
   glm::dvec2 pos;
   glfwGetCursorPos(window, &pos.x, &pos.y);
   return pos;
-}
-
-Window::~Window() {
-  instancePtr = nullptr;
-  glfwTerminate();
 }

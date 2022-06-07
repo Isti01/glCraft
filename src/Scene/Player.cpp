@@ -7,6 +7,10 @@ Player::Player(const Ref<World>& world, const Ref<Persistence>& persistence)
       persistence(persistence),
       world(world) {}
 
+Player::~Player() {
+  persistence->commitCamera(camera);
+}
+
 void Player::update(float deltaTime) {
   gravity += glm::vec3(0, -1, 0) * gravityConstant * deltaTime;
 
@@ -122,8 +126,4 @@ void Player::onCursorPositionEvent(double x, double y) {
 
 void Player::resetMousePosition() {
   shouldResetMouse = true;
-}
-
-Player::~Player() {
-  persistence->commitCamera(camera);
 }
