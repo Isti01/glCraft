@@ -11,6 +11,8 @@ software that I used to make this.
 
 - Building and destroying blocks
 ![Building and destroying blocks](./screenshots/building.png)
+- Ambient Occlusion
+![Building and destroying blocks](./screenshots/ambient-occlusion.png)
 - Procedural world generation
 ![Procedural world generation](./screenshots/procedural-world-generation.png)
 - Semi-transparent blocks
@@ -62,7 +64,7 @@ software that I used to make this.
     - The chunks are hollow on the inside, so most of the blocks that are not visible are not sent to the GPU.
     - Each vertex in a chunk is only 4 bytes long to make the game as memory-efficient as possible (on the GPU side).
     - The game has animated textures and an animated skybox.
-    - The game supports semi-transparent textures, the chunk meshes are sorted before drawing.
+    - The game supports semi-transparent textures, ambient occlusion and the chunk meshes are sorted before drawing.
 - Gameplay
   - 
     - The game has very basic, minecraft-like physics, with two movement modes:
@@ -71,6 +73,17 @@ software that I used to make this.
     - The game has block placing, block picking and block breaking. - *maybe the most essential feature*
     - Implemented a basic UI to change the active block, load saves, and load custom textures for the world.
     - The world is generated procedurally using a seed, and loaded dynamically as the player moves across it.
+
+- Controls
+  -
+    - `Left Click` to break a block
+    - `Middle Click` to pick a block
+    - `Right Click` to place a block
+    - `WASD`  to move around
+    - `Shift` to descend when physics is off
+    - `Space` to ascend when physics is off, or jump when physics is on
+    - `Ctrl` to go faster
+    - `Esc` to open the menu
 
 ## Libraries that I used
 
