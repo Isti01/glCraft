@@ -33,8 +33,6 @@ public:
   [[nodiscard]] float getRotationSpeed() const { return rotationSpeed; };
   void setRotationSpeed(float speed) { rotationSpeed = speed; };
 
-  [[nodiscard]] float getRotation() const { return rotation; };
-
   void update(const glm::mat4& projection, const glm::mat4& cameraView, float deltaTime);
   void render();
 };

@@ -36,8 +36,7 @@ void Scene::render() {
   skybox.render();
 
   glm::mat4 mvp = projectionMatrix * player.getCamera().getViewMatrix();
-  float rotation = skybox.getRotation();
-  world->render(player.getCamera().getPosition(), mvp, rotation);
+  world->render(player.getCamera().getPosition(), mvp);
 
   if (Ray ray{player.getCamera().getPosition(), player.getCamera().getLookDirection(), *world, Player::Reach}) {
     outline.render(mvp * glm::translate(ray.getHitTarget().position));
