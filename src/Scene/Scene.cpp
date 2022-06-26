@@ -1,7 +1,7 @@
 #include "Scene.h"
 
 #include "../Application/Application.h"
-#include "../Math/Ray.h"
+#include "../Math/WorldRayCast.h"
 #include "../World/BlockName.h"
 
 Scene::Scene(const std::string& savePath)
@@ -38,7 +38,7 @@ void Scene::render() {
   glm::mat4 mvp = projectionMatrix * player.getCamera().getViewMatrix();
   world->render(player.getCamera().getPosition(), mvp);
 
-  if (Ray ray{player.getCamera().getPosition(), player.getCamera().getLookDirection(), *world, Player::Reach}) {
+  if (WorldRayCast ray{player.getCamera().getPosition(), player.getCamera().getLookDirection(), *world, Player::Reach}) {
     outline.render(mvp * glm::translate(ray.getHitTarget().position));
   }
 

@@ -1,6 +1,6 @@
 #include "Player.h"
 
-#include "../Math/Ray.h"
+#include "../Math/WorldRayCast.h"
 
 Player::Player(const Ref<World>& world, const Ref<Persistence>& persistence)
     : camera(persistence->getCamera()),
@@ -91,16 +91,16 @@ void Player::onMouseButtonEvent(int32_t button, int32_t action, int32_t) {
   }
 
   if (button == GLFW_MOUSE_BUTTON_LEFT) {
-    if (Ray ray{camera.getPosition(), camera.getLookDirection(), *world, Reach}) {
+    if (WorldRayCast ray{camera.getPosition(), camera.getLookDirection(), *world, Reach}) {
       world->placeBlock(BlockData::BlockType::air, ray.getHitTarget().position);
     }
   } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-    Ray ray{camera.getPosition(), camera.getLookDirection(), *world, Reach};
+    WorldRayCast ray{camera.getPosition(), camera.getLookDirection(), *world, Reach};
     if (ray && ray.getHitTarget().hasNeighbor) {
       world->placeBlock(blockToPlace, ray.getHitTarget().neighbor);
     }
   } else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
-    if (Ray ray{camera.getPosition(), camera.getLookDirection(), *world, Reach}) {
+    if (WorldRayCast ray{camera.getPosition(), camera.getLookDirection(), *world, Reach}) {
       blockToPlace = ray.getHitTarget().block.type;
     }
   }

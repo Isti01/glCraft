@@ -1,8 +1,7 @@
-#include "Ray.h"
-
 #include "AxisPlane.h"
+#include "WorldRayCast.h"
 
-Ray::Ray(glm::vec3 position, glm::vec3 direction, World& world, float reach = 10.0f) {
+WorldRayCast::WorldRayCast(glm::vec3 position, glm::vec3 direction, World& world, float reach = 10.0f) {
   successful = false;
 
   std::array<AxisPlane, 3> planes = {{

@@ -10,12 +10,12 @@ struct HitTarget {
   bool hasNeighbor = false;
 };
 
-class Ray {
+class WorldRayCast {
   bool successful;
   HitTarget hitTarget;
 
 public:
-  Ray(glm::vec3 position, glm::vec3 direction, World& world, float reach);
+  WorldRayCast(glm::vec3 position, glm::vec3 direction, World& world, float reach);
 
   [[nodiscard]] bool hasHit() const { return successful; };
   [[nodiscard]] HitTarget getHitTarget() const { return hitTarget; };
