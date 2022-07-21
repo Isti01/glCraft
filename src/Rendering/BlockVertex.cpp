@@ -33,7 +33,7 @@ void BlockVertex::offset(uint32_t x, uint32_t y, uint32_t z) {
 }
 
 void BlockVertex::setAnimated() {
-  data |= 0b1 << 27;
+  data |= 0b1 << 28;
 }
 
 glm::ivec3 BlockVertex::getPosition() const {

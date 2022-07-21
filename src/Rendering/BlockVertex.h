@@ -12,7 +12,8 @@
  *  19-20: uv coordinates
  *  20-27: texture index
  *  28-28: animation flag
- *  29-31: normals
+ *  29-30: occlusion
+ *  31-31: reserved
  */
 class BlockVertex {
 private:
