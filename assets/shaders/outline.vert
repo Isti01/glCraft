@@ -13,8 +13,8 @@ void main() {
     uint zPos = bitfieldExtract(vertexData, 14, 5);
     vert_pos = vec3(xPos, yPos, zPos);
 
-    uint xUv = bitfieldExtract(vertexData, 19, 4);
-    uint yUv = bitfieldExtract(vertexData, 23, 4);
+    uint xUv = bitfieldExtract(vertexData, 19, 1);
+    uint yUv = bitfieldExtract(vertexData, 20, 1);
     vert_uv = vec2(xUv, yUv);
 
     gl_Position = MVP * vec4(vert_pos, 1);

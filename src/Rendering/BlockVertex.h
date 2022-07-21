@@ -6,23 +6,24 @@
 
 /**
  * Data layout:
- *  00-09: y  coordinates
- *  09-14: x  coordinates
- *  14-19: z  coordinates
- *  19-27: uv coordinates
- *  27-28: animation flag
- *  28-29: reserved
- *  29-32: normals
+ *  00-08: y  coordinates
+ *  09-13: x  coordinates
+ *  14-18: z  coordinates
+ *  19-20: uv coordinates
+ *  20-27: texture index
+ *  28-28: animation flag
+ *  29-31: normals
  */
 class BlockVertex {
 private:
   uint32_t data = 0;
 
-  void offsetUv(uint8_t x, uint8_t y);
+  void setUv(bool x, bool y);
+  void setTexture(uint8_t x, uint8_t y);
 
 public:
   BlockVertex() = default;
-  BlockVertex(const glm::ivec3& position, const glm::ivec2& uv);
+  BlockVertex(const glm::ivec3& position, const glm::bvec2& uv);
 
   void offset(uint32_t x, uint32_t y, uint32_t z);
   void setAnimated();

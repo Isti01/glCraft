@@ -6,21 +6,23 @@ uniform mat4 MVP = mat4(1);
 uniform vec3 lightDirection = vec3(1, 1, 1);
 
 flat out uint animated;
+flat out uint textureIndex;
 
 out float vert_lighting;
 out vec3 vert_pos;
 out vec2 vert_uv;
 
 void main() {
-    animated = bitfieldExtract(vertexData, 27, 1);
+    textureIndex = bitfieldExtract(vertexData, 20, 8);
+    animated = bitfieldExtract(vertexData, 28, 1);
 
     uint yPos = bitfieldExtract(vertexData,  0, 9);
     uint xPos = bitfieldExtract(vertexData,  9, 5);
     uint zPos = bitfieldExtract(vertexData, 14, 5);
     vert_pos = vec3(xPos, yPos, zPos);
 
-    uint xUv = bitfieldExtract(vertexData, 19, 4);
-    uint yUv = bitfieldExtract(vertexData, 23, 4);
+    uint xUv = bitfieldExtract(vertexData, 19, 1);
+    uint yUv = bitfieldExtract(vertexData, 20, 1);
     vert_uv = vec2(xUv, yUv);
 
     uint occlusionLevel = bitfieldExtract(vertexData, 29, 2);
