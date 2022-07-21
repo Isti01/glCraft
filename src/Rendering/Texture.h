@@ -18,9 +18,11 @@ public:
   void unbind() const;
 
   void buffer2DRGBAData(const Image& image);
-  void bufferCubeMapRGBAData(const std::array<Ref<const Image>, 6>& images);
+  void buffer2DArrayRGBAData(std::span<const Image> images);
+  void bufferCubeMapRGBAData(std::span<Ref<const Image>, 6> images);
 
   static Ref<const Texture> loadTexture2D(const std::string& name);
+  static Ref<const Texture> loadTexture2DArray(const std::string& name);
   static Ref<const Texture> loadCubeMapTexture(const std::string& name);
 
   Texture(const Texture&) = delete;

@@ -4,7 +4,7 @@
 
 World::World(const Ref<Persistence>& persistence, int32_t seed) : persistence(persistence), generator(seed) {
   shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
-  setTextureAtlas(AssetManager::instance().loadTexture("assets/textures/default_texture.png"));
+  setTextureAtlas(AssetManager::instance().loadTextureArray("assets/textures/default_texture.png"));
 }
 
 Ref<Chunk> World::generateOrLoadChunk(glm::ivec2 position) {
