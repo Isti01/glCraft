@@ -4,7 +4,7 @@
 
 World::World(const Ref<Persistence>& persistence, int32_t seed) : persistence(persistence), generator(seed) {
   shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
-  setTextureAtlas(AssetManager::instance().loadTexture("assets/textures/default_texture.png"));
+  setTextureAtlas(AssetManager::instance().loadTextureArray("assets/textures/default_texture.png"));
 }
 
 Ref<Chunk> World::generateOrLoadChunk(glm::ivec2 position) {
@@ -75,14 +75,14 @@ void World::render(glm::vec3 playerPos, glm::mat4 transform) {
   std::sort(sortedChunkIndices->begin(), sortedChunkIndices->end(),
             [](const auto& a, const auto& b) { return b.second < a.second; });
 
-  glm::vec2 animation{0};
-  int32_t animationProgress = static_cast<int32_t>(textureAnimation) % 5;
+  const int32_t animationProgress = static_cast<int32_t>(textureAnimation) % 5;
 
-  if (animationProgress != 0) {
-    animation = glm::vec2(2 - (animationProgress % 2), (animationProgress - 1) / 2);
-  }
+  // animation offsets for water and lava
+  const static int32_t animationOffsets[] = {0, 1, 2, 17, 18};
 
-  shader->setVec2("textureAnimation", animation);
+  const int32_t animationOffset = animationOffsets[animationProgress];
+
+  shader->setUInt("textureAnimation", animationOffset);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
