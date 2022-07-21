@@ -9,6 +9,7 @@
 #include "ShaderProgramRegistry.h"
 #include "ShaderRegistry.h"
 #include "TextRegistry.h"
+#include "TextureArrayRegistry.h"
 #include "TextureRegistry.h"
 
 class AssetManager {
@@ -17,6 +18,7 @@ class AssetManager {
   TextRegistry textRegistry;
   ImageRegistry imageRegistry;
   TextureRegistry textureRegistry;
+  TextureArrayRegistry textureArrayRegistry;
   CubeMapRegistry cubeMapRegistry;
   ShaderRegistry shaderRegistry;
   ShaderProgramRegistry shaderProgramRegistry;
@@ -37,6 +39,10 @@ public:
   Ref<const std::string> loadText(const std::string &name) { return textRegistry.get(name); };
   Ref<const Image> loadImage(const std::string &name) { return imageRegistry.get(name); };
   Ref<const Texture> loadTexture(const std::string &name) { return textureRegistry.get(name); };
+
+
+  /// the expected input format: width;height;
+  Ref<const Texture> loadTextureArray(const std::string &name) { return textureArrayRegistry.get(name); };
 
   /// the expected input format: right;left;top;bottom;front;back
   Ref<const Texture> loadCubeMap(const std::string &name) { return cubeMapRegistry.get(name); };
