@@ -17,6 +17,7 @@ public:
   void bind() const;
 
   void setInt(const std::string &location, int32_t value) const;
+  void setUInt(const std::string &location, int32_t value) const;
   void setFloat(const std::string &location, float value) const;
   void setVec2(const std::string &location, const glm::vec2 &value) const;
   void setVec3(const std::string &location, const glm::vec3 &value) const;
