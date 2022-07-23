@@ -20,11 +20,15 @@ class Scene {
   Skybox skybox;
 
   Player player;
+
+  const float zNear = 0.1f;
+  const float zFar = 350.0f;
   glm::mat4 projectionMatrix = glm::mat4(1);
 
   Crosshair crosshair;
   BlockOutline outline;
   bool isMenuOpen = false;
+  bool enableXRay = false;
 
   void toggleMenu();
   void updateMouse();

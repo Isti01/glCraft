@@ -41,8 +41,10 @@ private:
 
 public:
   explicit Chunk(const glm::ivec2& worldPosition);
+
   void render(const glm::mat4& transform, const World& world);
 
+  void setShader(const Ref<const ShaderProgram>& newShader) { shader = newShader; };
   void setDirty() { renderState = RenderState::dirty; };
   void setUseAmbientOcclusion(bool enabled) {
     if (enabled == useAmbientOcclusion) {
@@ -62,6 +64,13 @@ public:
 
     renderState = RenderState::dirty;
     data[x][y][z] = block;
+  }
+
+  [[nodiscard]] float distanceToPoint(const glm::vec2& point) const {
+    glm::vec2 referencePoint = {glm::clamp(point.x, (float) worldPosition.x, (float) worldPosition.x + 16.0f),
+                                glm::clamp(point.y, (float) worldPosition.y, (float) worldPosition.y + 16.0f)};
+
+    return glm::distance(referencePoint, point);
   }
 
   [[nodiscard]] const BlockData* getBlockAt(const glm::ivec3& position) const {

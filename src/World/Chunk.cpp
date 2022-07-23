@@ -12,8 +12,8 @@ void Chunk::init() {
   semiTransparentVertexCount = 0;
   mesh = nullptr;
   renderState = RenderState::initial;
-  shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
 }
+
 
 void Chunk::render(const glm::mat4& transform, const World& world) {
   if (!mesh || renderState != RenderState::ready) {
@@ -24,8 +24,12 @@ void Chunk::render(const glm::mat4& transform, const World& world) {
   shader->bind();
   shader->setMat4("MVP", transform * glm::translate(glm::vec3(worldPosition.x, 0, worldPosition.y)));
 
-  mesh->renderVertexSubStream(solidVertexCount, 0);
-  mesh->renderVertexSubStream(semiTransparentVertexCount, solidVertexCount);
+  if (solidVertexCount != 0) {
+    mesh->renderVertexSubStream(solidVertexCount, 0);
+  }
+  if (semiTransparentVertexCount != 0) {
+    mesh->renderVertexSubStream(semiTransparentVertexCount, solidVertexCount);
+  }
 }
 
 const BlockData* Chunk::getBlockAtOptimized(const glm::ivec3& pos, const World& world) const {

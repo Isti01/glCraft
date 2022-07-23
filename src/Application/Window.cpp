@@ -123,7 +123,7 @@ void GLAPIENTRY Window::onOpenGlMessage(GLenum source,
                                         GLsizei,
                                         const GLchar *message,
                                         const void *) {
-  if (id == 131185 || id == 131218) {
+  if (id == 131185 || id == 131218 || id == 131169) {
     return;
   }
 

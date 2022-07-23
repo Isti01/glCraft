@@ -1,9 +1,11 @@
 #include "World.h"
 
-#include "../Util/Util.h"
+#include "../Rendering/FullscreenQuad.h"
 
 World::World(const Ref<Persistence>& persistence, int32_t seed) : persistence(persistence), generator(seed) {
-  shader = AssetManager::instance().loadShaderProgram("assets/shaders/default");
+  opaqueShader = AssetManager::instance().loadShaderProgram("assets/shaders/world_opaque");
+  transparentShader = AssetManager::instance().loadShaderProgram("assets/shaders/world_transparent");
+  blendShader = AssetManager::instance().loadShaderProgram("assets/shaders/world_blend");
   setTextureAtlas(AssetManager::instance().loadTextureArray("assets/textures/default_texture.png"));
 }
 
@@ -33,8 +35,8 @@ void World::update(const glm::vec3& playerPosition, float deltaTime) {
   }
 
   float loadDistance = static_cast<float>(viewDistance) * 16 + 8.0f;
-  for (int32_t i = -viewDistance; i < viewDistance; i++) {
-    for (int32_t j = -viewDistance; j < viewDistance; j++) {
+  for (int32_t i = -viewDistance; i <= viewDistance; i++) {
+    for (int32_t j = -viewDistance; j <= viewDistance; j++) {
       glm::ivec2 position = glm::ivec2(i * 16, j * 16) + glm::ivec2(playerChunkPosition);
       if (isChunkLoaded(position)) {
         continue;
@@ -48,28 +50,16 @@ void World::update(const glm::vec3& playerPosition, float deltaTime) {
   }
 }
 
-void World::render(glm::vec3 playerPos, glm::mat4 transform) {
+void World::renderOpaque(glm::vec3 playerPos, glm::mat4 transform) {
   static auto sortedChunkIndices = std::make_shared<std::vector<std::pair<glm::vec2, float>>>();
   sortedChunkIndices->clear();
   if (sortedChunkIndices->capacity() < chunks.size()) {
     sortedChunkIndices->reserve(chunks.size());
   }
 
-  std::array<glm::ivec2, 4> chunkCoordinateOffsets = {{{0, 16}, {16, 0}, {16, 16}}};
-
-  glm::vec2 playerChunk = glm::vec2(playerPos.x, playerPos.z);
+  glm::vec2 playerXZ = glm::vec2(playerPos.x, playerPos.z);
   for (const auto& [key, value]: chunks) {
-    float maxDistance = glm::distance(playerChunk, glm::vec2(key));
-
-    for (const auto& offset: chunkCoordinateOffsets) {
-      float distance = glm::distance(playerChunk, glm::vec2(key + offset));
-
-      if (distance > maxDistance) {
-        maxDistance = distance;
-      }
-    }
-
-    sortedChunkIndices->push_back({key, maxDistance});
+    sortedChunkIndices->push_back({key, value->distanceToPoint(playerXZ)});
   }
 
   std::sort(sortedChunkIndices->begin(), sortedChunkIndices->end(),
@@ -82,15 +72,64 @@ void World::render(glm::vec3 playerPos, glm::mat4 transform) {
 
   const int32_t animationOffset = animationOffsets[animationProgress];
 
-  shader->setUInt("textureAnimation", animationOffset);
+  opaqueShader->setUInt("textureAnimation", animationOffset);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   for (const auto& index: *sortedChunkIndices) {
-    chunks[index.first]->setUseAmbientOcclusion(useAmbientOcclusion);
-    chunks[index.first]->render(transform, *this);
+    const auto& chunk = chunks[index.first];
+    chunk->setShader(opaqueShader);
+    chunk->setUseAmbientOcclusion(useAmbientOcclusion);
+    chunk->render(transform, *this);
   }
 
+  glDisable(GL_BLEND);
+}
+
+/// implemented this paper: https://jcgt.org/published/0002/02/09/
+void World::renderTransparent(glm::mat4 transform, float zNear, float zFar, int32_t width, int32_t height) {
+  static Ref<Framebuffer> framebuffer = nullptr;
+  if (framebuffer == nullptr || framebuffer->getWidth() != width || framebuffer->getHeight() != height) {
+    framebuffer = std::make_shared<Framebuffer>(width, height, false, 2);
+  }
+
+  const int32_t animationProgress = static_cast<int32_t>(textureAnimation) % 5;
+
+  // animation offsets for water and lava
+  const static int32_t animationOffsets[] = {0, 1, 2, 17, 18};
+  const int32_t animationOffset = animationOffsets[animationProgress];
+
+  framebuffer->bind();
+  glDepthMask(GL_FALSE);
+  glEnable(GL_BLEND);
+
+  glBlendFunci(0, GL_ONE, GL_ONE);
+  glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
+
+  glClearColor(0, 0, 0, 0);
+  glClear(GL_COLOR_BUFFER_BIT);
+  framebuffer->clearColorAttachment(1, glm::vec4(1));
+
+  transparentShader->setUInt("textureAnimation", animationOffset);
+  transparentShader->setFloat("zNear", zNear);
+  transparentShader->setFloat("zFar", zFar);
+  transparentShader->bind();
+
+  for (const auto& [key, chunk]: chunks) {
+    chunk->setShader(transparentShader);
+    chunk->setUseAmbientOcclusion(useAmbientOcclusion);
+    chunk->render(transform, *this);
+  }
+  framebuffer->unbind();
+
+  blendShader->bind();
+  blendShader->setTexture("accumTexture", framebuffer->getColorAttachment(0), 1);
+  blendShader->setTexture("revealageTexture", framebuffer->getColorAttachment(1), 2);
+
+  glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+  FullscreenQuad::getVertexArray()->renderIndexed();
+
+  glDepthMask(GL_TRUE);
   glDisable(GL_BLEND);
 }
 
@@ -149,7 +188,8 @@ void World::addChunk(glm::ivec2 position, const Ref<Chunk>& chunk) {
 
 void World::setTextureAtlas(const Ref<const Texture>& texture) {
   textureAtlas = texture;
-  shader->setTexture("atlas", textureAtlas, 0);
+  opaqueShader->setTexture("atlas", textureAtlas, 0);
+  transparentShader->setTexture("atlas", textureAtlas, 0);
 }
 
 const BlockData* World::getBlockAtIfLoaded(glm::ivec3 position) const {

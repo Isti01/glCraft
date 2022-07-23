@@ -35,8 +35,14 @@ void Scene::updateMouse() {
 void Scene::render() {
   skybox.render();
 
-  glm::mat4 mvp = projectionMatrix * player.getCamera().getViewMatrix();
-  world->render(player.getCamera().getPosition(), mvp);
+  const glm::mat4 mvp = projectionMatrix * player.getCamera().getViewMatrix();
+  if (enableXRay) {
+    const int32_t width = Window::instance().getWindowWidth();
+    const int32_t height = Window::instance().getWindowHeight();
+    world->renderTransparent(mvp, zNear, zFar, width, height);
+  } else {
+    world->renderOpaque(player.getCamera().getPosition(), mvp);
+  }
 
   if (WorldRayCast ray{player.getCamera().getPosition(), player.getCamera().getLookDirection(), *world, Player::Reach}) {
     outline.render(mvp * glm::translate(ray.getHitTarget().position));
@@ -63,6 +69,11 @@ void Scene::renderGui() {
     if (ImGui::Checkbox("Enable \"physics\"", &isSurvival)) {
       player.setSurvivalMovement(isSurvival);
     }
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    ImGui::Checkbox("Enable XRay", &enableXRay);
 
     ImGui::Spacing();
     ImGui::Spacing();
@@ -159,7 +170,7 @@ void Scene::renderGui() {
 
 void Scene::onResized(int32_t width, int32_t height) {
   float aspectRatio = width == 0 || height == 0 ? 0 : static_cast<float>(width) / static_cast<float>(height);
-  projectionMatrix = glm::perspective<float>(glm::half_pi<float>(), aspectRatio, .1f, 350.0f);
+  projectionMatrix = glm::perspective<float>(glm::half_pi<float>(), aspectRatio, zNear, zFar);
   crosshair.update(aspectRatio);
 }
 

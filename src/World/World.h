@@ -2,6 +2,7 @@
 
 #include "../AssetManager/AssetManager.h"
 #include "../Persistence/Persistence.h"
+#include "../Rendering/FrameBuffer.h"
 #include "../Rendering/ShaderProgram.h"
 #include "../Rendering/Texture.h"
 #include "../glCraft.h"
@@ -10,12 +11,15 @@
 
 class World {
   std::unordered_map<glm::ivec2, Ref<Chunk>, Util::HashVec2> chunks;
+
   Ref<const Texture> textureAtlas;
-  Ref<const ShaderProgram> shader;
+  Ref<const ShaderProgram> opaqueShader;
+  Ref<const ShaderProgram> transparentShader;
+  Ref<const ShaderProgram> blendShader;
+  bool useAmbientOcclusion = true;
+
   Ref<Persistence> persistence;
   WorldGenerator generator;
-
-  bool useAmbientOcclusion = true;
 
   int32_t viewDistance = 8;
   float textureAnimation = 0;
@@ -42,7 +46,8 @@ public:
   bool placeBlock(BlockData block, glm::ivec3 position);
 
   void update(const glm::vec3& playerPosition, float deltaTime);
-  void render(glm::vec3 playerPos, glm::mat4 transform);
+  void renderTransparent(glm::mat4 transform, float zNear, float zFar, int32_t width, int32_t height);
+  void renderOpaque(glm::vec3 playerPos, glm::mat4 transform);
 
   static bool isValidBlockPosition(glm::ivec3 position);
   void setTextureAtlas(const Ref<const Texture>& texture);
