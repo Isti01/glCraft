@@ -128,12 +128,8 @@ void Window::resetFrame() {
 
 void Window::finalizeFrame() {
   assert(framebufferStack->size() == 1);
-  static Ref<const ShaderProgram> colorIdentity = AssetManager::instance().loadShaderProgram("assets/shaders/identity");
 
-  Ref<Framebuffer> buffer = framebufferStack->pop();
-  ColorRenderPass renderPass(colorIdentity);
-  renderPass.setTexture("colorTexture", buffer->getColorAttachment(0), 0);
-  renderPass.render();
+  ColorRenderPass::renderTexture(framebufferStack->pop()->getColorAttachment(0));
 }
 
 void Window::swapBuffers() {
