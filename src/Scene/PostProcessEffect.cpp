@@ -15,7 +15,7 @@ void PostProcessEffect::render() {
 
   Ref<FramebufferStack> framebufferStack = window.getFramebufferStack();
   Ref<Framebuffer> colorSource = framebufferStack->peek();
-  framebufferStack->push(framebuffer);
+  framebufferStack->push(framebuffer, 1);
   ColorRenderPass::renderTextureWithEffect(colorSource->getColorAttachment(0), shader);
 
   Ref<Framebuffer> resultFbo = framebufferStack->pop();

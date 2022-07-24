@@ -1,8 +1,14 @@
 #include "FramebufferStack.h"
 
-void FramebufferStack::push(const Ref<Framebuffer>& framebuffer) {
+void FramebufferStack::push(const Ref<Framebuffer>& framebuffer, uint32_t attachmentReferencesToHold) {
   stack.push_back(framebuffer);
   framebuffer->bind();
+
+  if (keepIntermediateTextures) {
+    for (int i = 0; i < attachmentReferencesToHold; ++i) {
+      intermediateTextures.push_back(framebuffer->getColorAttachment(i));
+    }
+  }
 }
 
 Ref<Framebuffer> FramebufferStack::peek() const {
@@ -23,6 +29,18 @@ Ref<Framebuffer> FramebufferStack::pop() {
   }
 
   return framebuffer;
+}
+
+void FramebufferStack::clearIntermediateTextureReferences() {
+  intermediateTextures.clear();
+}
+
+void FramebufferStack::setKeepIntermediateTextures(bool keepBuffers) {
+  keepIntermediateTextures = keepBuffers;
+}
+
+std::vector<Ref<Texture>> FramebufferStack::getIntermediateTextures() const {
+  return intermediateTextures;
 }
 
 bool FramebufferStack::empty() const {

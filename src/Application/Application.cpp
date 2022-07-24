@@ -29,18 +29,19 @@ void Application::updateAndRender() {
   float deltaTime = static_cast<float>((now - lastTick).count()) / 1000000000.0f;
   lastTick = now;
 
-  window.beginFrame();
-
   scene->update(deltaTime);
-  scene->render();
 
-  window.finalizeFrame();
+  if (window.shouldRender()) {
+    window.beginFrame();
+    scene->render();
+    window.finalizeFrame();
 
-  gui.beginFrame();
-  scene->renderGui();
-  gui.finalizeFrame();
+    gui.beginFrame();
+    scene->renderGui();
+    gui.finalizeFrame();
 
-  window.swapBuffers();
+    window.swapBuffers();
+  }
 }
 
 void Application::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {

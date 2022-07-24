@@ -107,6 +107,10 @@ void Window::pollEvents() {
   glfwPollEvents();
 }
 
+bool Window::shouldRender() {
+  return windowWidth > 0 && windowHeight > 0;
+}
+
 void Window::beginFrame() {
   assert(framebufferStack->empty());
   resetFrame();  // reset the default framebuffer
@@ -116,7 +120,7 @@ void Window::beginFrame() {
     framebuffer = std::make_shared<Framebuffer>(windowWidth, windowHeight, true, 1);
   }
 
-  framebufferStack->push(framebuffer);
+  framebufferStack->push(framebuffer, 0);
   resetFrame();  // reset the level one framebuffer
 }
 
@@ -133,6 +137,7 @@ void Window::finalizeFrame() {
 }
 
 void Window::swapBuffers() {
+  framebufferStack->clearIntermediateTextureReferences();
   glfwSwapBuffers(window);
 }
 

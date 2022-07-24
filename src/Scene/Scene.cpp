@@ -7,7 +7,8 @@
 Scene::Scene(const std::string& savePath)
     : persistence(std::make_shared<Persistence>(savePath)),
       world(std::make_shared<World>(persistence)),
-      player(world, persistence) {
+      player(world, persistence),
+      vignetteEffect(AssetManager::instance().loadShaderProgram("assets/shaders/vignette_effect")) {
   onResized(Application::instance().getWindowWidth(), Application::instance().getWindowHeight());
   updateMouse();
 }
@@ -36,26 +37,28 @@ void Scene::render() {
   skybox.render();
 
   const glm::mat4 mvp = projectionMatrix * player.getCamera().getViewMatrix();
+  const Camera& camera = player.getCamera();
   if (enableXRay) {
     const int32_t width = Window::instance().getWindowWidth();
     const int32_t height = Window::instance().getWindowHeight();
     world->renderTransparent(mvp, zNear, zFar, width, height);
   } else {
-    world->renderOpaque(player.getCamera().getPosition(), mvp);
+    world->renderOpaque(camera.getPosition(), mvp);
   }
 
-  if (WorldRayCast ray{player.getCamera().getPosition(), player.getCamera().getLookDirection(), *world, Player::Reach}) {
+  if (WorldRayCast ray{camera.getPosition(), camera.getLookDirection(), *world, Player::Reach}) {
     outline.render(mvp * glm::translate(ray.getHitTarget().position));
   }
 
   crosshair.render();
+  if (enableVignette) {
+    vignetteEffect.getShader()->setFloat("intensity", vignetteIntensity);
+    vignetteEffect.getShader()->setFloat("start", vignetteStart);
+    vignetteEffect.render();
+  }
 }
 
-void Scene::renderGui() {
-  if (!isMenuOpen) {
-    return;
-  }
-
+void Scene::renderMenu() {
   if (ImGui::Begin("Menu")) {
     glm::vec3 position = player.getCamera().getPosition();
     ImGui::Text("Player position: x:%f, y:%f, z:%f", position.x, position.y, position.z);
@@ -73,7 +76,28 @@ void Scene::renderGui() {
     ImGui::Spacing();
     ImGui::Spacing();
 
+    if (ImGui::Checkbox("Show intermediate textures", &showIntermediateTextures)) {
+      Window::instance().getFramebufferStack()->setKeepIntermediateTextures(showIntermediateTextures);
+    }
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+
     ImGui::Checkbox("Enable XRay", &enableXRay);
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    ImGui::Checkbox("Enable vignette effect", &enableVignette);
+
+    if (enableVignette) {
+      float invertedIntensity = 4 - vignetteIntensity;
+      if (ImGui::SliderFloat("Vignette intensity", &invertedIntensity, 1, 3)) {
+        vignetteIntensity = 4 - invertedIntensity;
+      }
+
+      ImGui::SliderFloat("Vignette start", &vignetteStart, 0, 3);
+    }
 
     ImGui::Spacing();
     ImGui::Spacing();
@@ -141,31 +165,53 @@ void Scene::renderGui() {
 
     ImGui::Spacing();
     ImGui::Spacing();
+    {
+      const uint32_t pathLength = 256;
+      static char textureAtlasPath[pathLength] = "";
+      ImGui::InputText("Custom texture atlas path", textureAtlasPath, pathLength);
+      if (ImGui::Button("Load texture atlas")) {
+        Ref<const Texture> atlas = AssetManager::instance().loadTexture(textureAtlasPath);
+        if (atlas != nullptr) {
+          world->setTextureAtlas(atlas);
+        }
+      }
+    }
 
-    const uint32_t pathLength = 256;
-    static char textureAtlasPath[pathLength] = "";
-    ImGui::InputText("Custom texture atlas path", textureAtlasPath, pathLength);
-    if (ImGui::Button("Load texture atlas")) {
-      Ref<const Texture> atlas = AssetManager::instance().loadTexture(textureAtlasPath);
-      if (atlas != nullptr) {
-        world->setTextureAtlas(atlas);
+    ImGui::Spacing();
+    ImGui::Spacing();
+    {
+      const uint32_t pathLength = 256;
+      static char textureAtlasPath[pathLength] = "";
+      ImGui::InputText("Save file path", textureAtlasPath, pathLength);
+      if (ImGui::Button("Load World")) {
+        if (std::filesystem::exists(textureAtlasPath)) {
+          Application::instance().setScene(std::make_shared<Scene>(textureAtlasPath));
+        }
       }
     }
   }
 
-  ImGui::Spacing();
-  ImGui::Spacing();
+  ImGui::End();
+}
 
-  const uint32_t pathLength = 256;
-  static char textureAtlasPath[pathLength] = "";
-  ImGui::InputText("Save file path", textureAtlasPath, pathLength);
-  if (ImGui::Button("Load World")) {
-    if (std::filesystem::exists(textureAtlasPath)) {
-      Application::instance().setScene(std::make_shared<Scene>(textureAtlasPath));
+void Scene::renderIntermediateTextures() {
+  if (ImGui::Begin("Intermediate Textures")) {
+    for (const auto& texture: Window::instance().getFramebufferStack()->getIntermediateTextures()) {
+      ImGui::Text("%u", texture->getId());
+      ImGui::Image(reinterpret_cast<ImTextureID>(texture->getId()), ImVec2(200, 200), ImVec2(0, 1), ImVec2(1, 0));
     }
   }
-
   ImGui::End();
+}
+
+void Scene::renderGui() {
+  if (showIntermediateTextures) {
+    renderIntermediateTextures();
+  }
+
+  if (isMenuOpen) {
+    renderMenu();
+  }
 }
 
 void Scene::onResized(int32_t width, int32_t height) {

@@ -101,7 +101,7 @@ void World::renderTransparent(glm::mat4 transform, float zNear, float zFar, int3
   const static int32_t animationOffsets[] = {0, 1, 2, 17, 18};
   const int32_t animationOffset = animationOffsets[animationProgress];
 
-  Window::instance().getFramebufferStack()->push(framebuffer);
+  Window::instance().getFramebufferStack()->push(framebuffer, 2);
   glDepthMask(GL_FALSE);
   glEnable(GL_BLEND);
 

@@ -64,4 +64,5 @@ public:
   Window(Window &&) noexcept = delete;
   Window &operator=(Window &) = delete;
   Window &operator=(Window &&) noexcept = delete;
+  bool shouldRender();
 };

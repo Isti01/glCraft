@@ -11,6 +11,7 @@
 #include "BlockOutline.h"
 #include "Crosshair.h"
 #include "Player.h"
+#include "PostProcessEffect.h"
 #include "Skybox.h"
 
 class Scene {
@@ -27,8 +28,14 @@ class Scene {
 
   Crosshair crosshair;
   BlockOutline outline;
+  PostProcessEffect vignetteEffect;
+
   bool isMenuOpen = false;
+  bool showIntermediateTextures = false;
   bool enableXRay = false;
+  bool enableVignette = true;
+  float vignetteIntensity = 2.9;
+  float vignetteStart = 1.5f;
 
   void toggleMenu();
   void updateMouse();
@@ -40,6 +47,8 @@ public:
 
   void render();
   void renderGui();
+  void renderMenu();
+  void renderIntermediateTextures();
 
   void onResized(int32_t width, int32_t height);
   void onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode);
