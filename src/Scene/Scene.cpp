@@ -104,12 +104,11 @@ void Scene::renderMenu() {
     ImGui::Checkbox("Enable chromatic aberration effect", &enableChromaticAberration);
 
     if (enableChromaticAberration) {
-      ImGui::SliderFloat("Aberration start", &aberrationStart, 1, 3);
+      ImGui::SliderFloat("Aberration start", &aberrationStart, 0.5, 3);
       ImGui::SliderFloat("Aberration R Offset", &aberrationROffset, -0.01, 0.01);
       ImGui::SliderFloat("Aberration G Offset", &aberrationGOffset, -0.01, 0.01);
       ImGui::SliderFloat("Aberration B Offset", &aberrationBOffset, -0.01, 0.01);
     }
-
 
     ImGui::Spacing();
     ImGui::Spacing();
