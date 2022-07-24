@@ -127,7 +127,7 @@ void Window::beginFrame() {
 void Window::resetFrame() {
   glViewport(0, 0, windowWidth, windowHeight);
   glClearColor(clearColor.x * clearColor.w, clearColor.y * clearColor.w, clearColor.z * clearColor.w, clearColor.w);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void Window::finalizeFrame() {
@@ -148,7 +148,7 @@ void GLAPIENTRY Window::onOpenGlMessage(GLenum source,
                                         GLsizei,
                                         const GLchar *message,
                                         const void *) {
-  if (id == 131185 || id == 131218 || id == 131169) {
+  if (id == 131185 || id == 131218 || id == 131169 || id == 131076 || id == 131204) {
     return;
   }
 

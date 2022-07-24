@@ -29,11 +29,13 @@ class Scene {
   Crosshair crosshair;
   BlockOutline outline;
   PostProcessEffect vignetteEffect;
+  PostProcessEffect invertEffect;
 
   bool isMenuOpen = false;
   bool showIntermediateTextures = false;
   bool enableXRay = false;
-  bool enableVignette = true;
+  bool enableVignetteEffect = true;
+  bool enableInvertEffect = false;
   float vignetteIntensity = 2.9;
   float vignetteStart = 1.5f;
 

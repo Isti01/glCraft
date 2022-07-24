@@ -8,7 +8,8 @@ Scene::Scene(const std::string& savePath)
     : persistence(std::make_shared<Persistence>(savePath)),
       world(std::make_shared<World>(persistence)),
       player(world, persistence),
-      vignetteEffect(AssetManager::instance().loadShaderProgram("assets/shaders/vignette_effect")) {
+      vignetteEffect(AssetManager::instance().loadShaderProgram("assets/shaders/vignette_effect")),
+      invertEffect(AssetManager::instance().loadShaderProgram("assets/shaders/invert_effect")) {
   onResized(Application::instance().getWindowWidth(), Application::instance().getWindowHeight());
   updateMouse();
 }
@@ -51,7 +52,10 @@ void Scene::render() {
   }
 
   crosshair.render();
-  if (enableVignette) {
+  if (enableInvertEffect) {
+    invertEffect.render();
+  }
+  if (enableVignetteEffect) {
     vignetteEffect.getShader()->setFloat("intensity", vignetteIntensity);
     vignetteEffect.getShader()->setFloat("start", vignetteStart);
     vignetteEffect.render();
@@ -88,9 +92,14 @@ void Scene::renderMenu() {
     ImGui::Spacing();
     ImGui::Spacing();
 
-    ImGui::Checkbox("Enable vignette effect", &enableVignette);
+    ImGui::Checkbox("Enable invert effect", &enableInvertEffect);
 
-    if (enableVignette) {
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    ImGui::Checkbox("Enable vignette effect", &enableVignetteEffect);
+
+    if (enableVignetteEffect) {
       float invertedIntensity = 4 - vignetteIntensity;
       if (ImGui::SliderFloat("Vignette intensity", &invertedIntensity, 1, 3)) {
         vignetteIntensity = 4 - invertedIntensity;
