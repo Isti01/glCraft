@@ -12,7 +12,7 @@ public:
 
   static Gui &instance() { return *instancePtr; }
 
-  void update();
+  void beginFrame();
   void finalizeFrame();
 
   Gui(const Gui &) = delete;

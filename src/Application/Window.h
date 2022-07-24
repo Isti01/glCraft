@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Rendering/FramebufferStack.h"
 #include "../glCraft.h"
 
 class Window {
@@ -10,6 +11,7 @@ class Window {
   int32_t windowHeight = 900;
   GLFWwindow *window = nullptr;
   glm::vec4 clearColor = {0, 0, 0, 1};
+  Ref<FramebufferStack> framebufferStack = std::make_shared<FramebufferStack>();
 
   void setupCallbacks();
   static bool setupGlad();
@@ -42,11 +44,15 @@ public:
   void setWindowHeight(int32_t height) { windowHeight = height; }
 
   [[nodiscard]] inline GLFWwindow *getContext() { return window; };
+  [[nodiscard]] inline Ref<FramebufferStack> getFramebufferStack() { return framebufferStack; };
 
   bool isValid() { return window != nullptr; };
   [[nodiscard]] inline bool shouldClose() const { return glfwWindowShouldClose(window); };
-  void update();
+
+  void beginFrame();
+  void resetFrame();
   void finalizeFrame();
+  void swapBuffers();
 
   void pollEvents();
   void unlockMouse();

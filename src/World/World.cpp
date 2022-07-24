@@ -1,5 +1,7 @@
 #include "World.h"
 
+#include "../Application/Window.h"
+#include "../Rendering/ColorRenderPass.h"
 #include "../Rendering/FullscreenQuad.h"
 
 World::World(const Ref<Persistence>& persistence, int32_t seed) : persistence(persistence), generator(seed) {
@@ -99,7 +101,7 @@ void World::renderTransparent(glm::mat4 transform, float zNear, float zFar, int3
   const static int32_t animationOffsets[] = {0, 1, 2, 17, 18};
   const int32_t animationOffset = animationOffsets[animationProgress];
 
-  framebuffer->bind();
+  Window::instance().getFramebufferStack()->push(framebuffer);
   glDepthMask(GL_FALSE);
   glEnable(GL_BLEND);
 
@@ -120,14 +122,13 @@ void World::renderTransparent(glm::mat4 transform, float zNear, float zFar, int3
     chunk->setUseAmbientOcclusion(useAmbientOcclusion);
     chunk->render(transform, *this);
   }
-  framebuffer->unbind();
-
-  blendShader->bind();
-  blendShader->setTexture("accumTexture", framebuffer->getColorAttachment(0), 1);
-  blendShader->setTexture("revealageTexture", framebuffer->getColorAttachment(1), 2);
+  Window::instance().getFramebufferStack()->pop();
 
   glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
-  FullscreenQuad::getVertexArray()->renderIndexed();
+  ColorRenderPass renderPass(blendShader);
+  renderPass.setTexture("accumTexture", framebuffer->getColorAttachment(0), 1);
+  renderPass.setTexture("revealageTexture", framebuffer->getColorAttachment(1), 2);
+  renderPass.render();
 
   glDepthMask(GL_TRUE);
   glDisable(GL_BLEND);

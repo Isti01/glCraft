@@ -1,5 +1,6 @@
 #include "Window.h"
 
+#include "../Rendering/ColorRenderPass.h"
 #include "Application.h"
 
 Window *Window::instancePtr = nullptr;
@@ -106,13 +107,36 @@ void Window::pollEvents() {
   glfwPollEvents();
 }
 
-void Window::update() {
+void Window::beginFrame() {
+  assert(framebufferStack->empty());
+  resetFrame();  // reset the default framebuffer
+
+  static Ref<Framebuffer> framebuffer = nullptr;
+  if (framebuffer == nullptr || framebuffer->getWidth() != windowWidth || framebuffer->getHeight() != windowHeight) {
+    framebuffer = std::make_shared<Framebuffer>(windowWidth, windowHeight, true, 1);
+  }
+
+  framebufferStack->push(framebuffer);
+  resetFrame();  // reset the level one framebuffer
+}
+
+void Window::resetFrame() {
   glViewport(0, 0, windowWidth, windowHeight);
   glClearColor(clearColor.x * clearColor.w, clearColor.y * clearColor.w, clearColor.z * clearColor.w, clearColor.w);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Window::finalizeFrame() {
+  assert(framebufferStack->size() == 1);
+  static Ref<const ShaderProgram> colorIdentity = AssetManager::instance().loadShaderProgram("assets/shaders/identity");
+
+  Ref<Framebuffer> buffer = framebufferStack->pop();
+  ColorRenderPass renderPass(colorIdentity);
+  renderPass.setTexture("colorTexture", buffer->getColorAttachment(0), 0);
+  renderPass.render();
+}
+
+void Window::swapBuffers() {
   glfwSwapBuffers(window);
 }
 
