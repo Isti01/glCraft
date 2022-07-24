@@ -9,7 +9,9 @@ Scene::Scene(const std::string& savePath)
       world(std::make_shared<World>(persistence)),
       player(world, persistence),
       vignetteEffect(AssetManager::instance().loadShaderProgram("assets/shaders/vignette_effect")),
-      invertEffect(AssetManager::instance().loadShaderProgram("assets/shaders/invert_effect")) {
+      invertEffect(AssetManager::instance().loadShaderProgram("assets/shaders/invert_effect")),
+      chromaticAberrationEffect(
+         AssetManager::instance().loadShaderProgram("assets/shaders/chromatic_aberration_effect")) {
   onResized(Application::instance().getWindowWidth(), Application::instance().getWindowHeight());
   updateMouse();
 }
@@ -52,6 +54,13 @@ void Scene::render() {
   }
 
   crosshair.render();
+  if (enableChromaticAberration) {
+    chromaticAberrationEffect.getShader()->setFloat("start", aberrationStart);
+    chromaticAberrationEffect.getShader()->setFloat("rOffset", aberrationROffset);
+    chromaticAberrationEffect.getShader()->setFloat("gOffset", aberrationGOffset);
+    chromaticAberrationEffect.getShader()->setFloat("bOffset", aberrationBOffset);
+    chromaticAberrationEffect.render();
+  }
   if (enableInvertEffect) {
     invertEffect.render();
   }
@@ -88,6 +97,19 @@ void Scene::renderMenu() {
     ImGui::Spacing();
 
     ImGui::Checkbox("Enable XRay", &enableXRay);
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    ImGui::Checkbox("Enable chromatic aberration effect", &enableChromaticAberration);
+
+    if (enableChromaticAberration) {
+      ImGui::SliderFloat("Aberration start", &aberrationStart, 1, 3);
+      ImGui::SliderFloat("Aberration R Offset", &aberrationROffset, -0.01, 0.01);
+      ImGui::SliderFloat("Aberration G Offset", &aberrationGOffset, -0.01, 0.01);
+      ImGui::SliderFloat("Aberration B Offset", &aberrationBOffset, -0.01, 0.01);
+    }
+
 
     ImGui::Spacing();
     ImGui::Spacing();

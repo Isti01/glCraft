@@ -30,14 +30,24 @@ class Scene {
   BlockOutline outline;
   PostProcessEffect vignetteEffect;
   PostProcessEffect invertEffect;
+  PostProcessEffect chromaticAberrationEffect;
 
   bool isMenuOpen = false;
   bool showIntermediateTextures = false;
+  bool enableChromaticAberration = false;
+  float aberrationStart = 1.5f;
+
+  float aberrationROffset = 0.005;
+  float aberrationGOffset = 0.01;
+  float aberrationBOffset = -0.005;
+
   bool enableXRay = false;
+
   bool enableVignetteEffect = true;
-  bool enableInvertEffect = false;
   float vignetteIntensity = 2.9;
   float vignetteStart = 1.5f;
+
+  bool enableInvertEffect = false;
 
   void toggleMenu();
   void updateMouse();
