@@ -10,5 +10,7 @@ void ColorRenderPass::setTexture(const std::string& attachmentName, const Ref<Te
 
 void ColorRenderPass::render() {
   shader->bind();
+  glDisable(GL_DEPTH_TEST);
   FullscreenQuad::getVertexArray()->renderIndexed();
+  glEnable(GL_DEPTH_TEST);
 }
