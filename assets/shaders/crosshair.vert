@@ -2,8 +2,9 @@
 
 layout(location = 0) in vec3 position;
 
-uniform mat4 transform;
+out vec2 vert_pos;
 
 void main() {
-    gl_Position = transform * vec4(position, 1);
+    vert_pos = position.xy;
+    gl_Position = vec4(position, 1);
 }

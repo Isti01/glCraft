@@ -11,7 +11,8 @@ Scene::Scene(const std::string& savePath)
       vignetteEffect(AssetManager::instance().loadShaderProgram("assets/shaders/vignette_effect")),
       invertEffect(AssetManager::instance().loadShaderProgram("assets/shaders/invert_effect")),
       chromaticAberrationEffect(
-         AssetManager::instance().loadShaderProgram("assets/shaders/chromatic_aberration_effect")) {
+         AssetManager::instance().loadShaderProgram("assets/shaders/chromatic_aberration_effect")),
+      crosshair(AssetManager::instance().loadShaderProgram("assets/shaders/crosshair")) {
   onResized(Application::instance().getWindowWidth(), Application::instance().getWindowHeight());
   updateMouse();
 }
@@ -53,7 +54,14 @@ void Scene::render() {
     outline.render(mvp * glm::translate(ray.getHitTarget().position));
   }
 
-  crosshair.render();
+  if (enableCrosshair) {
+    crosshair.getShader()->setFloat("size", crosshairSize);
+    crosshair.getShader()->setFloat("verticalWidth", crosshairVerticalWidth);
+    crosshair.getShader()->setFloat("horizontalWidth", crosshairHorizontalWidth);
+    crosshair.getShader()->setFloat("aspectRatio", aspectRatio);
+    crosshair.render();
+  }
+
   if (enableChromaticAberration) {
     chromaticAberrationEffect.getShader()->setFloat("start", aberrationStart);
     chromaticAberrationEffect.getShader()->setFloat("rOffset", aberrationROffset);
@@ -61,9 +69,11 @@ void Scene::render() {
     chromaticAberrationEffect.getShader()->setFloat("bOffset", aberrationBOffset);
     chromaticAberrationEffect.render();
   }
+
   if (enableInvertEffect) {
     invertEffect.render();
   }
+
   if (enableVignetteEffect) {
     vignetteEffect.getShader()->setFloat("intensity", vignetteIntensity);
     vignetteEffect.getShader()->setFloat("start", vignetteStart);
@@ -77,6 +87,7 @@ void Scene::renderMenu() {
     ImGui::Text("Player position: x:%f, y:%f, z:%f", position.x, position.y, position.z);
     glm::vec3 lookDirection = player.getCamera().getLookDirection();
     ImGui::Text("Player direction: x:%f, y:%f, z:%f", lookDirection.x, lookDirection.y, lookDirection.z);
+    ImGui::Text("Screen aspect ratio: %f", aspectRatio);
 
     ImGui::Spacing();
     ImGui::Spacing();
@@ -91,6 +102,16 @@ void Scene::renderMenu() {
 
     if (ImGui::Checkbox("Show intermediate textures", &showIntermediateTextures)) {
       Window::instance().getFramebufferStack()->setKeepIntermediateTextures(showIntermediateTextures);
+    }
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    ImGui::Checkbox("Enable crosshair", &enableCrosshair);
+    if (enableCrosshair) {
+      ImGui::SliderFloat("Crosshair size", &crosshairSize, 0.01, 1);
+      ImGui::SliderFloat("Crosshair vertical width", &crosshairVerticalWidth, 0.01, 1);
+      ImGui::SliderFloat("Crosshair horizontal width", &crosshairHorizontalWidth, 0.01, 1);
     }
 
     ImGui::Spacing();
@@ -245,9 +266,8 @@ void Scene::renderGui() {
 }
 
 void Scene::onResized(int32_t width, int32_t height) {
-  float aspectRatio = width == 0 || height == 0 ? 0 : static_cast<float>(width) / static_cast<float>(height);
+  aspectRatio = width == 0 || height == 0 ? 0 : static_cast<float>(width) / static_cast<float>(height);
   projectionMatrix = glm::perspective<float>(glm::half_pi<float>(), aspectRatio, zNear, zFar);
-  crosshair.update(aspectRatio);
 }
 
 void Scene::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {

@@ -9,7 +9,6 @@
 #include "../World/World.h"
 #include "../glCraft.h"
 #include "BlockOutline.h"
-#include "Crosshair.h"
 #include "Player.h"
 #include "PostProcessEffect.h"
 #include "Skybox.h"
@@ -26,11 +25,11 @@ class Scene {
   const float zFar = 350.0f;
   glm::mat4 projectionMatrix = glm::mat4(1);
 
-  Crosshair crosshair;
   BlockOutline outline;
   PostProcessEffect vignetteEffect;
   PostProcessEffect invertEffect;
   PostProcessEffect chromaticAberrationEffect;
+  PostProcessEffect crosshair;
 
   bool isMenuOpen = false;
   bool showIntermediateTextures = false;
@@ -48,6 +47,12 @@ class Scene {
   float vignetteStart = 1.5f;
 
   bool enableInvertEffect = false;
+
+  float aspectRatio = 1.0f;
+  bool enableCrosshair = true;
+  float crosshairSize = 0.015f;
+  float crosshairVerticalWidth = 0.2f;
+  float crosshairHorizontalWidth = 0.15f;
 
   void toggleMenu();
   void updateMouse();
