@@ -1,8 +1,6 @@
 #version 450 core
 
 uniform sampler2D colorTexture;
-uniform float intensity = 2;
-uniform float start = 2.0f;
 
 layout(location = 0) out vec4 color;
 
