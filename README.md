@@ -13,11 +13,13 @@ software that I used to make this.
   ![Building and destroying blocks](./screenshots/building.png)
 - Ambient Occlusion  
   ![Building and destroying blocks](./screenshots/ambient-occlusion.png)
+- Post-processing effects  
+  ![Post-processing effects](./screenshots/post-processing.png)
 - Procedural world generation  
   ![Procedural world generation](./screenshots/procedural-world-generation.png)
 - Semi-transparent blocks  
   ![Semi-transparent blocks](./screenshots/semi-transparent-blocks.png)
-- Order-Independent Transparency mode
+- Order-Independent Transparency mode  
   ![Order-Independent Transparency mode](./screenshots/oit.png)
 - The chunks are hollow on the inside  
   ![The chunks are hollow on the inside](./screenshots/optimized-chunk-rendering.png)
@@ -66,7 +68,7 @@ software that I used to make this.
     - The chunks are hollow on the inside, so most of the blocks that are not visible are not sent to the GPU.
     - Each vertex in a chunk is only 4 bytes long to make the game as memory-efficient as possible (on the GPU side).
     - The game has animated textures and an animated skybox.
-    - The game supports semi-transparent textures, ambient occlusion and the chunk meshes are sorted before drawing.
+    - The game supports ambient occlusion, post-processing and semi-transparent textures, the chunk meshes are sorted before drawing.
     - The world rendering has order independent transparency rendering mode implemented from
       this [paper](https://jcgt.org/published/0002/02/09/).
 - Gameplay
