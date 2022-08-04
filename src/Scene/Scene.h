@@ -9,8 +9,12 @@
 #include "../World/World.h"
 #include "../glCraft.h"
 #include "BlockOutline.h"
+#include "Effects/ChromaticAberrationEffect.h"
+#include "Effects/CrosshairEffect.h"
+#include "Effects/InvertEffect.h"
+#include "Effects/PostProcessEffect.h"
+#include "Effects/VignetteEffect.h"
 #include "Player.h"
-#include "PostProcessEffect.h"
 #include "Skybox.h"
 
 class Scene {
@@ -26,33 +30,14 @@ class Scene {
   glm::mat4 projectionMatrix = glm::mat4(1);
 
   BlockOutline outline;
-  PostProcessEffect vignetteEffect;
-  PostProcessEffect invertEffect;
-  PostProcessEffect chromaticAberrationEffect;
-  PostProcessEffect crosshair;
+  std::vector<Ref<PostProcessEffect>> postProcessingEffects = {
+     std::make_shared<CrosshairEffect>(true), std::make_shared<ChromaticAberrationEffect>(false),
+     std::make_shared<InvertEffect>(false), std::make_shared<VignetteEffect>(true)};
 
   bool isMenuOpen = false;
   bool showIntermediateTextures = false;
-  bool enableChromaticAberration = false;
-  float aberrationStart = 1.5f;
-
-  float aberrationROffset = 0.005;
-  float aberrationGOffset = 0.01;
-  float aberrationBOffset = -0.005;
 
   bool enableXRay = false;
-
-  bool enableVignetteEffect = true;
-  float vignetteIntensity = 2.9;
-  float vignetteStart = 1.5f;
-
-  bool enableInvertEffect = false;
-
-  float aspectRatio = 1.0f;
-  bool enableCrosshair = true;
-  float crosshairSize = 0.015f;
-  float crosshairVerticalWidth = 0.2f;
-  float crosshairHorizontalWidth = 0.15f;
 
   void toggleMenu();
   void updateMouse();

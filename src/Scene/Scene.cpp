@@ -7,12 +7,7 @@
 Scene::Scene(const std::string& savePath)
     : persistence(std::make_shared<Persistence>(savePath)),
       world(std::make_shared<World>(persistence)),
-      player(world, persistence),
-      vignetteEffect(AssetManager::instance().loadShaderProgram("assets/shaders/vignette_effect")),
-      invertEffect(AssetManager::instance().loadShaderProgram("assets/shaders/invert_effect")),
-      chromaticAberrationEffect(
-         AssetManager::instance().loadShaderProgram("assets/shaders/chromatic_aberration_effect")),
-      crosshair(AssetManager::instance().loadShaderProgram("assets/shaders/crosshair")) {
+      player(world, persistence) {
   onResized(Application::instance().getWindowWidth(), Application::instance().getWindowHeight());
   updateMouse();
 }
@@ -54,30 +49,8 @@ void Scene::render() {
     outline.render(mvp * glm::translate(ray.getHitTarget().position));
   }
 
-  if (enableCrosshair) {
-    crosshair.getShader()->setFloat("size", crosshairSize);
-    crosshair.getShader()->setFloat("verticalWidth", crosshairVerticalWidth);
-    crosshair.getShader()->setFloat("horizontalWidth", crosshairHorizontalWidth);
-    crosshair.getShader()->setFloat("aspectRatio", aspectRatio);
-    crosshair.render();
-  }
-
-  if (enableChromaticAberration) {
-    chromaticAberrationEffect.getShader()->setFloat("start", aberrationStart);
-    chromaticAberrationEffect.getShader()->setFloat("rOffset", aberrationROffset);
-    chromaticAberrationEffect.getShader()->setFloat("gOffset", aberrationGOffset);
-    chromaticAberrationEffect.getShader()->setFloat("bOffset", aberrationBOffset);
-    chromaticAberrationEffect.render();
-  }
-
-  if (enableInvertEffect) {
-    invertEffect.render();
-  }
-
-  if (enableVignetteEffect) {
-    vignetteEffect.getShader()->setFloat("intensity", vignetteIntensity);
-    vignetteEffect.getShader()->setFloat("start", vignetteStart);
-    vignetteEffect.render();
+  for (auto& effect: postProcessingEffects) {
+    effect->render();
   }
 }
 
@@ -87,7 +60,6 @@ void Scene::renderMenu() {
     ImGui::Text("Player position: x:%f, y:%f, z:%f", position.x, position.y, position.z);
     glm::vec3 lookDirection = player.getCamera().getLookDirection();
     ImGui::Text("Player direction: x:%f, y:%f, z:%f", lookDirection.x, lookDirection.y, lookDirection.z);
-    ImGui::Text("Screen aspect ratio: %f", aspectRatio);
 
     ImGui::Spacing();
     ImGui::Spacing();
@@ -107,51 +79,17 @@ void Scene::renderMenu() {
     ImGui::Spacing();
     ImGui::Spacing();
 
-    ImGui::Checkbox("Enable crosshair", &enableCrosshair);
-    if (enableCrosshair) {
-      ImGui::SliderFloat("Crosshair size", &crosshairSize, 0.01, 1);
-      ImGui::SliderFloat("Crosshair vertical width", &crosshairVerticalWidth, 0.01, 1);
-      ImGui::SliderFloat("Crosshair horizontal width", &crosshairHorizontalWidth, 0.01, 1);
-    }
-
-    ImGui::Spacing();
-    ImGui::Spacing();
-
     ImGui::Checkbox("Enable XRay", &enableXRay);
 
     ImGui::Spacing();
     ImGui::Spacing();
 
-    ImGui::Checkbox("Enable chromatic aberration effect", &enableChromaticAberration);
+    for (auto& effect: postProcessingEffects) {
+      effect->renderGui();
 
-    if (enableChromaticAberration) {
-      ImGui::SliderFloat("Aberration start", &aberrationStart, 0.5, 3);
-      ImGui::SliderFloat("Aberration R Offset", &aberrationROffset, -0.01, 0.01);
-      ImGui::SliderFloat("Aberration G Offset", &aberrationGOffset, -0.01, 0.01);
-      ImGui::SliderFloat("Aberration B Offset", &aberrationBOffset, -0.01, 0.01);
+      ImGui::Spacing();
+      ImGui::Spacing();
     }
-
-    ImGui::Spacing();
-    ImGui::Spacing();
-
-    ImGui::Checkbox("Enable invert effect", &enableInvertEffect);
-
-    ImGui::Spacing();
-    ImGui::Spacing();
-
-    ImGui::Checkbox("Enable vignette effect", &enableVignetteEffect);
-
-    if (enableVignetteEffect) {
-      float invertedIntensity = 4 - vignetteIntensity;
-      if (ImGui::SliderFloat("Vignette intensity", &invertedIntensity, 1, 3)) {
-        vignetteIntensity = 4 - invertedIntensity;
-      }
-
-      ImGui::SliderFloat("Vignette start", &vignetteStart, 0, 3);
-    }
-
-    ImGui::Spacing();
-    ImGui::Spacing();
 
     BlockData::BlockType blockToPlace = player.getBlockToPlace();
     ImGui::Text("Selected Block: %s", BlockName::blockTypeToName(blockToPlace));
@@ -266,7 +204,7 @@ void Scene::renderGui() {
 }
 
 void Scene::onResized(int32_t width, int32_t height) {
-  aspectRatio = width == 0 || height == 0 ? 0 : static_cast<float>(width) / static_cast<float>(height);
+  float aspectRatio = width == 0 || height == 0 ? 0 : static_cast<float>(width) / static_cast<float>(height);
   projectionMatrix = glm::perspective<float>(glm::half_pi<float>(), aspectRatio, zNear, zFar);
 }
 
