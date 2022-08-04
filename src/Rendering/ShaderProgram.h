@@ -10,6 +10,7 @@ class ShaderProgram {
   [[nodiscard]] int32_t getUniformLocation(const std::string &location) const;
 
 public:
+  ShaderProgram(const Ref<const Shader>& vertexShader, const Ref<const Shader>& fragmentShader);
   explicit ShaderProgram(const std::string &name);
   ~ShaderProgram();
 

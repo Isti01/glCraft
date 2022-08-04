@@ -3,11 +3,8 @@
 #include "../AssetManager/AssetManager.h"
 #include "Shader.h"
 
-ShaderProgram::ShaderProgram(const std::string &name) {
-  Ref<const Shader> vertexShader = AssetManager::instance().loadShader(name + ".vert");
+ShaderProgram::ShaderProgram(const Ref<const Shader> &vertexShader, const Ref<const Shader> &fragmentShader) {
   assert(vertexShader->isValid());
-
-  Ref<const Shader> fragmentShader = AssetManager::instance().loadShader(name + ".frag");
   assert(fragmentShader->isValid());
 
   shaderProgram = glCreateProgram();
@@ -27,6 +24,10 @@ ShaderProgram::ShaderProgram(const std::string &name) {
     shaderProgram = 0;
   }
 }
+
+ShaderProgram::ShaderProgram(const std::string &name)
+    : ShaderProgram(AssetManager::instance().loadShader(name + ".vert"),
+                    AssetManager::instance().loadShader(name + ".frag")) {}
 
 ShaderProgram::~ShaderProgram() {
   if (isValid()) {
@@ -65,7 +66,6 @@ void ShaderProgram::setVec3(const std::string &location, const glm::vec3 &value)
 void ShaderProgram::setMat4(const std::string &location, const glm::mat4 &value) const {
   glProgramUniformMatrix4fv(shaderProgram, getUniformLocation(location), 1, GL_FALSE, &value[0][0]);
 }
-
 void ShaderProgram::setTexture(const std::string &location, const Ref<const Texture> &texture, int32_t slot) const {
   texture->bindToSlot(slot);
   glProgramUniform1i(shaderProgram, getUniformLocation(location), slot);

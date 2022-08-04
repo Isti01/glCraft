@@ -6,6 +6,7 @@ class Shader {
   uint32_t id;
 
 public:
+  Shader(const std::string& source, uint32_t type);
   explicit Shader(const std::string &name);
   ~Shader();
 

@@ -2,18 +2,11 @@
 
 #include "../AssetManager/AssetManager.h"
 
-Shader::Shader(const std::string &name) {
-  uint32_t type = 0;
-  if (name.ends_with(".vert"))
-    type = GL_VERTEX_SHADER;
-  if (name.ends_with(".frag"))
-    type = GL_FRAGMENT_SHADER;
-
+Shader::Shader(const std::string &source, uint32_t type) {
   assert(type != 0 && "Couldn't identify the shader type");
 
   id = glCreateShader(type);
-  Ref<const std::string> vertexShaderSource = AssetManager::instance().loadText(name);
-  const char *vertexShaderSourceStr = vertexShaderSource->c_str();
+  const char *vertexShaderSourceStr = source.c_str();
   glShaderSource(id, 1, &vertexShaderSourceStr, nullptr);
   glCompileShader(id);
 
@@ -27,6 +20,10 @@ Shader::Shader(const std::string &name) {
     id = 0;
   }
 }
+
+Shader::Shader(const std::string &name)
+    : Shader(*AssetManager::instance().loadText(name),
+             name.ends_with(".vert") ? GL_VERTEX_SHADER : (name.ends_with(".frag") ? GL_FRAGMENT_SHADER : 0)) {}
 
 Shader::~Shader() {
   if (isValid()) {
