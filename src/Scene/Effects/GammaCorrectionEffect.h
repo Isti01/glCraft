@@ -10,7 +10,7 @@ public:
   GammaCorrectionEffect(bool enabled)
       : PostProcessEffect(AssetManager::instance().loadShaderProgram("assets/shaders/gamma_correction"), enabled){};
 
-  void updateUniforms() override { shader->setFloat("power", power); }
+  void update() override { shader->setFloat("power", power); }
 
   void renderGui() override {
     ImGui::Checkbox("Enable gamma correction", &enabled);

@@ -23,7 +23,7 @@ void PostProcessEffect::render() {
   Ref<Framebuffer> colorSource = framebufferStack->peek();
   framebufferStack->push(framebuffer, 1);
 
-  updateUniforms();
+  update();
   ColorRenderPass::renderTextureWithEffect(colorSource->getColorAttachment(0), shader);
 
   Ref<Framebuffer> resultFbo = framebufferStack->pop();

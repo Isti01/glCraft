@@ -17,7 +17,7 @@ public:
 
   Ref<const ShaderProgram> getShader() { return shader; };
 
-  virtual void updateUniforms() = 0;
+  virtual void update() = 0;
   virtual void renderGui() = 0;
   void render();
 

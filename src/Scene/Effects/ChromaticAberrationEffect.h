@@ -25,7 +25,7 @@ public:
     }
   }
 
-  void updateUniforms() override {
+  void update() override {
     shader->setFloat("start", aberrationStart);
     shader->setFloat("rOffset", aberrationROffset);
     shader->setFloat("gOffset", aberrationGOffset);

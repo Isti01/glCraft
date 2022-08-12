@@ -21,7 +21,7 @@ public:
     }
   }
 
-  void updateUniforms() override {
+  void update() override {
     auto& window = Window::instance();
     auto width = window.getWindowWidth();
     auto height = window.getWindowHeight();

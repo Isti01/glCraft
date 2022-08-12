@@ -5,13 +5,13 @@
 
 class VignetteEffect : public PostProcessEffect {
   float vignetteIntensity = 2.9;
-  float vignetteStart = 1.5f;
+  float vignetteStart = 2;
 
 public:
   VignetteEffect(bool enabled)
       : PostProcessEffect(AssetManager::instance().loadShaderProgram("assets/shaders/vignette_effect"), enabled) {}
 
-  void updateUniforms() override {
+  void update() override {
     shader->setFloat("intensity", vignetteIntensity);
     shader->setFloat("start", vignetteStart);
   }

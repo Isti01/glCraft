@@ -12,6 +12,7 @@
 #include "Effects/ChromaticAberrationEffect.h"
 #include "Effects/CrosshairEffect.h"
 #include "Effects/GammaCorrectionEffect.h"
+#include "Effects/GaussianBlurEffect.h"
 #include "Effects/InvertEffect.h"
 #include "Effects/PostProcessEffect.h"
 #include "Effects/VignetteEffect.h"
@@ -23,7 +24,6 @@ class Scene {
   Ref<World> world;
 
   Skybox skybox;
-
   Player player;
 
   const float zNear = 0.1f;
@@ -34,8 +34,7 @@ class Scene {
   std::vector<Ref<PostProcessEffect>> postProcessingEffects = {
      std::make_shared<CrosshairEffect>(true),       std::make_shared<ChromaticAberrationEffect>(false),
      std::make_shared<InvertEffect>(false),         std::make_shared<VignetteEffect>(true),
-     std::make_shared<GammaCorrectionEffect>(true),
-  };
+     std::make_shared<GammaCorrectionEffect>(true), std::make_shared<GaussianBlurEffect>(false)};
 
   bool isMenuOpen = false;
   bool showIntermediateTextures = false;

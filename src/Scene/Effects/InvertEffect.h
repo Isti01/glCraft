@@ -8,7 +8,7 @@ public:
   InvertEffect(bool enabled)
       : PostProcessEffect(AssetManager::instance().loadShaderProgram("assets/shaders/invert_effect"), enabled){}
 
-  void updateUniforms() override {}
+  void update() override {}
 
   void renderGui() override {
     ImGui::Checkbox("Enable invert effect", &enabled);
