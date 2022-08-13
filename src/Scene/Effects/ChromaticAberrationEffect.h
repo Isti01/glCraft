@@ -1,5 +1,4 @@
-#ifndef CHROMATICABERRATIONEFFECT_H
-#define CHROMATICABERRATIONEFFECT_H
+#pragma once
 
 #include "PostProcessEffect.h"
 
@@ -32,6 +31,3 @@ public:
     shader->setFloat("bOffset", aberrationBOffset);
   }
 };
-
-
-#endif

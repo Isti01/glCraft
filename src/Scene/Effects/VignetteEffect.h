@@ -1,5 +1,4 @@
-#ifndef VIGNETTEEFFECT_H
-#define VIGNETTEEFFECT_H
+#pragma once
 
 #include "PostProcessEffect.h"
 
@@ -29,6 +28,3 @@ public:
     }
   }
 };
-
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef GAUSSIANBLUREFFECT_H
-#define GAUSSIANBLUREFFECT_H
+#pragma once
 
 #include "../../Rendering/ProceduralShader.h"
 #include "PostProcessEffect.h"
@@ -90,6 +89,3 @@ private:
     GaussianBlurShader(int32_t stDev) : stDev(stDev) { assert(stDev >= 0 && stDev <= 5); };
   };
 };
-
-
-#endif

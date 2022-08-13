@@ -1,5 +1,4 @@
-#ifndef PROCEDURALSHADER_H
-#define PROCEDURALSHADER_H
+#pragma once
 
 #include "ShaderProgram.h"
 
@@ -14,5 +13,3 @@ public:
 
   virtual ~ProceduralShader() = default;
 };
-
-#endif

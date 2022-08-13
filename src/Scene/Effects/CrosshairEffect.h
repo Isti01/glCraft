@@ -1,5 +1,4 @@
-#ifndef CROSSHAIREFFECT_H
-#define CROSSHAIREFFECT_H
+#pragma once
 
 #include "../../Application/Window.h"
 #include "./PostProcessEffect.h"
@@ -33,6 +32,3 @@ public:
     shader->setFloat("aspectRatio", aspectRatio);
   }
 };
-
-
-#endif

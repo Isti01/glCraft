@@ -1,10 +1,6 @@
-#ifndef FULLSCREENQUAD_H
-#define FULLSCREENQUAD_H
-
+#pragma once
 #include "VertexArray.h"
 
 namespace FullscreenQuad {
   Ref<VertexArray> getVertexArray();
 }
-
-#endif

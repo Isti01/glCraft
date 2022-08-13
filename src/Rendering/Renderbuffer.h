@@ -1,5 +1,4 @@
-#ifndef RENDERBUFFER_H
-#define RENDERBUFFER_H
+#pragma once
 
 #include "../glCraft.h"
 
@@ -20,5 +19,3 @@ public:
   void bind();
   void unbind();
 };
-
-#endif

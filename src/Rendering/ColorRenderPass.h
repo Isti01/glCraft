@@ -1,5 +1,4 @@
-#ifndef COLORRENDERPASS_H
-#define COLORRENDERPASS_H
+#pragma once
 
 #include "FullscreenQuad.h"
 #include "ShaderProgram.h"
@@ -16,5 +15,3 @@ public:
   static void renderTextureWithEffect(const Ref<Texture>& texture, const Ref<const ShaderProgram>& effect);
   static void renderTexture(const Ref<Texture>& texture);
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef INVERTEFFECT_H
-#define INVERTEFFECT_H
+#pragma once
 
 #include "PostProcessEffect.h"
 
@@ -14,6 +13,3 @@ public:
     ImGui::Checkbox("Enable invert effect", &enabled);
   }
 };
-
-
-#endif

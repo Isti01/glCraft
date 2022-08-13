@@ -1,5 +1,4 @@
-#ifndef FRAMEBUFFERSTACK_H
-#define FRAMEBUFFERSTACK_H
+#pragma once
 
 #include "../glCraft.h"
 #include "FrameBuffer.h"
@@ -21,5 +20,3 @@ public:
   [[nodiscard]] bool empty() const;
   [[nodiscard]] size_t size() const;
 };
-
-#endif

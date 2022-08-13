@@ -1,5 +1,4 @@
-#ifndef FRAMEBUFFER_H
-#define FRAMEBUFFER_H
+#pragma once
 
 #include "../glCraft.h"
 #include "Renderbuffer.h"
@@ -37,5 +36,3 @@ public:
   Framebuffer &operator=(Framebuffer &) = delete;
   Framebuffer &operator=(Framebuffer &&) noexcept = delete;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POSTPROCESSEFFECT_H
-#define POSTPROCESSEFFECT_H
+#pragma once
 
 #include "../../AssetManager/AssetManager.h"
 #include "../../Rendering/FrameBuffer.h"
@@ -23,5 +22,3 @@ public:
 
   virtual ~PostProcessEffect() = default;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef GAMMACORRECTIONEFFECT_H
-#define GAMMACORRECTIONEFFECT_H
+#pragma once
 
 #include "PostProcessEffect.h"
 
@@ -20,5 +19,3 @@ public:
     }
   }
 };
-
-#endif
