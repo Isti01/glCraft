@@ -27,9 +27,9 @@ class Scene {
   Player player;
 
   const float zNear = 0.1f;
-  const float zFar = 350.0f;
+  const float zFar = 1000.0f;
   glm::mat4 projectionMatrix = glm::mat4(1);
-
+  float deltaTime = 1.0f;
   BlockOutline outline;
   std::vector<Ref<PostProcessEffect>> postProcessingEffects = {
      std::make_shared<CrosshairEffect>(true),       std::make_shared<ChromaticAberrationEffect>(false),

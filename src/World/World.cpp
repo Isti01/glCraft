@@ -1,5 +1,7 @@
 #include "World.h"
 
+#include <ranges>
+
 #include "../Application/Window.h"
 #include "../Rendering/ColorRenderPass.h"
 #include "../Rendering/FullscreenQuad.h"
@@ -55,21 +57,40 @@ void World::update(const glm::vec3& playerPosition, float deltaTime) {
   }
 }
 
-void World::renderOpaque(glm::vec3 playerPos, glm::mat4 transform) {
-  TRACE_FUNCTION();
-  static auto sortedChunkIndices = std::make_shared<std::vector<std::pair<glm::vec2, float>>>();
-  sortedChunkIndices->clear();
-  if (sortedChunkIndices->capacity() < chunks.size()) {
-    sortedChunkIndices->reserve(chunks.size());
+void World::sortChunkIndices(glm::vec3 playerPos, const Ref<ChunkIndexVector>& chunkIndices) {
+  chunkIndices->clear();
+  if (chunkIndices->capacity() < chunks.size()) {
+    chunkIndices->reserve(chunks.size());
   }
 
   glm::vec2 playerXZ = glm::vec2(playerPos.x, playerPos.z);
   for (const auto& [key, value]: chunks) {
-    sortedChunkIndices->push_back({key, value->distanceToPoint(playerXZ)});
+    chunkIndices->push_back({key, value->distanceToPoint(playerXZ)});
   }
 
-  std::sort(sortedChunkIndices->begin(), sortedChunkIndices->end(),
+  std::sort(chunkIndices->begin(), chunkIndices->end(),
             [](const auto& a, const auto& b) { return b.second < a.second; });
+}
+
+void World::rebuildChunks(const Ref<ChunkIndexVector>& chunkIndices) {
+  uint32_t meshesRebuilt = 0;
+  for (auto& index: std::ranges::reverse_view(*chunkIndices)) {
+    if (meshesRebuilt > MaxRebuildsAllowedPerFrame) {
+      break;
+    }
+    const auto& chunk = chunks[index.first];
+    if (chunk->needsMeshRebuild()) {
+      chunks[index.first]->rebuildMesh(*this);
+      meshesRebuilt++;
+    }
+  }
+}
+
+void World::renderOpaque(glm::vec3 playerPos, glm::mat4 transform) {
+  TRACE_FUNCTION();
+  static auto sortedChunkIndices = std::make_shared<ChunkIndexVector>();
+  sortChunkIndices(playerPos, sortedChunkIndices);
+  rebuildChunks(sortedChunkIndices);
 
   const int32_t animationProgress = static_cast<int32_t>(textureAnimation) % 5;
 
@@ -93,12 +114,20 @@ void World::renderOpaque(glm::vec3 playerPos, glm::mat4 transform) {
 }
 
 /// implemented this paper: https://jcgt.org/published/0002/02/09/
-void World::renderTransparent(glm::mat4 transform, float zNear, float zFar, int32_t width, int32_t height) {
+void World::renderTransparent(glm::mat4 transform,
+                              glm::vec3 playerPos,
+                              float zNear,
+                              float zFar,
+                              int32_t width,
+                              int32_t height) {
   TRACE_FUNCTION();
   static Ref<Framebuffer> framebuffer = nullptr;
   if (framebuffer == nullptr || framebuffer->getWidth() != width || framebuffer->getHeight() != height) {
     framebuffer = std::make_shared<Framebuffer>(width, height, false, 2);
   }
+  static auto sortedChunkIndices = std::make_shared<ChunkIndexVector>();
+  sortChunkIndices(playerPos, sortedChunkIndices);
+  rebuildChunks(sortedChunkIndices);
 
   const int32_t animationProgress = static_cast<int32_t>(textureAnimation) % 5;
 
@@ -142,10 +171,10 @@ void World::renderTransparent(glm::mat4 transform, float zNear, float zFar, int3
 const BlockData* World::getBlockAt(glm::ivec3 position) {
   return getChunk(getChunkIndex(position))->getBlockAt(Chunk::toChunkCoordinates(position));
 }
-
 bool World::isValidBlockPosition(glm::ivec3 position) {
   return Chunk::isValidPosition(position);
 }
+
 
 bool World::placeBlock(BlockData block, glm::ivec3 position) {
   TRACE_FUNCTION();
@@ -166,11 +195,11 @@ bool World::placeBlock(BlockData block, glm::ivec3 position) {
 
   return true;
 }
+
 glm::ivec2 World::getChunkIndex(glm::ivec3 position) {
   return {position.x - Util::positiveMod(position.x, Chunk::HorizontalSize),
           position.z - Util::positiveMod(position.z, Chunk::HorizontalSize)};
 }
-
 
 Ref<Chunk> World::getChunk(glm::ivec2 position) {
   TRACE_FUNCTION();
@@ -200,7 +229,6 @@ void World::setTextureAtlas(const Ref<const Texture>& texture) {
   opaqueShader->setTexture("atlas", textureAtlas, 0);
   transparentShader->setTexture("atlas", textureAtlas, 0);
 }
-
 const BlockData* World::getBlockAtIfLoaded(glm::ivec3 position) const {
   glm::ivec2 index = getChunkIndex(position);
   if (!isChunkLoaded(index)) {
@@ -209,7 +237,6 @@ const BlockData* World::getBlockAtIfLoaded(glm::ivec3 position) const {
 
   return chunks.at(index)->getBlockAt(Chunk::toChunkCoordinates(position));
 }
-
 bool World::isChunkLoaded(glm::ivec2 position) const {
   return chunks.contains(position);
 }

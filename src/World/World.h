@@ -11,7 +11,7 @@
 
 class World {
   std::unordered_map<glm::ivec2, Ref<Chunk>, Util::HashVec2> chunks;
-
+  using ChunkIndexVector = std::vector<std::pair<glm::vec2, float>>;
   Ref<const Texture> textureAtlas;
   Ref<const ShaderProgram> opaqueShader;
   Ref<const ShaderProgram> transparentShader;
@@ -21,11 +21,15 @@ class World {
   Ref<Persistence> persistence;
   WorldGenerator generator;
 
+  const uint32_t MaxRebuildsAllowedPerFrame = 10;
+
   int32_t viewDistance = 1;
   float textureAnimation = 0;
   static constexpr float TextureAnimationSpeed = 2;
 
   Ref<Chunk> generateOrLoadChunk(glm::ivec2 position);
+  void sortChunkIndices(glm::vec3 playerPos, const Ref<ChunkIndexVector>& chunkIndices);
+  void rebuildChunks(const Ref<ChunkIndexVector>& chunkIndices);
 
 public:
   explicit World(const Ref<Persistence>& persistence, int32_t seed = 1337);
@@ -46,9 +50,14 @@ public:
   bool placeBlock(BlockData block, glm::ivec3 position);
 
   void update(const glm::vec3& playerPosition, float deltaTime);
-  void renderTransparent(glm::mat4 transform, float zNear, float zFar, int32_t width, int32_t height);
-  void renderOpaque(glm::vec3 playerPos, glm::mat4 transform);
+  void renderTransparent(glm::mat4 transform,
+                         glm::vec3 playerPos,
+                         float zNear,
+                         float zFar,
+                         int32_t width,
+                         int32_t height);
 
+  void renderOpaque(glm::vec3 playerPos, glm::mat4 transform);
   static bool isValidBlockPosition(glm::ivec3 position);
   void setTextureAtlas(const Ref<const Texture>& texture);
 };

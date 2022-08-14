@@ -14,8 +14,9 @@ Scene::Scene(const std::string& savePath)
   updateMouse();
 }
 
-void Scene::update(float deltaTime) {
+void Scene::update(float dt) {
   TRACE_FUNCTION();
+  deltaTime = dt;
   player.update(deltaTime);
   world->update(player.getCamera().getPosition(), deltaTime);
   skybox.update(projectionMatrix, player.getCamera().getViewMatrix(), deltaTime);
@@ -45,7 +46,7 @@ void Scene::render() {
   if (enableXRay) {
     const int32_t width = Window::instance().getWindowWidth();
     const int32_t height = Window::instance().getWindowHeight();
-    world->renderTransparent(mvp, zNear, zFar, width, height);
+    world->renderTransparent(mvp, camera.getPosition(), zNear, zFar, width, height);
   } else {
     world->renderOpaque(camera.getPosition(), mvp);
   }
@@ -62,6 +63,7 @@ void Scene::render() {
 void Scene::renderMenu() {
   TRACE_FUNCTION();
   if (ImGui::Begin("Menu")) {
+    ImGui::Text("Frame Time: %fms", deltaTime * 1000);
     glm::vec3 position = player.getCamera().getPosition();
     ImGui::Text("Player position: x:%f, y:%f, z:%f", position.x, position.y, position.z);
     glm::vec3 lookDirection = player.getCamera().getLookDirection();
@@ -120,7 +122,7 @@ void Scene::renderMenu() {
     ImGui::Spacing();
 
     int32_t distance = world->getViewDistance();
-    if (ImGui::SliderInt("Max render distance", &distance, 1, 13)) {
+    if (ImGui::SliderInt("Max render distance", &distance, 1, 32)) {
       world->setViewDistance(distance);
     }
 

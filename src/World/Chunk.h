@@ -36,14 +36,15 @@ private:
 
   BlockData data[HorizontalSize][VerticalSize][HorizontalSize];
 
-  void createMesh(const World& world);
   void init();
 
 public:
   explicit Chunk(const glm::ivec2& worldPosition);
 
-  void render(const glm::mat4& transform, const World& world);
+  void render(const glm::mat4& transform, World& world);
+  void rebuildMesh(const World& world);
 
+  [[nodiscard]] bool needsMeshRebuild() const { return !mesh || renderState != RenderState::ready; };
   void setShader(const Ref<const ShaderProgram>& newShader) { shader = newShader; };
   void setDirty() { renderState = RenderState::dirty; };
   void setUseAmbientOcclusion(bool enabled) {

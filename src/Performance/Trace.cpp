@@ -41,7 +41,7 @@ Trace::~Trace() {
   this->traceFile << "]\n}" << std::endl;
 }
 
-Trace::Timer::Timer(const std::string& name)
+Trace::TraceTimer::TraceTimer(const std::string& name)
     : startNewTrace(instancePtr == nullptr),
       startTime(getTimestamp()),
       name(name) {
@@ -51,11 +51,11 @@ Trace::Timer::Timer(const std::string& name)
   }
 }
 
-uint64_t Trace::Timer::getTimestamp() const {
+uint64_t Trace::TraceTimer::getTimestamp() const {
   return std::chrono::time_point_cast<TimeUnit>(Clock::now()).time_since_epoch().count();
 }
 
-Trace::Timer::~Timer() {
+Trace::TraceTimer::~TraceTimer() {
   const bool isTracerActive = instancePtr != nullptr;
   assert(isTracerActive);
   if (!isTracerActive)

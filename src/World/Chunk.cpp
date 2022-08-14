@@ -14,12 +14,10 @@ void Chunk::init() {
   renderState = RenderState::initial;
 }
 
-
-void Chunk::render(const glm::mat4& transform, const World& world) {
+void Chunk::render(const glm::mat4& transform, World& world) {
   TRACE_FUNCTION();
-  if (!mesh || renderState != RenderState::ready) {
-    createMesh(world);
-    renderState = RenderState::ready;
+  if (!mesh) {
+    return;
   }
 
   shader->bind();
@@ -67,7 +65,7 @@ uint8_t calculateOcclusionLevel(const glm::ivec3& blockPos,
   return 3 - (side1 + side2 + corner);
 }
 
-void Chunk::createMesh(const World& world) {
+void Chunk::rebuildMesh(const World& world) {
   TRACE_FUNCTION();
   static Ref<std::vector<BlockVertex>> solidVertices = std::make_shared<std::vector<BlockVertex>>(MaxVertexCount);
   static Ref<std::vector<BlockVertex>> semiTransparentVertices =
@@ -85,7 +83,7 @@ void Chunk::createMesh(const World& world) {
      {0, 0, -1},
   }};
   {
-    TRACE_SCOPE("Chunk::createMesh::WalkBlocks");
+    TRACE_SCOPE("Chunk::rebuildMesh::WalkBlocks");
     for (int32_t x = HorizontalSize - 1; x >= 0; --x) {
       for (int32_t y = VerticalSize - 1; y >= 0; --y) {
         for (int32_t z = HorizontalSize - 1; z >= 0; --z) {
@@ -132,7 +130,7 @@ void Chunk::createMesh(const World& world) {
     }
   }
   {
-    TRACE_SCOPE("Chunk::createMesh::WalkBlocks");
+    TRACE_SCOPE("Chunk::rebuildMesh::WalkBlocks");
     int32_t vertexCount = solidVertexCount + semiTransparentVertexCount;
 
     if (!mesh) {
@@ -149,6 +147,7 @@ void Chunk::createMesh(const World& world) {
     }
 
     buffer->bufferDynamicSubData(*semiTransparentVertices, semiTransparentVertexCount, 0, solidVertexCount);
+    renderState = RenderState::ready;
   }
 }
 
