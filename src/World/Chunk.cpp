@@ -34,7 +34,6 @@ void Chunk::render(const glm::mat4& transform, const World& world) {
 }
 
 const BlockData* Chunk::getBlockAtOptimized(const glm::ivec3& pos, const World& world) const {
-  TRACE_FUNCTION();
   const glm::ivec2& worldPos = worldPosition;
   if (pos.y >= 0 && pos.y < Chunk::VerticalSize) {
     if (pos.x >= 0 && pos.x < Chunk::HorizontalSize && pos.z >= 0 && pos.z < Chunk::HorizontalSize) {
@@ -56,7 +55,6 @@ uint8_t calculateOcclusionLevel(const glm::ivec3& blockPos,
                                 const glm::ivec3& vertOffset,
                                 const Chunk& chunk,
                                 const World& world) {
-  TRACE_FUNCTION();
   glm::ivec3 direction = glm::sign(glm::vec3(vertOffset) - glm::vec3(.5));
 
   uint8_t side1 = hasNonAirAt(blockPos + direction * glm::ivec3(1, 1, 0), chunk, world) ? 1 : 0;

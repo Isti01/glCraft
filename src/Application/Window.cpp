@@ -14,7 +14,9 @@ Window::Window() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifndef BUILD_TYPE_DIST
   glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+#endif
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
   window = glfwCreateWindow(windowWidth, windowHeight, name, nullptr, nullptr);
@@ -82,10 +84,12 @@ void Window::setupCallbacks() {
   glfwSetCursorPosCallback(window, onCursorPosition);
   glfwSetFramebufferSizeCallback(window, onResized);
 
+#ifndef BUILD_TYPE_DIST
   glEnable(GL_DEBUG_OUTPUT);
   glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
   glDebugMessageCallback(onOpenGlMessage, nullptr);
   glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+#endif
   glfwSwapInterval(1);
 
   glfwSetWindowRefreshCallback(window, onRefreshWindow);
