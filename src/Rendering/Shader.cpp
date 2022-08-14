@@ -1,8 +1,10 @@
 #include "Shader.h"
 
 #include "../AssetManager/AssetManager.h"
+#include "../Performance/Trace.h"
 
 Shader::Shader(const std::string &source, uint32_t type) {
+  TRACE_FUNCTION();
   assert(type != 0 && "Couldn't identify the shader type");
 
   id = glCreateShader(type);

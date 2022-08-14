@@ -1,6 +1,7 @@
 #include "Texture.h"
 
 #include "../AssetManager/AssetManager.h"
+#include "../Performance/Trace.h"
 #include "Image.h"
 
 Texture::Texture(uint32_t type, bool generateMipMap, int32_t maxLod) : type(type), generateMipMap(generateMipMap) {
@@ -31,6 +32,7 @@ Texture::~Texture() {
 
 
 void Texture::allocateTexture(int32_t width, int32_t height) {
+  TRACE_FUNCTION();
   assert(type == GL_TEXTURE_2D);
   bind();
 
@@ -43,6 +45,7 @@ void Texture::allocateTexture(int32_t width, int32_t height) {
 }
 
 void Texture::buffer2DRGBAData(const Image& image) {
+  TRACE_FUNCTION();
   assert(type == GL_TEXTURE_2D);
   bind();
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<int32_t>(image.width), static_cast<int32_t>(image.height), 0,
@@ -54,6 +57,7 @@ void Texture::buffer2DRGBAData(const Image& image) {
 }
 
 void Texture::buffer2DArrayRGBAData(std::span<const Image> images) {
+  TRACE_FUNCTION();
   assert(type == GL_TEXTURE_2D_ARRAY);
   assert(!images.empty());
   bind();
@@ -73,6 +77,7 @@ void Texture::buffer2DArrayRGBAData(std::span<const Image> images) {
 }
 
 void Texture::bufferCubeMapRGBAData(std::span<Ref<const Image>, 6> images) {
+  TRACE_FUNCTION();
   assert(type == GL_TEXTURE_CUBE_MAP);
   bind();
 
@@ -101,6 +106,7 @@ void Texture::unbind() const {
 }
 
 Ref<const Texture> Texture::loadTexture2D(const std::string& name) {
+  TRACE_FUNCTION();
   Ref<const Image> image = AssetManager::instance().loadImage(name);
   if (image == nullptr) {
     return nullptr;
@@ -112,6 +118,7 @@ Ref<const Texture> Texture::loadTexture2D(const std::string& name) {
 }
 
 Ref<const Texture> Texture::loadTexture2DArray(const std::string& name) {
+  TRACE_FUNCTION();
   Ref<const Image> image = AssetManager::instance().loadImage(name);
   if (image == nullptr) {
     return nullptr;
@@ -133,6 +140,7 @@ Ref<const Texture> Texture::loadTexture2DArray(const std::string& name) {
   return texture;
 }
 Ref<const Texture> Texture::loadCubeMapTexture(const std::string& name) {
+  TRACE_FUNCTION();
   std::stringstream parts(name);
 
   std::array<Ref<const Image>, 6> images{};

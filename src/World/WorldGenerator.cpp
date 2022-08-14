@@ -8,6 +8,7 @@ WorldGenerator::WorldGenerator(int32_t seed) : seed(seed), noise(seed) {
 }
 
 void WorldGenerator::populateChunk(const Ref<Chunk>& chunkRef) {
+  TRACE_FUNCTION();
   Chunk& chunk = *chunkRef;
 
   glm::ivec2 worldPosition = chunk.getPosition();

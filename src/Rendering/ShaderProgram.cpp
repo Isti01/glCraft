@@ -1,9 +1,11 @@
 #include "ShaderProgram.h"
 
 #include "../AssetManager/AssetManager.h"
+#include "../Performance/Trace.h"
 #include "Shader.h"
 
 ShaderProgram::ShaderProgram(const Ref<const Shader> &vertexShader, const Ref<const Shader> &fragmentShader) {
+  TRACE_FUNCTION();
   assert(vertexShader->isValid());
   assert(fragmentShader->isValid());
 

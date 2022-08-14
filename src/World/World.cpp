@@ -5,6 +5,7 @@
 #include "../Rendering/FullscreenQuad.h"
 
 World::World(const Ref<Persistence>& persistence, int32_t seed) : persistence(persistence), generator(seed) {
+  TRACE_FUNCTION();
   opaqueShader = AssetManager::instance().loadShaderProgram("assets/shaders/world_opaque");
   transparentShader = AssetManager::instance().loadShaderProgram("assets/shaders/world_transparent");
   blendShader = AssetManager::instance().loadShaderProgram("assets/shaders/world_blend");
@@ -12,6 +13,7 @@ World::World(const Ref<Persistence>& persistence, int32_t seed) : persistence(pe
 }
 
 Ref<Chunk> World::generateOrLoadChunk(glm::ivec2 position) {
+  TRACE_FUNCTION();
   Ref<Chunk> chunk = persistence->getChunk(position);
   if (chunk != nullptr) {
     return chunk;
@@ -24,6 +26,7 @@ Ref<Chunk> World::generateOrLoadChunk(glm::ivec2 position) {
 }
 
 void World::update(const glm::vec3& playerPosition, float deltaTime) {
+  TRACE_FUNCTION();
   textureAnimation += deltaTime * TextureAnimationSpeed;
 
   glm::vec2 playerChunkPosition = getChunkIndex(playerPosition);
@@ -53,6 +56,7 @@ void World::update(const glm::vec3& playerPosition, float deltaTime) {
 }
 
 void World::renderOpaque(glm::vec3 playerPos, glm::mat4 transform) {
+  TRACE_FUNCTION();
   static auto sortedChunkIndices = std::make_shared<std::vector<std::pair<glm::vec2, float>>>();
   sortedChunkIndices->clear();
   if (sortedChunkIndices->capacity() < chunks.size()) {
@@ -90,6 +94,7 @@ void World::renderOpaque(glm::vec3 playerPos, glm::mat4 transform) {
 
 /// implemented this paper: https://jcgt.org/published/0002/02/09/
 void World::renderTransparent(glm::mat4 transform, float zNear, float zFar, int32_t width, int32_t height) {
+  TRACE_FUNCTION();
   static Ref<Framebuffer> framebuffer = nullptr;
   if (framebuffer == nullptr || framebuffer->getWidth() != width || framebuffer->getHeight() != height) {
     framebuffer = std::make_shared<Framebuffer>(width, height, false, 2);
@@ -143,6 +148,7 @@ bool World::isValidBlockPosition(glm::ivec3 position) {
 }
 
 bool World::placeBlock(BlockData block, glm::ivec3 position) {
+  TRACE_FUNCTION();
   if (!Chunk::isValidPosition(position)) {
     return false;
   }
@@ -167,6 +173,7 @@ glm::ivec2 World::getChunkIndex(glm::ivec3 position) {
 
 
 Ref<Chunk> World::getChunk(glm::ivec2 position) {
+  TRACE_FUNCTION();
   if (!isChunkLoaded(position)) {
     addChunk(position, generateOrLoadChunk(position));
   }
@@ -175,6 +182,7 @@ Ref<Chunk> World::getChunk(glm::ivec2 position) {
 }
 
 void World::addChunk(glm::ivec2 position, const Ref<Chunk>& chunk) {
+  TRACE_FUNCTION();
   chunks[position] = chunk;
   std::array<glm::ivec2, 4> chunksAround = {{{0, 16}, {16, 0}, {0, -16}, {-16, 0}}};
   for (const glm::ivec2& offset: chunksAround) {

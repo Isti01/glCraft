@@ -16,6 +16,7 @@ void Chunk::init() {
 
 
 void Chunk::render(const glm::mat4& transform, const World& world) {
+  TRACE_FUNCTION();
   if (!mesh || renderState != RenderState::ready) {
     createMesh(world);
     renderState = RenderState::ready;
@@ -33,6 +34,7 @@ void Chunk::render(const glm::mat4& transform, const World& world) {
 }
 
 const BlockData* Chunk::getBlockAtOptimized(const glm::ivec3& pos, const World& world) const {
+  TRACE_FUNCTION();
   const glm::ivec2& worldPos = worldPosition;
   if (pos.y >= 0 && pos.y < Chunk::VerticalSize) {
     if (pos.x >= 0 && pos.x < Chunk::HorizontalSize && pos.z >= 0 && pos.z < Chunk::HorizontalSize) {
@@ -54,6 +56,7 @@ uint8_t calculateOcclusionLevel(const glm::ivec3& blockPos,
                                 const glm::ivec3& vertOffset,
                                 const Chunk& chunk,
                                 const World& world) {
+  TRACE_FUNCTION();
   glm::ivec3 direction = glm::sign(glm::vec3(vertOffset) - glm::vec3(.5));
 
   uint8_t side1 = hasNonAirAt(blockPos + direction * glm::ivec3(1, 1, 0), chunk, world) ? 1 : 0;
@@ -67,6 +70,7 @@ uint8_t calculateOcclusionLevel(const glm::ivec3& blockPos,
 }
 
 void Chunk::createMesh(const World& world) {
+  TRACE_FUNCTION();
   static Ref<std::vector<BlockVertex>> solidVertices = std::make_shared<std::vector<BlockVertex>>(MaxVertexCount);
   static Ref<std::vector<BlockVertex>> semiTransparentVertices =
      std::make_shared<std::vector<BlockVertex>>(MaxVertexCount);
@@ -82,68 +86,72 @@ void Chunk::createMesh(const World& world) {
      {0, 0, 1},
      {0, 0, -1},
   }};
-
-  for (int32_t x = HorizontalSize - 1; x >= 0; --x) {
-    for (int32_t y = VerticalSize - 1; y >= 0; --y) {
-      for (int32_t z = HorizontalSize - 1; z >= 0; --z) {
-        glm::ivec3 blockPos = {x, y, z};
-        const auto& [type, blockClass] = data[x][y][z];
-        if (blockClass == BlockData::BlockClass::air) {
-          continue;
-        }
-
-        for (const glm::ivec3& offset: offsetsToCheck) {
-          const BlockData* block = getBlockAtOptimized(blockPos + offset, world);
-          if (block != nullptr &&
-              (block->blockClass == blockClass || block->blockClass == BlockData::BlockClass::solid)) {
+  {
+    TRACE_SCOPE("Chunk::createMesh::WalkBlocks");
+    for (int32_t x = HorizontalSize - 1; x >= 0; --x) {
+      for (int32_t y = VerticalSize - 1; y >= 0; --y) {
+        for (int32_t z = HorizontalSize - 1; z >= 0; --z) {
+          glm::ivec3 blockPos = {x, y, z};
+          const auto& [type, blockClass] = data[x][y][z];
+          if (blockClass == BlockData::BlockClass::air) {
             continue;
           }
 
-          for (const auto& vertex: BlockMesh::getVerticesFromDirection(offset)) {
-            BlockVertex vert = vertex;
-            vert.offset(x, y, z);
-            vert.setType(offset, type);
-
-            uint8_t occlusionLevel = 3;
-            if (useAmbientOcclusion) {
-              if (offset.y == -1) {
-                occlusionLevel = 0;
-              } else {
-                occlusionLevel = calculateOcclusionLevel(blockPos, vert.getPosition() - blockPos, *this, world);
-              }
+          for (const glm::ivec3& offset: offsetsToCheck) {
+            const BlockData* block = getBlockAtOptimized(blockPos + offset, world);
+            if (block != nullptr &&
+                (block->blockClass == blockClass || block->blockClass == BlockData::BlockClass::solid)) {
+              continue;
             }
-            vert.setOcclusionLevel(occlusionLevel);
 
-            if (blockClass == BlockData::BlockClass::semiTransparent ||
-                blockClass == BlockData::BlockClass::transparent) {
-              semiTransparentVertices->at(semiTransparentVertexCount) = vert;
-              semiTransparentVertexCount++;
-            } else {
-              solidVertices->at(solidVertexCount) = vert;
-              solidVertexCount++;
+            for (const auto& vertex: BlockMesh::getVerticesFromDirection(offset)) {
+              BlockVertex vert = vertex;
+              vert.offset(x, y, z);
+              vert.setType(offset, type);
+
+              uint8_t occlusionLevel = 3;
+              if (useAmbientOcclusion) {
+                if (offset.y == -1) {
+                  occlusionLevel = 0;
+                } else {
+                  occlusionLevel = calculateOcclusionLevel(blockPos, vert.getPosition() - blockPos, *this, world);
+                }
+              }
+              vert.setOcclusionLevel(occlusionLevel);
+
+              if (blockClass == BlockData::BlockClass::semiTransparent ||
+                  blockClass == BlockData::BlockClass::transparent) {
+                semiTransparentVertices->at(semiTransparentVertexCount) = vert;
+                semiTransparentVertexCount++;
+              } else {
+                solidVertices->at(solidVertexCount) = vert;
+                solidVertexCount++;
+              }
             }
           }
         }
       }
     }
   }
+  {
+    TRACE_SCOPE("Chunk::createMesh::WalkBlocks");
+    int32_t vertexCount = solidVertexCount + semiTransparentVertexCount;
 
-  int32_t vertexCount = solidVertexCount + semiTransparentVertexCount;
+    if (!mesh) {
+      mesh = std::make_shared<VertexArray>();
+      mesh->addVertexAttributes(BlockVertex::vertexAttributes(), sizeof(BlockVertex));
+    }
 
-  if (!mesh) {
-    mesh = std::make_shared<VertexArray>();
-    mesh->addVertexAttributes(BlockVertex::vertexAttributes(), sizeof(BlockVertex));
+    Ref<VertexBuffer> buffer = mesh->getVertexBuffer();
+    if (buffer->getSize() < vertexCount) {
+      int32_t dataSize = glm::min(vertexCount + 1000, MaxVertexCount);
+      buffer->bufferDynamicData(*solidVertices, dataSize, 0);
+    } else {
+      buffer->bufferDynamicSubData(*solidVertices, solidVertexCount, 0, 0);
+    }
+
+    buffer->bufferDynamicSubData(*semiTransparentVertices, semiTransparentVertexCount, 0, solidVertexCount);
   }
-
-  Ref<VertexBuffer> buffer = mesh->getVertexBuffer();
-  if (buffer->getSize() < vertexCount) {
-    int32_t dataSize = glm::min(vertexCount + 1000, MaxVertexCount);
-    buffer->bufferDynamicData(*solidVertices, dataSize, 0);
-  } else {
-    buffer->bufferDynamicSubData(*solidVertices, solidVertexCount, 0, 0);
-  }
-
-  buffer->bufferDynamicSubData(*semiTransparentVertices, semiTransparentVertexCount, 0, solidVertexCount);
 }
 
 glm::ivec3 Chunk::toChunkCoordinates(const glm::ivec3& globalPosition) {

@@ -2,7 +2,10 @@
 
 #include <span>
 
+#include "../Performance/Trace.h"
+
 Image Image::subImage(glm::uvec2 offset, glm::uvec2 extent) const {
+  TRACE_FUNCTION();
   assert((offset.x + extent.x) <= width && (offset.y + extent.y) <= height);
 
   Image NewImage{extent.x, extent.y};

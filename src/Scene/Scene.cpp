@@ -2,17 +2,20 @@
 
 #include "../Application/Application.h"
 #include "../Math/WorldRayCast.h"
+#include "../Performance/Trace.h"
 #include "../World/BlockName.h"
 
 Scene::Scene(const std::string& savePath)
     : persistence(std::make_shared<Persistence>(savePath)),
       world(std::make_shared<World>(persistence)),
       player(world, persistence) {
+  TRACE_FUNCTION();
   onResized(Application::instance().getWindowWidth(), Application::instance().getWindowHeight());
   updateMouse();
 }
 
 void Scene::update(float deltaTime) {
+  TRACE_FUNCTION();
   player.update(deltaTime);
   world->update(player.getCamera().getPosition(), deltaTime);
   skybox.update(projectionMatrix, player.getCamera().getViewMatrix(), deltaTime);
@@ -24,6 +27,7 @@ void Scene::toggleMenu() {
 }
 
 void Scene::updateMouse() {
+  TRACE_FUNCTION();
   if (isMenuOpen) {
     player.resetMousePosition();
     Window::instance().unlockMouse();
@@ -33,6 +37,7 @@ void Scene::updateMouse() {
 }
 
 void Scene::render() {
+  TRACE_FUNCTION();
   skybox.render();
 
   const glm::mat4 mvp = projectionMatrix * player.getCamera().getViewMatrix();
@@ -55,6 +60,7 @@ void Scene::render() {
 }
 
 void Scene::renderMenu() {
+  TRACE_FUNCTION();
   if (ImGui::Begin("Menu")) {
     glm::vec3 position = player.getCamera().getPosition();
     ImGui::Text("Player position: x:%f, y:%f, z:%f", position.x, position.y, position.z);
@@ -184,6 +190,7 @@ void Scene::renderMenu() {
 }
 
 void Scene::renderIntermediateTextures() {
+  TRACE_FUNCTION();
   if (ImGui::Begin("Intermediate Textures")) {
     for (const auto& texture: Window::instance().getFramebufferStack()->getIntermediateTextures()) {
       ImGui::Text("%u", texture->getId());
@@ -194,6 +201,7 @@ void Scene::renderIntermediateTextures() {
 }
 
 void Scene::renderGui() {
+  TRACE_FUNCTION();
   if (showIntermediateTextures) {
     renderIntermediateTextures();
   }
@@ -204,11 +212,13 @@ void Scene::renderGui() {
 }
 
 void Scene::onResized(int32_t width, int32_t height) {
+  TRACE_FUNCTION();
   float aspectRatio = width == 0 || height == 0 ? 0 : static_cast<float>(width) / static_cast<float>(height);
   projectionMatrix = glm::perspective<float>(glm::half_pi<float>(), aspectRatio, zNear, zFar);
 }
 
 void Scene::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mode) {
+  TRACE_FUNCTION();
   if (key == GLFW_KEY_ESCAPE) {
     if (action == GLFW_PRESS) {
       toggleMenu();
@@ -221,12 +231,14 @@ void Scene::onKeyEvent(int32_t key, int32_t scancode, int32_t action, int32_t mo
 }
 
 void Scene::onMouseButtonEvent(int32_t button, int32_t action, int32_t mods) {
+  TRACE_FUNCTION();
   if (!isMenuOpen) {
     player.onMouseButtonEvent(button, action, mods);
   }
 }
 
 void Scene::onCursorPositionEvent(double x, double y) {
+  TRACE_FUNCTION();
   if (!isMenuOpen) {
     player.onCursorPositionEvent(x, y);
   }

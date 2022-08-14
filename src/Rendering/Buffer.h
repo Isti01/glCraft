@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Performance/Trace.h"
 #include "../glCraft.h"
 #include "type_traits"
 
@@ -22,6 +23,7 @@ public:
 
   template<typename T>
   void bufferStaticData(const std::vector<T> &data, int32_t dataSize, int32_t dataOffset = 0) {
+    TRACE_FUNCTION();
     assert(isValid() && "Cannot write data to an invalid buffer");
     assert(dataOffset + dataSize <= data.size() && "Data is out of bounds");
 
@@ -37,6 +39,7 @@ public:
 
   template<typename T>
   void bufferDynamicData(const std::vector<T> &data, int32_t dataSize, int32_t dataOffset = 0) {
+    TRACE_FUNCTION();
     assert(isValid() && "Cannot write data to an invalid buffer");
     assert(dataOffset + dataSize <= data.size() && "Data is out of bounds");
 
@@ -55,6 +58,7 @@ public:
                             int32_t dataSize,
                             int32_t dataOffset = 0,
                             int32_t bufferOffset = 0) {
+    TRACE_FUNCTION();
     assert(isValid() && "Cannot write data to an invalid buffer");
     assert(dataOffset + dataSize <= data.size() && "Data is out of bounds");
     assert(dataOffset + dataSize <= size && "Buffer is out of bounds");

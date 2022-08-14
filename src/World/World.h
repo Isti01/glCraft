@@ -21,7 +21,7 @@ class World {
   Ref<Persistence> persistence;
   WorldGenerator generator;
 
-  int32_t viewDistance = 8;
+  int32_t viewDistance = 1;
   float textureAnimation = 0;
   static constexpr float TextureAnimationSpeed = 2;
 

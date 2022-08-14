@@ -2,9 +2,12 @@
 
 #include <cstdlib>
 
+#include "../Performance/Trace.h"
+
 #define SERIALIZE_DATA
 
 Persistence::Persistence(std::string newPath) : path(std::move(newPath)) {
+  TRACE_FUNCTION();
 #ifdef SERIALIZE_DATA
   std::ifstream file(path, std::ios::in | std::ios::binary);
   if (!file) {
@@ -25,6 +28,7 @@ Persistence::Persistence(std::string newPath) : path(std::move(newPath)) {
   size_t chunkCount = (length - sizeof(Camera)) / (sizeof(glm::ivec2) + sizeof(Chunk::data));
 
   for (size_t i = 0; i < chunkCount; i++) {
+    TRACE_SCOPE("Persistence::Persistence::loadChunk");
     glm::ivec2 worldPosition;
     file.read(reinterpret_cast<char*>(&worldPosition[0]), sizeof(glm::ivec2));
 
@@ -37,6 +41,7 @@ Persistence::Persistence(std::string newPath) : path(std::move(newPath)) {
 }
 
 Persistence::~Persistence() {
+  TRACE_FUNCTION();
 #ifdef SERIALIZE_DATA
   std::ofstream file(path, std::ios::out | std::ios::binary);
   if (!file) {
@@ -47,6 +52,7 @@ Persistence::~Persistence() {
   file.write(reinterpret_cast<char*>(&camera), sizeof(camera));
 
   for (auto& [key, chunk]: chunks) {
+    TRACE_SCOPE("Persistence::~Persistence::saveChunk");
     glm::ivec2 worldPosition = key;
     file.write(reinterpret_cast<char*>(&worldPosition[0]), sizeof(glm::ivec2));
     file.write(reinterpret_cast<char*>(&chunk->data[0]), sizeof(Chunk::data));
@@ -55,12 +61,14 @@ Persistence::~Persistence() {
 }
 
 void Persistence::commitChunk(const Ref<Chunk>& chunk) {
+  TRACE_FUNCTION();
 #ifdef SERIALIZE_DATA
   chunks[chunk->getPosition()] = chunk;
 #endif
 }
 
 Ref<Chunk> Persistence::getChunk(glm::ivec2 position) const {
+  TRACE_FUNCTION();
   if (!chunks.contains(position)) {
     return nullptr;
   }

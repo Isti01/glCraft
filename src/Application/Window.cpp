@@ -1,11 +1,13 @@
 #include "Window.h"
 
+#include "../Performance/Trace.h"
 #include "../Rendering/ColorRenderPass.h"
 #include "Application.h"
 
 Window *Window::instancePtr = nullptr;
 
 Window::Window() {
+  TRACE_FUNCTION();
   assert(instancePtr == nullptr && "The window is already instantiated");
   instancePtr = this;
   glfwInit();
@@ -34,6 +36,7 @@ Window::Window() {
 }
 
 Window::~Window() {
+  TRACE_FUNCTION();
   instancePtr = nullptr;
   glfwTerminate();
 }
@@ -43,10 +46,12 @@ void Window::onWindowError(int32_t errorCode, const char *description) {
 }
 
 void Window::onKeyEvent(GLFWwindow *, int32_t key, int32_t scancode, int32_t action, int32_t mode) {
+  TRACE_FUNCTION();
   Application::instance().onKeyEvent(key, scancode, action, mode);
 }
 
 void Window::onResized(GLFWwindow *, int32_t width, int32_t height) {
+  TRACE_FUNCTION();
   Application &app = Application::instance();
   Window &window = app.getWindow();
   window.setWindowHeight(height);
@@ -56,18 +61,22 @@ void Window::onResized(GLFWwindow *, int32_t width, int32_t height) {
 }
 
 void Window::onMouseButtonEvent(GLFWwindow *, int32_t button, int32_t action, int32_t mods) {
+  TRACE_FUNCTION();
   Application::instance().onMouseButtonEvent(button, action, mods);
 }
 
 void Window::onCursorPosition(GLFWwindow *, double x, double y) {
+  TRACE_FUNCTION();
   Application::instance().onCursorPositionEvent(x, y);
 }
 
 void Window::onRefreshWindow(GLFWwindow *) {
+  TRACE_FUNCTION();
   Application::instance().onRefreshWindow();
 }
 
 void Window::setupCallbacks() {
+  TRACE_FUNCTION();
   glfwSetKeyCallback(window, onKeyEvent);
   glfwSetMouseButtonCallback(window, onMouseButtonEvent);
   glfwSetCursorPosCallback(window, onCursorPosition);
@@ -84,6 +93,7 @@ void Window::setupCallbacks() {
 }
 
 bool Window::setupGlad() {
+  TRACE_FUNCTION();
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
     std::cerr << "Failed to initialize OpenGL context" << std::endl;
     return false;
@@ -104,6 +114,7 @@ void Window::unlockMouse() {
 }
 
 void Window::pollEvents() {
+  TRACE_FUNCTION();
   glfwPollEvents();
 }
 
@@ -112,6 +123,7 @@ bool Window::shouldRender() {
 }
 
 void Window::beginFrame() {
+  TRACE_FUNCTION();
   assert(framebufferStack->empty());
   resetFrame();  // reset the default framebuffer
 
@@ -125,18 +137,21 @@ void Window::beginFrame() {
 }
 
 void Window::resetFrame() {
+  TRACE_FUNCTION();
   glViewport(0, 0, windowWidth, windowHeight);
   glClearColor(clearColor.x * clearColor.w, clearColor.y * clearColor.w, clearColor.z * clearColor.w, clearColor.w);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void Window::finalizeFrame() {
+  TRACE_FUNCTION();
   assert(framebufferStack->size() == 1);
 
   ColorRenderPass::renderTexture(framebufferStack->pop()->getColorAttachment(0));
 }
 
 void Window::swapBuffers() {
+  TRACE_FUNCTION();
   framebufferStack->clearIntermediateTextureReferences();
   glfwSwapBuffers(window);
 }
