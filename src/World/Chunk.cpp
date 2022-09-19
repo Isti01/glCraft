@@ -3,7 +3,7 @@
 #include "../AssetManager/AssetManager.h"
 #include "World.h"
 
-Chunk::Chunk(const glm::ivec2& worldPosition) : worldPosition(worldPosition) {
+Chunk::Chunk(const glm::ivec2& worldPosition) : worldPosition(worldPosition), aabb(glm::vec3(0), glm::vec3(0)) {
   init();
 }
 
@@ -12,11 +12,15 @@ void Chunk::init() {
   semiTransparentVertexCount = 0;
   mesh = nullptr;
   renderState = RenderState::initial;
+
+  glm::vec3 position = glm::vec3(worldPosition.x, 0, worldPosition.y);
+  glm::vec3 maxOffset = glm::vec3(HorizontalSize, VerticalSize, HorizontalSize);
+  aabb = AABB{position, position + maxOffset};
 }
 
-void Chunk::render(const glm::mat4& transform, World& world) {
+void Chunk::render(const glm::mat4& transform, const Frustum& frustum, World& world) {
   TRACE_FUNCTION();
-  if (!mesh) {
+  if (!mesh || !isVisible(frustum)) {
     return;
   }
 

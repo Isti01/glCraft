@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Frustum.h>
+
 #include "../AssetManager/AssetManager.h"
 #include "../Persistence/Persistence.h"
 #include "../Rendering/FrameBuffer.h"
@@ -29,7 +31,7 @@ class World {
 
   Ref<Chunk> generateOrLoadChunk(glm::ivec2 position);
   void sortChunkIndices(glm::vec3 playerPos, const Ref<ChunkIndexVector>& chunkIndices);
-  void rebuildChunks(const Ref<ChunkIndexVector>& chunkIndices);
+  void rebuildChunks(const Ref<ChunkIndexVector>& chunkIndices, const Frustum& frustum);
 
 public:
   explicit World(const Ref<Persistence>& persistence, int32_t seed = 1337);
@@ -52,12 +54,13 @@ public:
   void update(const glm::vec3& playerPosition, float deltaTime);
   void renderTransparent(glm::mat4 transform,
                          glm::vec3 playerPos,
+                         const Frustum& frustum,
                          float zNear,
                          float zFar,
                          int32_t width,
                          int32_t height);
 
-  void renderOpaque(glm::vec3 playerPos, glm::mat4 transform);
+  void renderOpaque(glm::mat4 transform, glm::vec3 playerPos, const Frustum& frustum);
   static bool isValidBlockPosition(glm::ivec3 position);
   void setTextureAtlas(const Ref<const Texture>& texture);
 };

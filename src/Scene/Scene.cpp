@@ -1,5 +1,7 @@
 #include "Scene.h"
 
+#include <Frustum.h>
+
 #include "../Application/Application.h"
 #include "../Math/WorldRayCast.h"
 #include "../Performance/Trace.h"
@@ -42,13 +44,15 @@ void Scene::render() {
   skybox.render();
 
   const glm::mat4 mvp = projectionMatrix * player.getCamera().getViewMatrix();
+  Frustum frustum(mvp);
+
   const Camera& camera = player.getCamera();
   if (enableXRay) {
     const int32_t width = Window::instance().getWindowWidth();
     const int32_t height = Window::instance().getWindowHeight();
-    world->renderTransparent(mvp, camera.getPosition(), zNear, zFar, width, height);
+    world->renderTransparent(mvp, camera.getPosition(), frustum, zNear, zFar, width, height);
   } else {
-    world->renderOpaque(camera.getPosition(), mvp);
+    world->renderOpaque(mvp, camera.getPosition(), frustum);
   }
 
   if (WorldRayCast ray{camera.getPosition(), camera.getLookDirection(), *world, Player::Reach}) {
@@ -122,7 +126,7 @@ void Scene::renderMenu() {
     ImGui::Spacing();
 
     int32_t distance = world->getViewDistance();
-    if (ImGui::SliderInt("Max render distance", &distance, 1, 32)) {
+    if (ImGui::SliderInt("Max render distance", &distance, 1, 64)) {
       world->setViewDistance(distance);
     }
 

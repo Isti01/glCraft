@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Frustum.h>
+
+#include "../Math/AABB.h"
 #include "../Rendering/BlockMesh.h"
 #include "../Rendering/BlockVertex.h"
 #include "../Rendering/ShaderProgram.h"
@@ -35,13 +38,14 @@ private:
   glm::ivec2 worldPosition;
 
   BlockData data[HorizontalSize][VerticalSize][HorizontalSize];
+  AABB aabb;
 
   void init();
 
 public:
   explicit Chunk(const glm::ivec2& worldPosition);
 
-  void render(const glm::mat4& transform, World& world);
+  void render(const glm::mat4& transform, const Frustum& frustum, World& world);
   void rebuildMesh(const World& world);
 
   [[nodiscard]] bool needsMeshRebuild() const { return !mesh || renderState != RenderState::ready; };
@@ -54,6 +58,10 @@ public:
 
     setDirty();
     useAmbientOcclusion = enabled;
+  };
+
+  [[nodiscard]] bool isVisible(const Frustum& frustum) const {
+    return frustum.IsBoxVisible(aabb.minPoint, aabb.maxPoint);
   };
 
   void placeBlock(BlockData block, const glm::ivec3& position) {

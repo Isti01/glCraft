@@ -6,6 +6,9 @@
 #include "Camera.h"
 
 class Player {
+  // The player is 0.6 blocks wide and 1.8 blocks tall, the eyes are approximately 0.3 units from the top
+
+
   Camera camera;
 
   Ref<World> world;
@@ -26,6 +29,22 @@ class Player {
   bool shouldResetMouse = true;
 
 public:
+  static constexpr AABB PlayerAABB = AABB{
+     {-0.3, -1.5, -0.3},
+     {0.3, 0.3, 0.3},
+  };
+
+  static constexpr std::array<glm::vec3, 8> PlayerBoundingBox = {{
+     {0.3, 0.3, 0.3},
+     {0.3, 0.3, -0.3},
+     {-0.3, 0.3, 0.3},
+     {-0.3, 0.3, -0.3},
+     {0.3, -1.5, 0.3},
+     {0.3, -1.5, -0.3},
+     {-0.3, -1.5, 0.3},
+     {-0.3, -1.5, -0.3},
+  }};
+
   static constexpr float DefaultGravity = 46.62f;
   static constexpr float Reach = 4.5f;
 

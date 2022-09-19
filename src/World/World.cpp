@@ -72,25 +72,25 @@ void World::sortChunkIndices(glm::vec3 playerPos, const Ref<ChunkIndexVector>& c
             [](const auto& a, const auto& b) { return b.second < a.second; });
 }
 
-void World::rebuildChunks(const Ref<ChunkIndexVector>& chunkIndices) {
+void World::rebuildChunks(const Ref<ChunkIndexVector>& chunkIndices, const Frustum& frustum) {
   uint32_t meshesRebuilt = 0;
   for (auto& index: std::ranges::reverse_view(*chunkIndices)) {
     if (meshesRebuilt > MaxRebuildsAllowedPerFrame) {
       break;
     }
     const auto& chunk = chunks[index.first];
-    if (chunk->needsMeshRebuild()) {
-      chunks[index.first]->rebuildMesh(*this);
+    if (chunk->needsMeshRebuild() && chunk->isVisible(frustum)) {
+      chunk->rebuildMesh(*this);
       meshesRebuilt++;
     }
   }
 }
 
-void World::renderOpaque(glm::vec3 playerPos, glm::mat4 transform) {
+void World::renderOpaque(glm::mat4 transform, glm::vec3 playerPos, const Frustum& frustum) {
   TRACE_FUNCTION();
   static auto sortedChunkIndices = std::make_shared<ChunkIndexVector>();
   sortChunkIndices(playerPos, sortedChunkIndices);
-  rebuildChunks(sortedChunkIndices);
+  rebuildChunks(sortedChunkIndices, frustum);
 
   const int32_t animationProgress = static_cast<int32_t>(textureAnimation) % 5;
 
@@ -107,7 +107,7 @@ void World::renderOpaque(glm::vec3 playerPos, glm::mat4 transform) {
     const auto& chunk = chunks[index.first];
     chunk->setShader(opaqueShader);
     chunk->setUseAmbientOcclusion(useAmbientOcclusion);
-    chunk->render(transform, *this);
+    chunk->render(transform, frustum, *this);
   }
 
   glDisable(GL_BLEND);
@@ -116,6 +116,7 @@ void World::renderOpaque(glm::vec3 playerPos, glm::mat4 transform) {
 /// implemented this paper: https://jcgt.org/published/0002/02/09/
 void World::renderTransparent(glm::mat4 transform,
                               glm::vec3 playerPos,
+                              const Frustum& frustum,
                               float zNear,
                               float zFar,
                               int32_t width,
@@ -127,7 +128,7 @@ void World::renderTransparent(glm::mat4 transform,
   }
   static auto sortedChunkIndices = std::make_shared<ChunkIndexVector>();
   sortChunkIndices(playerPos, sortedChunkIndices);
-  rebuildChunks(sortedChunkIndices);
+  rebuildChunks(sortedChunkIndices, frustum);
 
   const int32_t animationProgress = static_cast<int32_t>(textureAnimation) % 5;
 
@@ -154,7 +155,7 @@ void World::renderTransparent(glm::mat4 transform,
   for (const auto& [key, chunk]: chunks) {
     chunk->setShader(transparentShader);
     chunk->setUseAmbientOcclusion(useAmbientOcclusion);
-    chunk->render(transform, *this);
+    chunk->render(transform, frustum, *this);
   }
   Window::instance().getFramebufferStack()->pop();
 
