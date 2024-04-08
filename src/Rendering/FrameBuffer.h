@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../glCraft.h"
-#include "Renderbuffer.h"
 #include "Texture.h"
 
 class Framebuffer {
@@ -9,7 +8,7 @@ class Framebuffer {
 
   std::vector<Ref<Texture>> attachments;
   std::vector<uint32_t> attachmentNames;
-  Ref<Renderbuffer> depthAttachment = nullptr;
+  Ref<Texture> depthAttachment = nullptr;
 
   int32_t width;
   int32_t height;
@@ -22,7 +21,7 @@ public:
   [[nodiscard]] int32_t getHeight() const { return height; };
   [[nodiscard]] bool isValid() const { return id != 0; };
 
-  Ref<Renderbuffer> getDepthAttachment();
+  Ref<Texture> getDepthAttachment();
   Ref<Texture> getColorAttachment(int32_t index);
 
   void clearColorAttachment(int32_t index, const glm::vec4 &value);

@@ -5,11 +5,19 @@
 
 class Texture {
   uint32_t id = 0;
-  uint32_t type;
+  uint32_t target;
+  int32_t internalFormat;
+  int32_t format;
+  int32_t type;
   bool generateMipMap;
 
 public:
-  Texture(uint32_t type, bool generateMipMap = true, int32_t maxLod = 1000);
+  Texture(uint32_t target,
+          int32_t internalFormat,
+          int32_t format,
+          int32_t type,
+          bool generateMipMap = true,
+          int32_t maxLod = 1000);
   ~Texture();
 
   [[nodiscard]] bool isValid() const { return id != 0; };

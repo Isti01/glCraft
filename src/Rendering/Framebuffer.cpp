@@ -7,12 +7,13 @@ Framebuffer::Framebuffer(int32_t width, int32_t height, bool createDepthAttachme
   bind(false);
 
   if (createDepthAttachment) {
-    depthAttachment = std::make_shared<Renderbuffer>(GL_DEPTH24_STENCIL8, width, height);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthAttachment->getId());
+    depthAttachment = std::make_shared<Texture>(GL_TEXTURE_2D, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, false);
+    depthAttachment->allocateTexture(width, height);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthAttachment->getId(), 0);
   }
 
   for (uint32_t i = 0; i < colorAttachmentCount; ++i) {
-    Ref<Texture> attachment = std::make_shared<Texture>(GL_TEXTURE_2D, false, 0);
+    Ref<Texture> attachment = std::make_shared<Texture>(GL_TEXTURE_2D, GL_RGBA16, GL_RGBA, GL_SHORT, false, 0);
     attachment->allocateTexture(width, height);
 
     uint32_t attachmentName = GL_COLOR_ATTACHMENT0 + i;
@@ -30,7 +31,7 @@ Framebuffer::~Framebuffer() {
   }
 }
 
-Ref<Renderbuffer> Framebuffer::getDepthAttachment() {
+Ref<Texture> Framebuffer::getDepthAttachment() {
   return depthAttachment;
 }
 

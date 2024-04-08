@@ -4,21 +4,26 @@
 #include "../Performance/Trace.h"
 #include "Image.h"
 
-Texture::Texture(uint32_t type, bool generateMipMap, int32_t maxLod) : type(type), generateMipMap(generateMipMap) {
-  assert(type == GL_TEXTURE_2D || type == GL_TEXTURE_2D_ARRAY || type == GL_TEXTURE_CUBE_MAP);
+Texture::Texture(uint32_t target,
+                 int32_t internalFormat,
+                 int32_t format,
+                 int32_t type,
+                 bool generateMipMap,
+                 int32_t maxLod)
+    : target(target),
+      internalFormat(internalFormat),
+      format(format),
+      type(type),
+      generateMipMap(generateMipMap) {
+  assert(target == GL_TEXTURE_2D || target == GL_TEXTURE_2D_ARRAY || target == GL_TEXTURE_CUBE_MAP);
   glGenTextures(1, &id);
   bind();
 
-  glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-  glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-  if (type == GL_TEXTURE_CUBE_MAP) {
-    glTexParameteri(type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
-  }
 
-  glTexParameteri(type, GL_TEXTURE_MIN_FILTER, generateMipMap ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
-  glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(target, GL_TEXTURE_MIN_FILTER, generateMipMap ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
+  glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   if (generateMipMap) {
-    glTexParameteri(type, GL_TEXTURE_MAX_LOD, maxLod);
+    glTexParameteri(target, GL_TEXTURE_MAX_LOD, maxLod);
   }
 
   unbind();
@@ -33,12 +38,12 @@ Texture::~Texture() {
 
 void Texture::allocateTexture(int32_t width, int32_t height) {
   TRACE_FUNCTION();
-  assert(type == GL_TEXTURE_2D);
+  assert(target == GL_TEXTURE_2D);
   bind();
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16, width, height, 0, GL_RGBA, GL_SHORT, nullptr);
+  glTexImage2D(target, 0, internalFormat, width, height, 0, format, type, nullptr);
   if (generateMipMap) {
-    glGenerateMipmap(type);
+    glGenerateMipmap(target);
   }
 
   unbind();
@@ -46,31 +51,31 @@ void Texture::allocateTexture(int32_t width, int32_t height) {
 
 void Texture::buffer2DRGBAData(const Image& image) {
   TRACE_FUNCTION();
-  assert(type == GL_TEXTURE_2D);
+  assert(target == GL_TEXTURE_2D);
   bind();
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<int32_t>(image.width), static_cast<int32_t>(image.height), 0,
-               GL_RGBA, GL_UNSIGNED_BYTE, &image.data[0]);
+  glTexImage2D(target, 0, internalFormat, static_cast<int32_t>(image.width), static_cast<int32_t>(image.height),
+               0, format, type, &image.data[0]);
   if (generateMipMap) {
-    glGenerateMipmap(type);
+    glGenerateMipmap(target);
   }
   unbind();
 }
 
 void Texture::buffer2DArrayRGBAData(std::span<const Image> images) {
   TRACE_FUNCTION();
-  assert(type == GL_TEXTURE_2D_ARRAY);
+  assert(target == GL_TEXTURE_2D_ARRAY);
   assert(!images.empty());
   bind();
 
-  glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, static_cast<int32_t>(images[0].width),
-               static_cast<int32_t>(images[0].height), images.size(), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+  glTexImage3D(target, 0, internalFormat, static_cast<int32_t>(images[0].width),
+               static_cast<int32_t>(images[0].height), images.size(), 0, format, type, nullptr);
 
   for (size_t i = 0; i < images.size(); i++) {
-    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, static_cast<int32_t>(images[i].width),
-                    static_cast<int32_t>(images[i].height), 1, GL_RGBA, GL_UNSIGNED_BYTE, images[i].data.data());
+    glTexSubImage3D(target, 0, 0, 0, i, static_cast<int32_t>(images[i].width),
+                    static_cast<int32_t>(images[i].height), 1, format, type, images[i].data.data());
   }
   if (generateMipMap) {
-    glGenerateMipmap(type);
+    glGenerateMipmap(target);
   }
 
   unbind();
@@ -78,22 +83,22 @@ void Texture::buffer2DArrayRGBAData(std::span<const Image> images) {
 
 void Texture::bufferCubeMapRGBAData(std::span<Ref<const Image>, 6> images) {
   TRACE_FUNCTION();
-  assert(type == GL_TEXTURE_CUBE_MAP);
+  assert(target == GL_TEXTURE_CUBE_MAP);
   bind();
 
   for (size_t i = 0; i < images.size(); i++) {
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, static_cast<int32_t>(images[i]->width),
-                 static_cast<int32_t>(images[i]->height), 0, GL_RGBA, GL_UNSIGNED_BYTE, &images[i]->data[0]);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, static_cast<int32_t>(images[i]->width),
+                 static_cast<int32_t>(images[i]->height), 0, format, type, &images[i]->data[0]);
   }
   if (generateMipMap) {
-    glGenerateMipmap(type);
+    glGenerateMipmap(target);
   }
 
   unbind();
 }
 
 void Texture::bind() const {
-  glBindTexture(type, id);
+  glBindTexture(target, id);
 }
 
 void Texture::bindToSlot(uint32_t slot) const {
@@ -102,7 +107,7 @@ void Texture::bindToSlot(uint32_t slot) const {
 }
 
 void Texture::unbind() const {
-  glBindTexture(type, 0);
+  glBindTexture(target, 0);
 }
 
 Ref<const Texture> Texture::loadTexture2D(const std::string& name) {
@@ -112,7 +117,7 @@ Ref<const Texture> Texture::loadTexture2D(const std::string& name) {
     return nullptr;
   }
 
-  Ref<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_2D, true, 4);
+  Ref<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, true, 4);
   texture->buffer2DRGBAData(*image);
   return texture;
 }
@@ -135,7 +140,7 @@ Ref<const Texture> Texture::loadTexture2DArray(const std::string& name) {
     }
   }
 
-  Ref<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_2D_ARRAY, true, 4);
+  Ref<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_2D_ARRAY, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, true, 4);
   texture->buffer2DArrayRGBAData(subImages);
   return texture;
 }
@@ -158,7 +163,7 @@ Ref<const Texture> Texture::loadCubeMapTexture(const std::string& name) {
     }
   }
 
-  Ref<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_CUBE_MAP);
+  Ref<Texture> texture = std::make_shared<Texture>(GL_TEXTURE_CUBE_MAP, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
   texture->bufferCubeMapRGBAData(images);
   return texture;
 }
