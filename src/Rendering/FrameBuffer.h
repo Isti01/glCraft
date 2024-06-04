@@ -20,6 +20,7 @@ public:
   [[nodiscard]] int32_t getWidth() const { return width; };
   [[nodiscard]] int32_t getHeight() const { return height; };
   [[nodiscard]] bool isValid() const { return id != 0; };
+  [[nodiscard]] size_t getAttachmentCount() const { return attachments.size(); };
 
   Ref<Texture> getDepthAttachment();
   Ref<Texture> getColorAttachment(int32_t index);

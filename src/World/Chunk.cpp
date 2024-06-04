@@ -18,7 +18,7 @@ void Chunk::init() {
   aabb = AABB{position, position + maxOffset};
 }
 
-void Chunk::render(const glm::mat4& transform, const Frustum& frustum, World& world) {
+void Chunk::renderOpaque(const glm::mat4& transform, const Frustum& frustum) {
   TRACE_FUNCTION();
   if (!mesh || !isVisible(frustum)) {
     return;
@@ -30,9 +30,22 @@ void Chunk::render(const glm::mat4& transform, const Frustum& frustum, World& wo
   if (solidVertexCount != 0) {
     mesh->renderVertexSubStream(solidVertexCount, 0);
   }
+}
+
+void Chunk::renderSemiTransparent(const glm::mat4& transform, const Frustum& frustum) {
+  TRACE_FUNCTION();
+  if (!mesh || !isVisible(frustum)) {
+    return;
+  }
+
+  shader->bind();
+  shader->setMat4("MVP", transform * glm::translate(glm::vec3(worldPosition.x, 0, worldPosition.y)));
+
+  glDisable(GL_CULL_FACE);
   if (semiTransparentVertexCount != 0) {
     mesh->renderVertexSubStream(semiTransparentVertexCount, solidVertexCount);
   }
+  glEnable(GL_CULL_FACE);
 }
 
 const BlockData* Chunk::getBlockAtOptimized(const glm::ivec3& pos, const World& world) const {
@@ -99,8 +112,14 @@ void Chunk::rebuildMesh(const World& world) {
 
           for (const glm::ivec3& offset: offsetsToCheck) {
             const BlockData* block = getBlockAtOptimized(blockPos + offset, world);
-            if (block != nullptr &&
-                (block->blockClass == blockClass || block->blockClass == BlockData::BlockClass::solid)) {
+            if (block == nullptr) {
+              continue;
+            }
+
+            bool isSameClass = block->blockClass == blockClass;
+            bool isTransparentNextToOpaque =
+               block->blockClass == BlockData::BlockClass::solid && blockClass == BlockData::BlockClass::transparent;
+            if (isSameClass || isTransparentNextToOpaque) {
               continue;
             }
 

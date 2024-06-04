@@ -107,7 +107,8 @@ void World::renderOpaque(glm::mat4 transform, glm::vec3 playerPos, const Frustum
     const auto& chunk = chunks[index.first];
     chunk->setShader(opaqueShader);
     chunk->setUseAmbientOcclusion(useAmbientOcclusion);
-    chunk->render(transform, frustum, *this);
+    chunk->renderOpaque(transform, frustum);
+    chunk->renderSemiTransparent(transform, frustum);
   }
 
   glDisable(GL_BLEND);
@@ -119,9 +120,10 @@ void World::renderTransparent(glm::mat4 transform,
                               const Frustum& frustum,
                               float zNear,
                               float zFar,
-                              int32_t width,
-                              int32_t height) {
+                              const Ref<Framebuffer>& opaqueRender) {
   TRACE_FUNCTION();
+  auto width = opaqueRender->getWidth();
+  auto height = opaqueRender->getHeight();
   static Ref<Framebuffer> framebuffer = nullptr;
   if (framebuffer == nullptr || framebuffer->getWidth() != width || framebuffer->getHeight() != height) {
     framebuffer = std::make_shared<Framebuffer>(width, height, false, 2);
@@ -135,9 +137,8 @@ void World::renderTransparent(glm::mat4 transform,
   // animation offsets for water and lava
   const static int32_t animationOffsets[] = {0, 1, 2, 17, 18};
   const int32_t animationOffset = animationOffsets[animationProgress];
-
-  Window::instance().getFramebufferStack()->push(framebuffer, 2);
-  glDepthMask(GL_FALSE);
+  auto& window = Window::instance();
+  window.getFramebufferStack()->push(framebuffer);
   glEnable(GL_BLEND);
 
   glBlendFunci(0, GL_ONE, GL_ONE);
@@ -150,22 +151,22 @@ void World::renderTransparent(glm::mat4 transform,
   transparentShader->setUInt("textureAnimation", animationOffset);
   transparentShader->setFloat("zNear", zNear);
   transparentShader->setFloat("zFar", zFar);
+  transparentShader->setTexture("opaqueDepth", opaqueRender->getDepthAttachment(), 1);
   transparentShader->bind();
 
   for (const auto& [key, chunk]: chunks) {
     chunk->setShader(transparentShader);
     chunk->setUseAmbientOcclusion(useAmbientOcclusion);
-    chunk->render(transform, frustum, *this);
+    chunk->renderSemiTransparent(transform, frustum);
   }
   Window::instance().getFramebufferStack()->pop();
 
-  glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   ColorRenderPass renderPass(blendShader);
   renderPass.setTexture("accumTexture", framebuffer->getColorAttachment(0), 1);
   renderPass.setTexture("revealageTexture", framebuffer->getColorAttachment(1), 2);
+  renderPass.setTexture("opaqueTexture", opaqueRender->getColorAttachment(0), 3);
   renderPass.render();
-
-  glDepthMask(GL_TRUE);
   glDisable(GL_BLEND);
 }
 

@@ -47,13 +47,22 @@ void Scene::render() {
   Frustum frustum(mvp);
 
   const Camera& camera = player.getCamera();
-  if (enableXRay) {
-    const int32_t width = Window::instance().getWindowWidth();
-    const int32_t height = Window::instance().getWindowHeight();
-    world->renderTransparent(mvp, camera.getPosition(), frustum, zNear, zFar, width, height);
-  } else {
-    world->renderOpaque(mvp, camera.getPosition(), frustum);
+  const int32_t width = Window::instance().getWindowWidth();
+  const int32_t height = Window::instance().getWindowHeight();
+
+  static Ref<Framebuffer> framebuffer = nullptr;
+  if (framebuffer == nullptr || framebuffer->getWidth() != width || framebuffer->getHeight() != height) {
+    framebuffer = std::make_shared<Framebuffer>(width, height, true, 1);
   }
+
+  Window::instance().getFramebufferStack()->push(framebuffer);
+  glClearColor(0, 0, 0, 0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  world->renderOpaque(mvp, camera.getPosition(), frustum);
+  auto opaqueRender = Window::instance().getFramebufferStack()->pop();
+
+  world->renderTransparent(mvp, camera.getPosition(), frustum, zNear, zFar, opaqueRender);
+
 
   if (WorldRayCast ray{camera.getPosition(), camera.getLookDirection(), *world, Player::Reach}) {
     outline.render(mvp * glm::translate(ray.getHitTarget().position));
@@ -87,11 +96,6 @@ void Scene::renderMenu() {
     if (ImGui::Checkbox("Show intermediate textures", &showIntermediateTextures)) {
       Window::instance().getFramebufferStack()->setKeepIntermediateTextures(showIntermediateTextures);
     }
-
-    ImGui::Spacing();
-    ImGui::Spacing();
-
-    ImGui::Checkbox("Enable XRay", &enableXRay);
 
     ImGui::Spacing();
     ImGui::Spacing();

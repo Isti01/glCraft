@@ -1,11 +1,11 @@
 #include "FramebufferStack.h"
 
-void FramebufferStack::push(const Ref<Framebuffer>& framebuffer, uint32_t attachmentReferencesToHold) {
+void FramebufferStack::push(const Ref<Framebuffer>& framebuffer) {
   stack.push_back(framebuffer);
   framebuffer->bind();
 
   if (keepIntermediateTextures) {
-    for (int i = 0; i < attachmentReferencesToHold; ++i) {
+    for (int i = 0; i < framebuffer->getAttachmentCount(); ++i) {
       intermediateTextures.push_back(framebuffer->getColorAttachment(i));
     }
   }

@@ -9,7 +9,7 @@ class FramebufferStack {
   bool keepIntermediateTextures = false;
 
 public:
-  void push(const Ref<Framebuffer>& framebuffer, uint32_t attachmentCountToRecord);
+  void push(const Ref<Framebuffer>& framebuffer);
   [[nodiscard]] Ref<Framebuffer> peek() const;
   Ref<Framebuffer> pop();
 

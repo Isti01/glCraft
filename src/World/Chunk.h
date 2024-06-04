@@ -45,7 +45,8 @@ private:
 public:
   explicit Chunk(const glm::ivec2& worldPosition);
 
-  void render(const glm::mat4& transform, const Frustum& frustum, World& world);
+  void renderOpaque(const glm::mat4& transform, const Frustum& frustum);
+  void renderSemiTransparent(const glm::mat4& transform, const Frustum& frustum);
   void rebuildMesh(const World& world);
 
   [[nodiscard]] bool needsMeshRebuild() const { return !mesh || renderState != RenderState::ready; };

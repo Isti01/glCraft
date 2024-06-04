@@ -136,7 +136,7 @@ void Window::beginFrame() {
     framebuffer = std::make_shared<Framebuffer>(windowWidth, windowHeight, true, 1);
   }
 
-  framebufferStack->push(framebuffer, 0);
+  framebufferStack->push(framebuffer);
   resetFrame();  // reset the level one framebuffer
 }
 

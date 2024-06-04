@@ -57,8 +57,7 @@ public:
                          const Frustum& frustum,
                          float zNear,
                          float zFar,
-                         int32_t width,
-                         int32_t height);
+                         const Ref<Framebuffer>& opaqueRender);
 
   void renderOpaque(glm::mat4 transform, glm::vec3 playerPos, const Frustum& frustum);
   static bool isValidBlockPosition(glm::ivec3 position);
