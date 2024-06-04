@@ -4,7 +4,7 @@
 
 #include "../Performance/Trace.h"
 
-//#define SERIALIZE_DATA
+#define SERIALIZE_DATA
 
 Persistence::Persistence(std::string newPath) : path(std::move(newPath)) {
   TRACE_FUNCTION();
