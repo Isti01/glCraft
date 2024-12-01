@@ -64,6 +64,9 @@ void ShaderProgram::setVec2(const std::string &location, const glm::vec2 &value)
 void ShaderProgram::setVec3(const std::string &location, const glm::vec3 &value) const {
   glProgramUniform3fv(shaderProgram, getUniformLocation(location), 1, &value.x);
 }
+void ShaderProgram::setVec4(const std::string &location, const glm::vec4 &value) const {
+  glProgramUniform4fv(shaderProgram, getUniformLocation(location), 1, &value.x);
+}
 
 void ShaderProgram::setMat4(const std::string &location, const glm::mat4 &value) const {
   glProgramUniformMatrix4fv(shaderProgram, getUniformLocation(location), 1, GL_FALSE, &value[0][0]);

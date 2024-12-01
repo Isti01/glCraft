@@ -3,10 +3,14 @@
 #include <ranges>
 
 #include "../Application/Window.h"
+#include "../AssetManager/AssetManager.h"
 #include "../Rendering/ColorRenderPass.h"
 #include "../Rendering/FullscreenQuad.h"
 
-World::World(const Ref<Persistence>& persistence, int32_t seed) : persistence(persistence), generator(seed) {
+World::World(const Ref<Persistence>& persistence, std::vector<Ref<WorldBehavior>> behaviors, int32_t seed)
+    : behaviors(std::move(behaviors)),
+      persistence(persistence),
+      generator(seed) {
   TRACE_FUNCTION();
   opaqueShader = AssetManager::instance().loadShaderProgram("assets/shaders/world_opaque");
   transparentShader = AssetManager::instance().loadShaderProgram("assets/shaders/world_transparent");
@@ -27,6 +31,22 @@ Ref<Chunk> World::generateOrLoadChunk(glm::ivec2 position) {
   return chunk;
 }
 
+void World::unloadChunk(const Ref<Chunk>& chunk) {
+  const auto chunkPos = chunk->getPosition();
+  chunks.erase(chunkPos);
+  for (int32_t x = 0; x < Chunk::HorizontalSize; ++x) {
+    for (int32_t y = 0; y < Chunk::VerticalSize; ++y) {
+      for (int32_t z = 0; z < Chunk::HorizontalSize; ++z) {
+        for (const auto& worldBehavior: behaviors) {
+          glm::ivec3 blockPos = {x, y, z};
+          glm::ivec3 globalBlockPos = blockPos + glm::ivec3(chunkPos.x, 0, chunkPos.y);
+          worldBehavior->onBlockRemoved(globalBlockPos, chunk->getBlockAt(blockPos), *this);
+        }
+      }
+    }
+  }
+}
+
 void World::update(const glm::vec3& playerPosition, float deltaTime) {
   TRACE_FUNCTION();
   textureAnimation += deltaTime * TextureAnimationSpeed;
@@ -37,7 +57,7 @@ void World::update(const glm::vec3& playerPosition, float deltaTime) {
   float unloadDistance = static_cast<float>(viewDistance + 1) * 16 + 8.0f;
   for (const auto& [chunkPosition, chunk]: chunksCopy) {
     if (glm::abs(glm::distance(glm::vec2(chunkPosition), playerChunkPosition)) > unloadDistance) {
-      chunks.erase(chunkPosition);
+      unloadChunk(chunk);
     }
   }
 
@@ -55,6 +75,10 @@ void World::update(const glm::vec3& playerPosition, float deltaTime) {
       }
     }
   }
+
+  for (auto& behavior: behaviors) {
+    behavior->update(deltaTime);
+  }
 }
 
 void World::sortChunkIndices(glm::vec3 playerPos, const Ref<ChunkIndexVector>& chunkIndices) {
@@ -65,7 +89,7 @@ void World::sortChunkIndices(glm::vec3 playerPos, const Ref<ChunkIndexVector>& c
 
   glm::vec2 playerXZ = glm::vec2(playerPos.x, playerPos.z);
   for (const auto& [key, value]: chunks) {
-    chunkIndices->push_back({key, value->distanceToPoint(playerXZ)});
+    chunkIndices->emplace_back(key, value->distanceToPoint(playerXZ));
   }
 
   std::sort(chunkIndices->begin(), chunkIndices->end(),
@@ -109,6 +133,10 @@ void World::renderOpaque(glm::mat4 transform, glm::vec3 playerPos, const Frustum
     chunk->setUseAmbientOcclusion(useAmbientOcclusion);
     chunk->renderOpaque(transform, frustum);
     chunk->renderSemiTransparent(transform, frustum);
+  }
+
+  for (const auto& behavior: behaviors) {
+    behavior->renderOpaque(transform, playerPos, frustum);
   }
 
   glDisable(GL_BLEND);
@@ -185,13 +213,28 @@ bool World::placeBlock(BlockData block, glm::ivec3 position) {
   }
 
   glm::ivec3 positionInChunk = Chunk::toChunkCoordinates(position);
-  getChunk(getChunkIndex(position))->placeBlock(block, positionInChunk);
+  auto chunk = getChunk(getChunkIndex(position));
+  auto oldBlock = chunk->getBlockAt(positionInChunk);
+  for (const auto& behavior: behaviors) {
+    behavior->onBlockRemoved(position, oldBlock, *this);
+  }
 
-  const std::array<glm::ivec3, 4> blocksAround = {{{0, 0, 1}, {1, 0, 0}, {0, 0, -1}, {-1, 0, 0}}};
+  getChunk(getChunkIndex(position))->placeBlock(block, positionInChunk);
+  for (const auto& behavior: behaviors) {
+    behavior->onNewBlock(position, &block, *this);
+  }
+
+  constexpr std::array<glm::ivec3, 6> blocksAround = {
+     {{0, 0, 1}, {1, 0, 0}, {0, 0, -1}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}}};
   for (const glm::ivec3& offset: blocksAround) {
     glm::ivec3 neighbor = offset + positionInChunk;
+    glm::ivec3 neighborWorldPosition = position + offset;
     if (!Chunk::isInBounds(neighbor.x, neighbor.y, neighbor.z)) {
-      getChunk(getChunkIndex(position + offset))->setDirty();
+      const auto& chunk = getChunk(getChunkIndex(neighborWorldPosition));
+      chunk->setDirty();
+    }
+    for (const auto& behavior: behaviors) {
+      behavior->onBlockUpdate(neighborWorldPosition, getBlockAt(neighborWorldPosition), *this);
     }
   }
 
@@ -223,6 +266,17 @@ void World::addChunk(glm::ivec2 position, const Ref<Chunk>& chunk) {
       continue;
 
     chunks[neighborPosition]->setDirty();
+  }
+  for (int32_t x = 0; x < Chunk::HorizontalSize; ++x) {
+    for (int32_t y = 0; y < Chunk::VerticalSize; ++y) {
+      for (int32_t z = 0; z < Chunk::HorizontalSize; ++z) {
+        for (const auto& worldBehavior: behaviors) {
+          glm::ivec3 blockPos = {x, y, z};
+          worldBehavior->onNewBlock(blockPos + glm::ivec3(position.x, 0, position.y), chunk->getBlockAt(blockPos),
+                                    *this);
+        }
+      }
+    }
   }
 }
 

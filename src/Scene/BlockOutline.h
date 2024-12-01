@@ -1,15 +1,14 @@
 #pragma once
 
 #include "../Rendering/ShaderProgram.h"
-#include "../Rendering/VertexArray.h"
-#include "../glCraft.h"
+#include "CubeMesh.h"
 
 class BlockOutline {
   Ref<const ShaderProgram> outlinedBlockShader;
-  Ref<VertexArray> outlinedBlockVertexArray;
+  Ref<const CubeMesh> blockMesh;
 
 public:
-  BlockOutline();
+  explicit BlockOutline(Ref<const CubeMesh> blockMesh);
 
-  void render(const glm::mat4& transform);
+  void render(const glm::mat4& transform) const;
 };

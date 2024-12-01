@@ -2,9 +2,8 @@
 
 #include <Frustum.h>
 
-#include "../AssetManager/AssetManager.h"
+#include "../Scene/Behaviors/WorldBehavior.h"
 #include "../Persistence/Persistence.h"
-#include "../Rendering/FrameBuffer.h"
 #include "../Rendering/ShaderProgram.h"
 #include "../Rendering/Texture.h"
 #include "../glCraft.h"
@@ -13,6 +12,7 @@
 
 class World {
   std::unordered_map<glm::ivec2, Ref<Chunk>, Util::HashVec2> chunks;
+  std::vector<Ref<WorldBehavior>> behaviors;
   using ChunkIndexVector = std::vector<std::pair<glm::vec2, float>>;
   Ref<const Texture> textureAtlas;
   Ref<const ShaderProgram> opaqueShader;
@@ -30,11 +30,12 @@ class World {
   static constexpr float TextureAnimationSpeed = 2;
 
   Ref<Chunk> generateOrLoadChunk(glm::ivec2 position);
+  void unloadChunk(const Ref<Chunk>& chunk);
   void sortChunkIndices(glm::vec3 playerPos, const Ref<ChunkIndexVector>& chunkIndices);
   void rebuildChunks(const Ref<ChunkIndexVector>& chunkIndices, const Frustum& frustum);
 
 public:
-  explicit World(const Ref<Persistence>& persistence, int32_t seed = 1337);
+  explicit World(const Ref<Persistence>& persistence, std::vector<Ref<WorldBehavior>> behaviors, int32_t seed);
 
   Ref<Chunk> getChunk(glm::ivec2 position);
   void addChunk(glm::ivec2 position, const Ref<Chunk>& chunk);

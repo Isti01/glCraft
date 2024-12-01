@@ -30,7 +30,7 @@ class Scene {
   const float zFar = 1000.0f;
   glm::mat4 projectionMatrix = glm::mat4(1);
   float deltaTime = 1.0f;
-  BlockOutline outline;
+  BlockOutline outline{std::make_shared<CubeMesh>()};
   std::vector<Ref<PostProcessEffect>> postProcessingEffects = {
      std::make_shared<CrosshairEffect>(true),       std::make_shared<ChromaticAberrationEffect>(false),
      std::make_shared<InvertEffect>(false),         std::make_shared<VignetteEffect>(true),
