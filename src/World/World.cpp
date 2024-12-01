@@ -40,7 +40,7 @@ void World::unloadChunk(const Ref<Chunk>& chunk) {
         for (const auto& worldBehavior: behaviors) {
           glm::ivec3 blockPos = {x, y, z};
           glm::ivec3 globalBlockPos = blockPos + glm::ivec3(chunkPos.x, 0, chunkPos.y);
-          worldBehavior->onBlockRemoved(globalBlockPos, chunk->getBlockAt(blockPos), *this);
+          worldBehavior->onBlockRemoved(globalBlockPos, chunk->getBlockAt(blockPos), *this, false);
         }
       }
     }
@@ -216,7 +216,7 @@ bool World::placeBlock(BlockData block, glm::ivec3 position) {
   auto chunk = getChunk(getChunkIndex(position));
   auto oldBlock = chunk->getBlockAt(positionInChunk);
   for (const auto& behavior: behaviors) {
-    behavior->onBlockRemoved(position, oldBlock, *this);
+    behavior->onBlockRemoved(position, oldBlock, *this, true);
   }
 
   getChunk(getChunkIndex(position))->placeBlock(block, positionInChunk);

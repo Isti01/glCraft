@@ -26,7 +26,7 @@ public:
   LavaParticleBehavior() = default;
   void onNewBlock(glm::ivec3 blockPos, const BlockData *block, World &world) override;
   void onBlockUpdate(glm::ivec3 blockPos, const BlockData *block, World &world) override;
-  void onBlockRemoved(glm::ivec3 blockPos, const BlockData *block, World &world) override;
+  void onBlockRemoved(glm::ivec3 blockPos, const BlockData *block, World &world, bool removedByPlayer) override;
   void renderOpaque(glm::mat4 transform, glm::vec3 playerPos, const Frustum &frustum) override;
   void update(float dt) override;
 };

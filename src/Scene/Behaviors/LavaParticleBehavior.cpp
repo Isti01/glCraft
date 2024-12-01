@@ -1,7 +1,5 @@
 #include "LavaParticleBehavior.h"
 
-#include <execution>
-
 #include "../../AssetManager/AssetManager.h"
 
 LavaParticleSystem::LavaParticleSystem()
@@ -40,7 +38,10 @@ void LavaParticleBehavior::onBlockUpdate(glm::ivec3 blockPos, const BlockData *b
   }
 }
 
-void LavaParticleBehavior::onBlockRemoved(glm::ivec3 blockPos, const BlockData *block, World &world) {
+void LavaParticleBehavior::onBlockRemoved(glm::ivec3 blockPos,
+                                          const BlockData *block,
+                                          World &world,
+                                          bool removedByPlayer) {
   if (block == nullptr || block->type != BlockData::BlockType::lava)
     return;
 

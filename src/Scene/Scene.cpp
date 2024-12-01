@@ -6,13 +6,15 @@
 #include "../Math/WorldRayCast.h"
 #include "../Performance/Trace.h"
 #include "../World/BlockName.h"
+#include "Behaviors/BlockBreakParticleBehavior.h"
 #include "Behaviors/LavaParticleBehavior.h"
 
 Scene::Scene(const std::string& savePath)
     : persistence(std::make_shared<Persistence>(savePath)),
       world(std::make_shared<World>(
          persistence,
-         std::vector{std::static_pointer_cast<WorldBehavior>(std::make_shared<LavaParticleBehavior>())},
+         std::vector{std::static_pointer_cast<WorldBehavior>(std::make_shared<LavaParticleBehavior>()),
+                     std::static_pointer_cast<WorldBehavior>(std::make_shared<BlockBreakParticleBehavior>())},
          1337)),
       player(world, persistence) {
   TRACE_FUNCTION();
