@@ -20,7 +20,7 @@ Texture::Texture(uint32_t target,
   bind();
 
 
-  glTexParameteri(target, GL_TEXTURE_MIN_FILTER, generateMipMap ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
+  glTexParameteri(target, GL_TEXTURE_MIN_FILTER, generateMipMap ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST);
   glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   if (generateMipMap) {
     glTexParameteri(target, GL_TEXTURE_MAX_LOD, maxLod);

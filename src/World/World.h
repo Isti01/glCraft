@@ -2,14 +2,16 @@
 
 #include <Frustum.h>
 
-#include "../Scene/Behaviors/WorldBehavior.h"
 #include "../Persistence/Persistence.h"
 #include "../Rendering/ShaderProgram.h"
 #include "../Rendering/Texture.h"
+#include "../Scene/Behaviors/WorldBehavior.h"
 #include "../glCraft.h"
 #include "Chunk.h"
 #include "WorldGenerator.h"
 
+
+class Framebuffer;
 class World {
   std::unordered_map<glm::ivec2, Ref<Chunk>, Util::HashVec2> chunks;
   std::vector<Ref<WorldBehavior>> behaviors;
