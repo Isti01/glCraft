@@ -51,7 +51,7 @@ software that I used to make this.
 
     - Run the game on Linux *with an optional save to load*:
   ```shell
-  ./main <saved-world.glc>
+  ./glCraft <saved-world.glc>
   ```
 
     - Or on Windows *with an optional save to load*
