@@ -56,7 +56,7 @@ software that I used to make this.
 
     - Or on Windows *with an optional save to load*
   ```batch
-  main.exe <saved-world.glc>
+  glCraft.exe <saved-world.glc>
   ```
 
 ## Features
